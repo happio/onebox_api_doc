@@ -8,7 +8,7 @@ module OneboxApiDoc
       mattr_accessor :app_name do 'API DOC' end
 
       # where is your API defined?
-      mattr_accessor :api_docs_matcher do "" end
+      mattr_accessor :api_docs_matcher do "api_doc/*.rb" end
 
       def config(&block)
         yield self

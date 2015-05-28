@@ -15,7 +15,7 @@ module OneboxApiDoc
     end
 
     def api_docs_paths
-      Dir.glob(OneboxApiDoc::Engine.api_docs_matcher)
+      Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
     end
 
     private

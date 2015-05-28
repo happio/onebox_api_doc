@@ -5,6 +5,6 @@ OneboxApiDoc::Engine.config do |config|
   config.app_name = 'Api Doc'
 
   # where is your API Doc defined?
-  config.api_docs_matcher = "#{Rails.root}/api_doc/*.rb"
+  config.api_docs_matcher = "api_doc/*.rb"
 
 end
