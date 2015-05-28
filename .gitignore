@@ -3,7 +3,6 @@ log/*.log
 pkg/
 test/dummy/config/database.yml
 test/dummy/db/migrate/
-test/dummy/db/schema.rb
 test/dummy/log/*.log
 test/dummy/tmp/
 test/dummy/.sass-cache
