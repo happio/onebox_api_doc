@@ -3,13 +3,13 @@ require "rails_helper"
 module OneboxApiDoc
   describe Base do
 
-    describe "reload_documentation" do
+    describe "load_documentation" do
       before :each do
         OneboxApiDoc::Base.new.unload_documentation
       end
 
       it "load document class" do
-        OneboxApiDoc::Base.new.reload_documentation
+        OneboxApiDoc::Base.new.load_documentation
         expect{ UsersApiDoc }.not_to raise_error
       end
     end
@@ -20,7 +20,7 @@ module OneboxApiDoc
         expect{ UsersApiDoc }.to raise_error
       end
       it "unload document class if the class was loaded" do
-        OneboxApiDoc::Base.new.reload_documentation
+        OneboxApiDoc::Base.new.load_documentation
         OneboxApiDoc::Base.new.unload_documentation
         expect{ UsersApiDoc }.to raise_error
       end

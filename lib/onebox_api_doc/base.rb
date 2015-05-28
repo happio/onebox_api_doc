@@ -2,26 +2,29 @@ module OneboxApiDoc
   class Base
 
     @tags = []
+    @all_permissions = []
 
     def reload_documentation
+      unload_documentation
+      load_documentation
+    end
+
+    def load_documentation
       rails_mark_classes_for_reload
 
       api_docs_paths.each do |f|
         load_api_doc_from_file f
       end
-      # @checksum = nil if Apipie.configuration.update_checksum
-
-      # locale = old_locale
-    end
-
-    def api_docs_paths
-      Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
     end
 
     def unload_documentation
       api_docs_paths.each do |f|
         unload_api_doc_from_file f
       end
+    end
+
+    def api_docs_paths
+      Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
     end
 
     private
