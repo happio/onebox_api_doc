@@ -1,7 +1,11 @@
 module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
-    @groups = []
+    def index
+
+    end
+
+    
 
   end
 end
