@@ -13,22 +13,57 @@ module OneboxApiDoc
 
     def initialize name="", type, desc: "", permissions: [], required: false,
       default: nil, validates: {}, warning: nil, &block
-      @_name = name
-      @_type = type
+      @_name = name.to_s
+      @_type = type.to_s.capitalize
       @_desc = desc
       @_required = required
       @_default_value = default
       @_warning = warning
       @_permissions = permissions
-      @_validates = validates
+      @_validates = validation_messages validates
       @_params = []
       self.instance_eval(&block) if block_given?
     end
 
-    private
+    ##############################
+    ####### Getter Methods #######
+    ##############################
 
-    # def validates options={}
-    # end
+    def _name
+      @_name
+    end
+
+    def _type
+      @_type
+    end
+
+    def _desc
+      @_desc
+    end
+
+    def _permissions
+      @_permissions
+    end
+
+    def _required
+      @_required
+    end
+
+    def _default_value
+      @_default_value
+    end
+
+    def _warning
+      @_warning
+    end
+
+    def _validates
+      @_validates
+    end
+
+    def _params
+      @_params
+    end
 
   end
 end
