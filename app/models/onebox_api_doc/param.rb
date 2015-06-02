@@ -5,8 +5,6 @@ module OneboxApiDoc
     :_default_value, :_warning, :_validates, :_params
 
     def initialize name, type, options={}, &block
-    # def initialize name="", type, desc: "", permissions: [], required: false,
-    #   default: nil, validates: {}, warning: nil, &block
       @_name = name.to_s
       @_type = type.to_s.capitalize
       @_desc = options[:desc]
