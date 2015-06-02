@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class Base
 
-    @tags = []
+    @all_tags = []
     @all_permissions = []
 
     def reload_documentation
@@ -25,6 +25,14 @@ module OneboxApiDoc
 
     def api_docs_paths
       Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
+    end
+
+    def all_tags
+      @all_tags
+    end
+
+    def all_permissions
+      @all_permissions
     end
 
     private
