@@ -95,6 +95,9 @@ module OneboxApiDoc
 
     it "set controller name and version to doc" do
       expect(TestApiDoc._controller_name).to eq "products"
+    end
+
+    it "set version to doc" do
       expect(TestApiDoc._version).to eq "1.2.3"
     end
 

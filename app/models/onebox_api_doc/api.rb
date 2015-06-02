@@ -5,7 +5,7 @@ module OneboxApiDoc
       :_desc, :_tags, :_header, :_body, :_response, :_error
 
     def initialize controller_name, action, short_desc="", &block
-      route = ApiDoc.route_for(controller_name, action)
+      route = Route.route_for(controller_name, action)
       return nil unless route.present?
       @_url = route[:path]
       @_method = route[:method]
