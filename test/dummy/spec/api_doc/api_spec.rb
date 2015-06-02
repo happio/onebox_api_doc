@@ -49,7 +49,7 @@ module OneboxApiDoc
           end
         end
       end
-      it "set correct api detail", yy: true do
+      it "set correct api detail" do
         expect(@api._action).to eq "show"
         expect(@api._short_desc).to eq "get user"
         expect(@api._url).to eq "/users/:id"
