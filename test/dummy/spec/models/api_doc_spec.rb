@@ -109,7 +109,7 @@ module OneboxApiDoc
       expect(api._url).to eq "/products/:id"
       expect(api._method).to eq "GET"
       expect(api._desc).to eq "description"
-      expect(api._tags).to eq [:mobile, :web]
+      expect(api._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
       expect(api._permissions).to eq [:guest, :admin, :member]
 
       expect(api._header).to be_a OneboxApiDoc::Api::Header
