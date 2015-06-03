@@ -1,8 +1,24 @@
 module OneboxApiDoc
   class Base
 
-    @all_tags = []
-    @all_permissions = []
+    class << self
+      attr_reader :all_tags, :all_permissions
+
+      def add_new_tag tag
+        @all_tags ||= []
+        @all_tags << tag
+      end
+
+      def add_new_permission permission
+        @all_permissions ||= []
+        @all_permissions << permission
+      end
+    end
+
+    def initialize
+      @all_tags ||= []
+      @all_permissions ||= []
+    end
 
     def reload_documentation
       unload_documentation
@@ -25,14 +41,6 @@ module OneboxApiDoc
 
     def api_docs_paths
       Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
-    end
-
-    def all_tags
-      @all_tags
-    end
-
-    def all_permissions
-      @all_permissions
     end
 
     private
