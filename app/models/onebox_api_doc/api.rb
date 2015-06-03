@@ -25,11 +25,16 @@ module OneboxApiDoc
     end
 
     def tags *tags
-      @_tags = tags
+      @_tags = tags.map do |tag|
+        t = OneboxApiDoc::Tag.find_or_initialize tag.to_s
+        t.apis << self
+        t
+      end
     end
 
     def permissions *permissions
       @_permissions = permissions
+      # @_permissions = permissions.map{ |permission| OneboxApiDoc::Permission.find_or_initialize permission }
     end
 
     def header &block
