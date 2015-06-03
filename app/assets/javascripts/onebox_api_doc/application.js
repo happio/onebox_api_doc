@@ -10,4 +10,10 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require_tree .
+// require_tree .
+
+//= require jquery
+//= require jquery_ujs
+
+//= require semantic-ui
+//= require onebox_api_doc/init-semantic-ui

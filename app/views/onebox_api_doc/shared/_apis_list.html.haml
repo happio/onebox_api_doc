@@ -1,0 +1,8 @@
+.ui.fluid.vertical.menu
+  - (1..5).each do |i|
+    .item
+      Resource #{i}
+      .menu
+        - (1..5).each do |j|
+          .item
+            short desc #{i}-#{j}
