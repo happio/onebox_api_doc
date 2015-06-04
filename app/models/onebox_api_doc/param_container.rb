@@ -1,6 +1,8 @@
 module OneboxApiDoc
   class ParamContainer
 
+    attr_reader :_params
+
     def initialize &block
       @_params = []
       self.instance_eval(&block) if block_given?

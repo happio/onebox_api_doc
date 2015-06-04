@@ -34,12 +34,13 @@ module OneboxApiDoc
       end
     end
 
-      describe "api_docs" do
-        it "return all api doc classes" do
-          expected_api_docs = OneboxApiDoc::ApiDoc.subclasses
-          expect(OneboxApiDoc::Base.new.api_docs).to eq expected_api_docs
-        end
+    describe "api_docs" do
+      it "return all api doc classes" do
+        expected_api_docs = OneboxApiDoc::ApiDoc.subclasses
+        expect(OneboxApiDoc::Base.new.api_docs).to eq expected_api_docs
       end
+    end
+
     describe "add_tag" do
       it "add tag to @all_tags" do
         base = OneboxApiDoc::Base.new
@@ -55,6 +56,7 @@ module OneboxApiDoc
         expect(base.all_tags.map(&:name)).to include "tag name"
       end
     end
+    
     describe "add_permission" do
       it "add permission to @all_permissions" do
         base = OneboxApiDoc::Base.new

@@ -58,15 +58,15 @@ module OneboxApiDoc
     ##############################
 
     class Header < ParamContainer
-      attr_reader :_params
+      # attr_reader :_params
     end
 
     class Body < ParamContainer
-      attr_reader :_params
+      # attr_reader :_params
     end
 
     class Response < ParamContainer
-      attr_reader :_params
+      # attr_reader :_params
     end
 
     class Error
@@ -82,7 +82,7 @@ module OneboxApiDoc
       end
 
       class Code < ParamContainer
-        attr_reader :_params, :_code, :_message, :_permissions
+        attr_reader :_code, :_message, :_permissions
 
         def initialize code, message, &block
           @_code = code
