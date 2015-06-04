@@ -12,14 +12,14 @@ module OneboxApiDoc
           header do
             param :user_id, :integer, 
               desc: 'user id',
-              permissions: [ :member ],
+              permissions: :member,
               required: true,
               validates: {
                 min: 0
               }
             param :user_auth, :string, 
               desc: 'user authentication',
-              permissions: [ :member ],
+              permissions: :member,
               required: true
           end
           body do
@@ -28,23 +28,23 @@ module OneboxApiDoc
           response do
             param :id, :integer,
               desc: 'user id',
-              permissions: [:member]
+              permissions: :member
             param :name, :string,
               desc: 'user name',
-              permissions: [:member]
+              permissions: :member
             param :email, :string,
               desc: 'user email',
-              permissions: [:member]
+              permissions: :member
           end
           error do
             code 401, "Unauthorize" do
-              permissions [:member]
+              permissions :member
               param :code, :integer,
                 desc: 'error code',
-                permissions: [:member]
+                permissions: :member
               param :message, :string,
                 desc: 'error message',
-                permissions: [:member]
+                permissions: :member
             end
           end
         end
@@ -56,7 +56,7 @@ module OneboxApiDoc
         expect(@api._method).to eq "GET"
         expect(@api._desc).to eq "get current user"
         expect(@api._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-        expect(@api._permissions).to eq [:member]
+        expect(@api._permissions).to eq ["member"]
 
         expect(@api._header).to be_a OneboxApiDoc::Api::Header
         header = @api._header
@@ -65,7 +65,7 @@ module OneboxApiDoc
         expect(header_param1._name).to eq "user_id"
         expect(header_param1._type).to eq "Integer"
         expect(header_param1._desc).to eq "user id"
-        expect(header_param1._permissions).to eq [:member]
+        expect(header_param1._permissions).to eq ["member"]
         expect(header_param1._required).to eq true
         expect(header_param1._default_value).to eq nil
         expect(header_param1._validates).to be_an Array
@@ -75,7 +75,7 @@ module OneboxApiDoc
         expect(header_param2._name).to eq "user_auth"
         expect(header_param2._type).to eq "String"
         expect(header_param2._desc).to eq "user authentication"
-        expect(header_param2._permissions).to eq [:member]
+        expect(header_param2._permissions).to eq ["member"]
         expect(header_param2._required).to eq true
         expect(header_param2._validates).to be_an Array
         expect(header_param2._validates).to be_blank
@@ -92,19 +92,19 @@ module OneboxApiDoc
         expect(response_param1._name).to eq "id"
         expect(response_param1._type).to eq "Integer"
         expect(response_param1._desc).to eq "user id"
-        expect(response_param1._permissions).to eq [:member]
+        expect(response_param1._permissions).to eq ["member"]
 
         response_param2 = response._params.shift
         expect(response_param2._name).to eq "name"
         expect(response_param2._type).to eq "String"
         expect(response_param2._desc).to eq "user name"
-        expect(response_param2._permissions).to eq [:member]
+        expect(response_param2._permissions).to eq ["member"]
 
         response_param3 = response._params.shift
         expect(response_param3._name).to eq "email"
         expect(response_param3._type).to eq "String"
         expect(response_param3._desc).to eq "user email"
-        expect(response_param3._permissions).to eq [:member]
+        expect(response_param3._permissions).to eq ["member"]
 
         expect(@api._error).to be_a OneboxApiDoc::Api::Error
         error = @api._error
@@ -113,20 +113,20 @@ module OneboxApiDoc
         expect(error_code).to be_a OneboxApiDoc::Api::Error::Code
         expect(error_code._code).to eq 401
         expect(error_code._message).to eq "Unauthorize"
-        expect(error_code._permissions).to eq [:member]
+        expect(error_code._permissions).to eq ["member"]
         expect(error_code._params).to be_an Array
         error_param1 = error_code._params.first
         expect(error_param1).to be_a OneboxApiDoc::Param
         expect(error_param1._name).to eq "code"
         expect(error_param1._type).to eq "Integer"
         expect(error_param1._desc).to eq "error code"
-        expect(error_param1._permissions).to eq [:member]
+        expect(error_param1._permissions).to eq ["member"]
         error_param2 = error_code._params.last
         expect(error_param2).to be_a OneboxApiDoc::Param
         expect(error_param2._name).to eq "message"
         expect(error_param2._type).to eq "String"
         expect(error_param2._desc).to eq "error message"
-        expect(error_param2._permissions).to eq [:member]
+        expect(error_param2._permissions).to eq ["member"]
       end
     end
 
@@ -155,12 +155,7 @@ module OneboxApiDoc
       it "set correct _permissions" do
         api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.permissions :admin, :guest, :member
-        # expect(api._permissions).to be_an Array
-        # expected_permission_names = ["admin", "guest", "member"]
-        # expect(api._permissions.map { |permission| permission.name }).to eq expected_permission_names
-        # api._permissions.each do |permission|
-        #   expect(permission.apis).to include api
-        # end
+        expect(api._permissions).to eq ["admin", "guest", "member"]
       end
     end
 
@@ -170,7 +165,7 @@ module OneboxApiDoc
         api.header do
           param :user_id, :integer, 
             desc: 'user id',
-            permissions: [ :member ],
+            permissions: :member,
             required: true,
             validates: {
               min: 0
@@ -183,7 +178,7 @@ module OneboxApiDoc
         expect(header_param1._name).to eq "user_id"
         expect(header_param1._type).to eq "Integer"
         expect(header_param1._desc).to eq "user id"
-        expect(header_param1._permissions).to eq [:member]
+        expect(header_param1._permissions).to eq ["member"]
         expect(header_param1._required).to eq true
         expect(header_param1._default_value).to eq nil
         expect(header_param1._validates).to be_an Array
@@ -198,14 +193,14 @@ module OneboxApiDoc
         api.body do
           param :id, :integer,
             desc: 'user id',
-            permissions: [:member],
+            permissions: :member,
             required: true,
             validates: {
               min: 0
             }
           param :email, :string,
             desc: 'user email',
-            permissions: [:member],
+            permissions: :member,
             required: true,
             validates: {
               min: 0
@@ -218,7 +213,7 @@ module OneboxApiDoc
         expect(body_param1._name).to eq "id"
         expect(body_param1._type).to eq "Integer"
         expect(body_param1._desc).to eq "user id"
-        expect(body_param1._permissions).to eq [:member]
+        expect(body_param1._permissions).to eq ["member"]
         expect(body_param1._required).to eq true
         expect(body_param1._default_value).to eq nil
         expect(body_param1._validates).to be_an Array
@@ -229,7 +224,7 @@ module OneboxApiDoc
         expect(body_param2._name).to eq "email"
         expect(body_param2._type).to eq "String"
         expect(body_param2._desc).to eq "user email"
-        expect(body_param2._permissions).to eq [:member]
+        expect(body_param2._permissions).to eq ["member"]
         expect(body_param2._required).to eq true
         expect(body_param2._default_value).to eq nil
         expect(body_param2._validates).to be_an Array
@@ -244,10 +239,10 @@ module OneboxApiDoc
         api.response do
           param :id, :integer,
             desc: 'user id',
-            permissions: [:member]
+            permissions: :member
           param :name, :string,
             desc: 'user name',
-            permissions: [:member]
+            permissions: :member
         end
         expect(api._response).to be_a OneboxApiDoc::Api::Response
         response = api._response
@@ -256,13 +251,13 @@ module OneboxApiDoc
         expect(response_param1._name).to eq "id"
         expect(response_param1._type).to eq "Integer"
         expect(response_param1._desc).to eq "user id"
-        expect(response_param1._permissions).to eq [:member]
+        expect(response_param1._permissions).to eq ["member"]
 
         response_param2 = response._params.last
         expect(response_param2._name).to eq "name"
         expect(response_param2._type).to eq "String"
         expect(response_param2._desc).to eq "user name"
-        expect(response_param2._permissions).to eq [:member]
+        expect(response_param2._permissions).to eq ["member"]
       end
     end
 
@@ -271,13 +266,13 @@ module OneboxApiDoc
         api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.error do
           code 401, "Unauthorize" do
-            permissions [:member]
+            permissions :member
             param :code, :integer,
               desc: 'error code',
-              permissions: [:member]
+              permissions: :member
             param :message, :string,
               desc: 'error message',
-              permissions: [:member]
+              permissions: :member
           end
         end
         expect(api._error).to be_a OneboxApiDoc::Api::Error
@@ -287,20 +282,20 @@ module OneboxApiDoc
         expect(error_code).to be_a OneboxApiDoc::Api::Error::Code
         expect(error_code._code).to eq 401
         expect(error_code._message).to eq "Unauthorize"
-        expect(error_code._permissions).to eq [:member]
+        expect(error_code._permissions).to eq ["member"]
         expect(error_code._params).to be_an Array
         error_param1 = error_code._params.first
         expect(error_param1).to be_a OneboxApiDoc::Param
         expect(error_param1._name).to eq "code"
         expect(error_param1._type).to eq "Integer"
         expect(error_param1._desc).to eq "error code"
-        expect(error_param1._permissions).to eq [:member]
+        expect(error_param1._permissions).to eq ["member"]
         error_param2 = error_code._params.last
         expect(error_param2).to be_a OneboxApiDoc::Param
         expect(error_param2._name).to eq "message"
         expect(error_param2._type).to eq "String"
         expect(error_param2._desc).to eq "error message"
-        expect(error_param2._permissions).to eq [:member]
+        expect(error_param2._permissions).to eq ["member"]
       end
     end
   end

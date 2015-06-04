@@ -1,12 +1,13 @@
 module OneboxApiDoc
   class Api
 
-    attr_reader :_action, :_method, :_url, :_permissions, :_short_desc,
+    attr_reader :_controller_name, :_action, :_method, :_url, :_permissions, :_short_desc,
       :_desc, :_tags, :_header, :_body, :_response, :_error
 
     def initialize controller_name, action, short_desc="", &block
       route = Route.route_for(controller_name, action)
       return nil unless route.present?
+      @_controller_name = controller_name
       @_url = route[:path]
       @_method = route[:method]
       @_action = action.to_s
@@ -33,8 +34,7 @@ module OneboxApiDoc
     end
 
     def permissions *permissions
-      permissions.each{ |permission| OneboxApiDoc.base.add_permission permission }
-      @_permissions = permissions
+      @_permissions = permissions.map{ |permission| OneboxApiDoc.base.add_permission permission }
     end
 
     def header &block
@@ -88,7 +88,7 @@ module OneboxApiDoc
           @_code = code
           @_message = message
           @_params = []
-          # @_permissions = []
+          @_permissions = []
           self.instance_eval(&block) if block_given?
         end
 
@@ -96,8 +96,8 @@ module OneboxApiDoc
         ####### Setter Methods #######
         ##############################
 
-        def permissions permissions
-          @_permissions = permissions
+        def permissions *permissions
+          @_permissions = permissions.map{ |permission| OneboxApiDoc.base.add_permission permission }
         end
 
         def param name="", type, desc: "", permissions: [], &block
