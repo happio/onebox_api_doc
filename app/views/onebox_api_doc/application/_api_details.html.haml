@@ -24,15 +24,22 @@
   cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
   proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-%h3.ui.horizontal.header.divider Header
-= render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 1}
+.ui.top.attached.tabular.menu
+  .item{"data-tab" => "header"} Header
+  .item{"data-tab" => "body"} Body
+  .item.active{"data-tab" => "response"} Response
+  .item{"data-tab" => "error"} Error
 
-%h3.ui.horizontal.header.divider Body
-= render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 2}
+.ui.bottom.attached.tab.segment{"data-tab" => "header"}
+  = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 3}
+  
 
-%h3.ui.horizontal.header.divider Response
-= render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 3}
+.ui.bottom.attached.tab.segment{"data-tab" => "body"}
+  = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 2}
 
-%h3.ui.horizontal.header.divider Error
+.ui.bottom.attached.active.tab.segment{"data-tab" => "response"}
+  = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 1}
+
+.ui.bottom.attached.tab.segment{"data-tab" => "error"} None
 
 
