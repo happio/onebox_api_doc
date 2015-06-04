@@ -8,5 +8,14 @@ module OneboxApiDoc
       self.apis = []
       self
     end
+
+    def apis_by_resources
+      result = {}
+      apis.each do |api|
+        result[api._controller_name] ||= []
+        result[api._controller_name] << api
+      end
+      result
+    end
   end
 end

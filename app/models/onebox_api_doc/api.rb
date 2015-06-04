@@ -7,7 +7,7 @@ module OneboxApiDoc
     def initialize controller_name, action, short_desc="", &block
       route = Route.route_for(controller_name, action)
       return nil unless route.present?
-      @_controller_name = controller_name
+      @_controller_name = controller_name.to_s
       @_url = route[:path]
       @_method = route[:method]
       @_action = action.to_s
