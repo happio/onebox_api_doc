@@ -110,7 +110,7 @@ module OneboxApiDoc
       expect(api._method).to eq "GET"
       expect(api._desc).to eq "description"
       expect(api._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-      expect(api._permissions).to eq [:guest, :admin, :member]
+      expect(api._permissions).to eq ["guest", "admin", "member"]
 
       expect(api._header).to be_a OneboxApiDoc::Api::Header
       header = api._header
@@ -119,7 +119,7 @@ module OneboxApiDoc
       expect(header_param1._name).to eq "header_param1"
       expect(header_param1._type).to eq "String"
       expect(header_param1._desc).to eq "header_param1 desc"
-      expect(header_param1._permissions).to eq [ :guest, :admin, :member ]
+      expect(header_param1._permissions).to eq ["guest", "admin", "member"]
       expect(header_param1._required).to eq true
       expect(header_param1._default_value).to eq "header_param1 default"
       expect(header_param1._validates).to be_an Array
@@ -136,7 +136,7 @@ module OneboxApiDoc
       expect(header_param1_1._name).to eq "header_param1_1"
       expect(header_param1_1._type).to eq "Integer"
       expect(header_param1_1._desc).to eq "header_param1_1 desc"
-      expect(header_param1_1._permissions).to eq [ :guest, :member ]
+      expect(header_param1_1._permissions).to eq [ "guest", "member" ]
       expect(header_param1_1._required).to eq false
       expect(header_param1_1._default_value).to eq "header_param1_1 default"
       expect(header_param1_1._validates).to be_an Array

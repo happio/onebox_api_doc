@@ -44,19 +44,19 @@ module OneboxApiDoc
     describe "add_tag" do
       it "add tag to @all_tags" do
         base = OneboxApiDoc::Base.new
-        base.add_tag "tag name"
+        base.add_tag :new_tag
         expect(base.all_tags.size).to eq 1
-        expect(base.all_tags.map(&:name)).to include "tag name"
+        expect(base.all_tags.map(&:name)).to include "new_tag"
       end
       it "do not add tag with duplicate name" do
         base = OneboxApiDoc::Base.new
-        base.add_tag "tag name"
-        base.add_tag "tag name"
+        base.add_tag :new_tag
+        base.add_tag :new_tag
         expect(base.all_tags.size).to eq 1
-        expect(base.all_tags.map(&:name)).to include "tag name"
+        expect(base.all_tags.map(&:name)).to include "new_tag"
       end
     end
-    
+
     describe "add_permission" do
       it "add permission to @all_permissions" do
         base = OneboxApiDoc::Base.new

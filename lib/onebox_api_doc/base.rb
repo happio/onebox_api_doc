@@ -36,16 +36,18 @@ module OneboxApiDoc
     end
 
     def add_tag tag_name
-      tag = @all_tags.select { |tag| tag.name == tag_name }.first
+      tag = @all_tags.select { |tag| tag.name == tag_name.to_s }.first
       unless tag.present?
-        tag = OneboxApiDoc::Tag.new(tag_name)
+        tag = OneboxApiDoc::Tag.new(tag_name.to_s)
         @all_tags << tag
       end
       tag
     end
 
     def add_permission role
-      @all_permissions << role.to_s unless @all_permissions.include? role.to_s
+      role = role.to_s
+      @all_permissions << role unless @all_permissions.include? role
+      role
     end
 
     private
