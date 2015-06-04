@@ -5,11 +5,12 @@ module OneboxApiDoc
 
     describe "load_documentation" do
       before :each do
-        OneboxApiDoc::Base.new.unload_documentation
+        @base = OneboxApiDoc::Base.new
+        @base.unload_documentation
       end
 
       it "load document class" do
-        OneboxApiDoc::Base.new.load_documentation
+        @base.load_documentation
         expect{ UsersApiDoc }.not_to raise_error
       end
     end
@@ -20,8 +21,9 @@ module OneboxApiDoc
         expect{ UsersApiDoc }.to raise_error
       end
       it "unload document class if the class was loaded" do
-        OneboxApiDoc::Base.new.load_documentation
-        OneboxApiDoc::Base.new.unload_documentation
+        base = OneboxApiDoc::Base.new
+        base.load_documentation
+        base.unload_documentation
         expect{ UsersApiDoc }.to raise_error
       end
     end
@@ -32,19 +34,40 @@ module OneboxApiDoc
       end
     end
 
-    describe "class methods" do
       describe "api_docs" do
         it "return all api doc classes" do
           expected_api_docs = OneboxApiDoc::ApiDoc.subclasses
-          expect(OneboxApiDoc::Base.api_docs).to eq expected_api_docs
+          expect(OneboxApiDoc::Base.new.api_docs).to eq expected_api_docs
         end
       end
-      describe "add_new_tag" do
-        it "add tag to @all_tags" do
-          tag = OneboxApiDoc::Tag.find_or_initialize "new tag"
-          OneboxApiDoc::Base.add_new_tag tag
-          expect(OneboxApiDoc::Base.all_tags).to include tag
-        end
+    describe "add_tag" do
+      it "add tag to @all_tags" do
+        base = OneboxApiDoc::Base.new
+        base.add_tag "tag name"
+        expect(base.all_tags.size).to eq 1
+        expect(base.all_tags.map(&:name)).to include "tag name"
+      end
+      it "do not add tag with duplicate name" do
+        base = OneboxApiDoc::Base.new
+        base.add_tag "tag name"
+        base.add_tag "tag name"
+        expect(base.all_tags.size).to eq 1
+        expect(base.all_tags.map(&:name)).to include "tag name"
+      end
+    end
+    describe "add_permission" do
+      it "add permission to @all_permissions" do
+        base = OneboxApiDoc::Base.new
+        base.add_permission :admin
+        expect(base.all_permissions.size).to eq 1
+        expect(base.all_permissions).to include "admin"
+      end
+      it "do not add duplicate permission to @all_permissions" do
+        base = OneboxApiDoc::Base.new
+        base.add_permission "admin"
+        base.add_permission :admin
+        expect(base.all_permissions.size).to eq 1
+        expect(base.all_permissions).to include "admin"
       end
     end
   end
