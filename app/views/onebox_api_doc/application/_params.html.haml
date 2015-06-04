@@ -1,0 +1,34 @@
+- if has_nested and nested_size <= 3
+  - nested_size += 1
+
+  %table.ui.celled.structured.table
+    %tbody
+      %tr
+        %td 
+          .ui.header
+            .param__key name*
+            .sub.header.param__type String
+        %td
+          %p.param__desc desc 
+      %tr
+        %td 
+          .ui.header 
+            .param__key name
+            .sub.header.param_type String
+        %td
+          %p.param__from extension_name:version
+          %p.param__desc desc
+          %p.param__permission permission: Admin, Member, Guest
+          .param_validate
+            %p.header Validate :
+            %ul.ui.bulleted.list
+              %li.item string only
+              %li.item email pattern
+          %p.param__warning warnning: it will be removed next version
+      %tr
+        %td 
+          .ui.header
+            .sub.header Array
+        %td
+          .param__desc desc
+          = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: nested_size }

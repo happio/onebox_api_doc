@@ -1,0 +1,38 @@
+%h2.ui.header.resourec__name Product
+
+.ui.divider
+
+%h1.ui.header.api__url
+  %span.action.get GET
+  %span.url /my/url
+  .sub.header
+    short description
+.ui.label.permission
+  Permission
+  .detail.name
+    Admin
+  .detail.name
+    Member
+  .detail.name
+    Guest
+
+%p.description
+  long description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+%h3.ui.horizontal.header.divider Header
+= render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 1}
+
+%h3.ui.horizontal.header.divider Body
+= render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 2}
+
+%h3.ui.horizontal.header.divider Response
+= render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 3}
+
+%h3.ui.horizontal.header.divider Error
+
+
