@@ -11,7 +11,11 @@ module OneboxApiDoc
       @_required = options[:required]
       @_default_value = options[:default]
       @_warning = options[:warning]
-      @_permissions = options[:permissions]
+      if options[:permissions].present?
+        permissions = options[:permissions]
+        permissions = [permissions] unless permissions.is_a? Array
+        @_permissions = permissions.map{ |permission| OneboxApiDoc.base.add_permission permission }
+      end
       @_validates = validation_messages(options[:validates] || {})
       @_params = []
       self.instance_eval(&block) if block_given?

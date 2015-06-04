@@ -27,7 +27,7 @@ module OneboxApiDoc
           required: false,
           default: 'all'
         expect(@param).not_to eq nil
-        expect(@param._permissions).to eq [ :guest, :admin, :member ]
+        expect(@param._permissions).to eq [ "guest", "admin", "member" ]
         expect(@param._required).to eq false
         expect(@param._default_value).to eq 'all'
       end
@@ -95,13 +95,13 @@ module OneboxApiDoc
           expect(first_param._name).to eq "address_no"
           expect(first_param._type).to eq "String"
           expect(first_param._desc).to eq "address number"
-          expect(first_param._permissions).to eq [ :guest, :admin, :member ]
+          expect(first_param._permissions).to eq [ "guest", "admin", "member" ]
           expect(first_param._required).to eq true
           second_param = @param._params.last
           expect(second_param._name).to eq "road"
           expect(second_param._type).to eq "String"
           expect(second_param._desc).to eq "road"
-          expect(second_param._permissions).to eq [ :guest, :admin, :member ]
+          expect(second_param._permissions).to eq [ "guest", "admin", "member" ]
           expect(second_param._required).to eq false
         end
       end
