@@ -155,5 +155,39 @@ module OneboxApiDoc
       expect(api._error).to be_a OneboxApiDoc::Api::Error
     end
 
+    describe "controller_name" do
+      class ControllerNameApiDoc < ApiDoc
+        controller_name :test_controller_names
+      end
+      it "set correct controller name" do
+        expect(ControllerNameApiDoc._controller_name).to eq "test_controller_names"
+      end
+
+      class WithoutControllerNameApiDoc < ApiDoc
+      end
+      it "set controller name according to class name if not calling" do
+        expect(WithoutControllerNameApiDoc._controller_name).to eq "without_controller_names"
+      end
+    end
+
+    describe "version" do
+      class VersionApiDoc < ApiDoc
+        version "0.0.1"
+      end
+      it "set correct version" do
+        expect(VersionApiDoc._version).to eq "0.0.1"
+      end
+
+      class WithoutVersionApiDoc < ApiDoc
+      end
+      it "set controller name according to class name if not calling" do
+        expect(WithoutVersionApiDoc._version).to eq "0.0"
+      end
+    end
+
+    # describe "api" do
+
+    # end
+
   end
 end
