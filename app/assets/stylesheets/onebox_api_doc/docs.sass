@@ -23,5 +23,13 @@
 
 
 /* Override */
-.ui.table tr:first-child td
-  border-top: 1px solid #d4d4d5
+.ui
+  &.table 
+    tr
+      & > td
+        &:first-child
+          vertical-align: text-top
+
+      &:first-child 
+        td
+          border-top: 1px solid #d4d4d5
