@@ -1,0 +1,19 @@
+/* URL */
+.api__url
+  & > .action
+    opacity: 0.7
+    &.get
+      color: #4DAB58 //green
+    &.post
+      // @extend .api_url.action
+      color: #CC9900 //yellow
+    &.put,
+    &.patch
+      // @extend .api_url.action
+      color: #36F //blue
+    &.delete
+      // @extend .api_url.action
+      color: #C30 //red
+  &:hover
+    & > .action
+      opacity: 1

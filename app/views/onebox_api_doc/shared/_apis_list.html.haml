@@ -1,8 +1,23 @@
 .ui.fluid.vertical.menu
-  - (1..5).each do |i|
-    .item
-      Resource #{i}
-      .menu
-        - (1..5).each do |j|
-          .item
-            short desc #{i}-#{j}
+  .item.api__resource
+    Resource Desc
+  - (1..5).each do |j|
+    = link_to "short desc #{j}", '/', class: 'item'
+
+  .item.api__resource
+    Resource URL
+  = link_to '/', class: 'item api__url' do
+    %span.action.get GET
+    %span.url /my/url/:id
+  = link_to '/', class: 'item api__url' do
+    %span.action.post POST
+    %span.url /my/url/:id
+  = link_to '/', class: 'item api__url' do
+    %span.action.put PUT
+    %span.url /my/url/:id
+  = link_to '/', class: 'item api__url' do
+    %span.action.patch PATCH
+    %span.url /my/url/:id
+  = link_to '/', class: 'item api__url' do
+    %span.action.delete DELETE
+    %span.url /my/url/:id
