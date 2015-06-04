@@ -31,5 +31,21 @@ module OneboxApiDoc
         expect(OneboxApiDoc::Base.new.api_docs_paths).to eq Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
       end
     end
+
+    describe "class methods" do
+      describe "api_docs" do
+        it "return all api doc classes" do
+          expected_api_docs = OneboxApiDoc::ApiDoc.subclasses
+          expect(OneboxApiDoc::Base.api_docs).to eq expected_api_docs
+        end
+      end
+      describe "add_new_tag" do
+        it "add tag to @all_tags" do
+          tag = OneboxApiDoc::Tag.find_or_initialize "new tag"
+          OneboxApiDoc::Base.add_new_tag tag
+          expect(OneboxApiDoc::Base.all_tags).to include tag
+        end
+      end
+    end
   end
 end

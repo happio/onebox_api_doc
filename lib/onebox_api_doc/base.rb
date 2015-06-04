@@ -2,7 +2,11 @@ module OneboxApiDoc
   class Base
 
     class << self
-      attr_reader :all_tags, :all_permissions
+      attr_reader :all_tags, :all_permissions, :all_versions
+
+      def api_docs
+        OneboxApiDoc::ApiDoc.subclasses
+      end
 
       def add_new_tag tag
         @all_tags ||= []
@@ -16,8 +20,8 @@ module OneboxApiDoc
     end
 
     def initialize
-      @all_tags ||= []
-      @all_permissions ||= []
+      @all_tags = []
+      @all_permissions = []
     end
 
     def reload_documentation
@@ -47,7 +51,7 @@ module OneboxApiDoc
 
     def load_api_doc_from_file(api_doc_file)
       require api_doc_file
-      api_doc_class_name = api_doc_file.gsub(/\A.*\/api_doc\//,"").gsub(/\.\w*\Z/,"").camelize
+      api_doc_file.gsub(/\A.*\/api_doc\//,"").gsub(/\.\w*\Z/,"").camelize
     end
 
     def unload_api_doc_from_file(api_doc_file)
