@@ -58,15 +58,12 @@ module OneboxApiDoc
     ##############################
 
     class Header < ParamContainer
-      # attr_reader :_params
     end
 
     class Body < ParamContainer
-      # attr_reader :_params
     end
 
     class Response < ParamContainer
-      # attr_reader :_params
     end
 
     class Error
@@ -101,7 +98,6 @@ module OneboxApiDoc
         end
 
         def param name="", type, desc: "", permissions: [], &block
-          # _params ||= []
           @_params << OneboxApiDoc::Param.new(name, type, desc: desc, permissions: permissions, &block)
         end
       end
