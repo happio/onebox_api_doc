@@ -1,11 +1,13 @@
 module OneboxApiDoc
   class Base
 
-    attr_reader :all_tags, :all_permissions, :param_groups
+    attr_reader :all_tags, :all_permissions, :core_versions, :extension_versions, :param_groups
 
     def initialize
       @all_tags = []
       @all_permissions = []
+      @core_versions = []
+      @extension_versions = {}
       @param_groups = {}
     end
 
@@ -45,19 +47,38 @@ module OneboxApiDoc
       tag
     end
 
+    def add_core_version version
+      version = @core_versions.select { |version| version.name == version.to_s  }.first
+      unless version.present?
+        version = OneboxApiDoc::version.new(version.to_s)
+        core_versions << version
+      end
+      version
+    end
+
+    def add_extension_version extension_name, version
+      all_versions @extension_versions[extension_name.to_s] ||= []
+      version = all_versions.select { |version| version.name == version.to_s  }.first
+      unless version.present?
+        version = OneboxApiDoc::version.new(version.to_s)
+        all_versions << version
+      end
+      version
+    end
+
     def add_permission role
       role = role.to_s
       @all_permissions << role unless @all_permissions.include? role
       role
     end
 
-    def add_param_group(api_doc, name, &block)
-      key = "#{api_doc.name}##{name}"
+    def add_param_group(name, &block)
+      key = name.to_s
       @param_groups[key] = block
     end
 
-    def get_param_group(api_doc, name)
-      key = "#{api_doc.name}##{name}"
+    def get_param_group(name)
+      key = name.to_s
       if @param_groups.has_key?(key)
         return @param_groups[key]
       else
