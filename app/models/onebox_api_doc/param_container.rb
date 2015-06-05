@@ -1,11 +1,10 @@
 module OneboxApiDoc
   class ParamContainer
 
-    attr_reader :_params, :_api
+    attr_reader :_params
 
-    def initialize api = nil, &block
+    def initialize &block
       @_params = []
-      @_api = api
       self.instance_eval(&block) if block_given?
     end
 
@@ -18,7 +17,7 @@ module OneboxApiDoc
     end
 
     def param_group name
-      block = OneboxApiDoc.base.get_param_group(self._api._api_doc, name)
+      block = OneboxApiDoc.base.get_param_group(name)
       self.instance_exec(&block)
     end
 

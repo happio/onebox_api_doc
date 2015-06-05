@@ -257,45 +257,29 @@ module OneboxApiDoc
       end
       it "add param group to base" do
         expect(OneboxApiDoc.base.param_groups).to be_an Hash
-        expect(OneboxApiDoc.base.param_groups.keys).to include "OneboxApiDoc::DefParamGroupApiDoc#user_header"
+        expect(OneboxApiDoc.base.param_groups.keys).to include "user_header"
       end
     end
 
     describe "param_group" do
       before do
-        # OneboxApiDoc.base.add_param_group OneboxApiDoc::ParamGroupApiDoc, :user_header do
-        #   param :user_id, :string, 
-        #     desc: 'user id',
-        #     permissions: :member,
-        #     required: true
-        #   param :user_type, :string, 
-        #     desc: 'user type',
-        #     permissions: :member,
-        #     required: true
-        #   param :user_auth, :string, 
-        #     desc: 'user authentication',
-        #     permissions: :member,
-        #     required: true
-        # end
+        OneboxApiDoc.base.add_param_group :user_header do
+          param :user_id, :string, 
+            desc: 'user id',
+            permissions: :member,
+            required: true
+          param :user_type, :string, 
+            desc: 'user type',
+            permissions: :member,
+            required: true
+          param :user_auth, :string, 
+            desc: 'user authentication',
+            permissions: :member,
+            required: true
+        end
 
         class ParamGroupApiDoc < ApiDoc
           controller_name :users
-
-          def_param_group :user_header do
-            param :user_id, :string, 
-              desc: 'user id',
-              permissions: :member,
-              required: true
-            param :user_type, :string, 
-              desc: 'user type',
-              permissions: :member,
-              required: true
-            param :user_auth, :string, 
-              desc: 'user authentication',
-              permissions: :member,
-              required: true
-          end
-
           api :show, 'short_desc' do
             desc 'description'
             tags :mobile, :web

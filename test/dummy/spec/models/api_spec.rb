@@ -3,15 +3,9 @@ require "rails_helper"
 module OneboxApiDoc
   describe Api do
 
-    before do
-      class TestApiDoc < ApiDoc
-        controller_name :users
-      end
-    end
-
     describe "initialize" do
       before do
-        @api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user") do
+        @api = OneboxApiDoc::Api.new(:users, :show, "get user") do
           desc 'get current user'
           tags :mobile, :web
           permissions :member
@@ -138,7 +132,7 @@ module OneboxApiDoc
 
     describe "desc" do
       it "set correct _desc" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.desc "api_desc"
         expect(api._desc).to eq "api_desc"
       end
@@ -146,7 +140,7 @@ module OneboxApiDoc
 
     describe "tags" do
       it "set correct _tags" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.tags :tag1, :tag2, :tag3
         expect(api._tags).to be_an Array
         expected_tag_names = ["tag1", "tag2", "tag3"]
@@ -159,7 +153,7 @@ module OneboxApiDoc
 
     describe "permissions" do
       it "set correct _permissions" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.permissions :admin, :guest, :member
         expect(api._permissions).to eq ["admin", "guest", "member"]
       end
@@ -167,7 +161,7 @@ module OneboxApiDoc
 
     describe "header" do
       it "set correct _header" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.header do
           param :user_id, :integer, 
             desc: 'user id',
@@ -195,7 +189,7 @@ module OneboxApiDoc
 
     describe "body" do
       it "set correct _body" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.body do
           param :id, :integer,
             desc: 'user id',
@@ -241,7 +235,7 @@ module OneboxApiDoc
 
     describe "response" do
       it "set correct _response" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.response do
           param :id, :integer,
             desc: 'user id',
@@ -269,7 +263,7 @@ module OneboxApiDoc
 
     describe "error" do
       it "set correct _error" do
-        api = OneboxApiDoc::Api.new(TestApiDoc, :show, "get user")
+        api = OneboxApiDoc::Api.new(:users, :show, "get user")
         api.error do
           code 401, "Unauthorize" do
             permissions :member

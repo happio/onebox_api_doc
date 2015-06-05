@@ -32,13 +32,13 @@ module OneboxApiDoc
 
       def api action, short_desc="", &block
         @_apis ||= []
-        @_apis << OneboxApiDoc::Api.new(self, action, short_desc, &block)
+        @_apis << OneboxApiDoc::Api.new(_controller_name, action, short_desc, &block)
       end
 
       def def_param_group name, &block
-        OneboxApiDoc.base.add_param_group self, name, &block
+        OneboxApiDoc.base.add_param_group name, &block
       end
-      
+
     end
 
   end
