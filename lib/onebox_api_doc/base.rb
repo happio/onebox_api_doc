@@ -1,11 +1,12 @@
 module OneboxApiDoc
   class Base
 
-    attr_reader :all_tags, :all_permissions, :all_versions
+    attr_reader :all_tags, :all_permissions, :param_groups
 
     def initialize
       @all_tags = []
       @all_permissions = []
+      @param_groups = {}
     end
 
     def reload_documentation
@@ -48,6 +49,20 @@ module OneboxApiDoc
       role = role.to_s
       @all_permissions << role unless @all_permissions.include? role
       role
+    end
+
+    def add_param_group(api_doc, name, &block)
+      key = "#{api_doc.name}##{name}"
+      @param_groups[key] = block
+    end
+
+    def get_param_group(api_doc, name)
+      key = "#{api_doc.name}##{name}"
+      if @param_groups.has_key?(key)
+        return @param_groups[key]
+      else
+        raise "param group #{key} not defined"
+      end
     end
 
     private
