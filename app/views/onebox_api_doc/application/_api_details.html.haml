@@ -42,10 +42,10 @@
               note of extension #{i} Lorem ipsum dolor sit amet, consectetur
 
 .ui.top.attached.tabular.menu
-  .item{"data-tab" => "header"} Header
-  .item{"data-tab" => "body"} Body
-  .item.active{"data-tab" => "response"} Response
-  .item{"data-tab" => "error"} Error
+  %a.item{"data-tab" => "header"} Header
+  %a.item{"data-tab" => "body"} Body
+  %a.item.active{"data-tab" => "response"} Response
+  %a.item{"data-tab" => "error"} Error
 
 .ui.bottom.attached.tab.segment{"data-tab" => "header"}
   = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 3}
