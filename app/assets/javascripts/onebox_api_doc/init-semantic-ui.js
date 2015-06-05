@@ -11,3 +11,14 @@ $('.ui.accordion')
 $('.menu .item')
   .tab()
 ;
+
+$('.dropdown.display_apis')
+  .dropdown({
+    // you can use any ui transition
+    transition: 'drop'
+  })
+;
+
+$('.params .param__from')
+  .popup()
+;

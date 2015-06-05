@@ -27,8 +27,8 @@
 .ui.top.attached.tabular.menu
   .item{"data-tab" => "header"} Header
   .item{"data-tab" => "body"} Body
-  .item{"data-tab" => "response"} Response
-  .item.active{"data-tab" => "error"} Error
+  .item.active{"data-tab" => "response"} Response
+  .item{"data-tab" => "error"} Error
 
 .ui.bottom.attached.tab.segment{"data-tab" => "header"}
   = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 3}
@@ -36,10 +36,10 @@
 .ui.bottom.attached.tab.segment{"data-tab" => "body"}
   = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 2}
 
-.ui.bottom.attached.tab.segment{"data-tab" => "response"}
+.ui.bottom.attached.tab.active.segment{"data-tab" => "response"}
   = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 1}
 
-.ui.bottom.attached.active.tab.segment{"data-tab" => "error"}
+.ui.bottom.attached.tab.segment{"data-tab" => "error"}
   = render partial: 'onebox_api_doc/application/errors'
 
 

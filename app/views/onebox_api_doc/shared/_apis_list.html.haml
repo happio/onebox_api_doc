@@ -1,31 +1,34 @@
 .ui.fluid.vertical.accordion.menu
-  .title 
-    .item.api__resource
-      Resource Desc
-      %i.dropdown.icon
-  .content
-    .ui.fluid.vertical.menu
-      - (1..5).each do |j|
-        = link_to "short desc #{j}", '/', class: 'item'
-
-  .title
-    .item.api__resource
-      Resource URL
-      %i.dropdown.icon
-  .content 
-    .ui.fluid.vertical.menu
-      = link_to '/', class: 'item api__url' do
-        %span.action.get GET
-        %span.url /my/url/:id
-      = link_to '/', class: 'item api__url' do
-        %span.action.post POST
-        %span.url /my/url/:id
-      = link_to '/', class: 'item api__url' do
-        %span.action.put PUT
-        %span.url /my/url/:id
-      = link_to '/', class: 'item api__url' do
-        %span.action.patch PATCH
-        %span.url /my/url/:id
-      = link_to '/', class: 'item api__url' do
-        %span.action.delete DELETE
-        %span.url /my/url/:id
+  - (1..2).each do |i|
+    .item
+      .title
+        .item.api__resource
+          Resource #{i}
+          %i.dropdown.icon
+      .content 
+        .ui.fluid.vertical.menu
+          = link_to '/', class: 'item' do
+            .api__url
+              %span.action.get GET
+              %span.url /my/url/:id
+            .api__desc short desc
+          = link_to '/', class: 'item' do
+            .api__url
+              %span.action.post POST
+              %span.url /my/url/:id
+            .api__desc short desc
+          = link_to '/', class: 'item' do
+            .api__url
+              %span.action.put PUT
+              %span.url /my/url/:id
+            .api__desc short desc
+          = link_to '/', class: 'item' do
+            .api__url
+              %span.action.patch PATCH
+              %span.url /my/url/:id
+            .api__desc short desc
+          = link_to '/', class: 'item' do
+            .api__url
+              %span.action.delete DELETE
+              %span.url /my/url/:id
+            .api__desc short desc

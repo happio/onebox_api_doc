@@ -1,39 +1,46 @@
 /* URL */
-.api__url
-  & > .action
-    opacity: 0.7
-    &.get
-      color: #4DAB58 //green
-    &.post
-      // @extend .api_url.action
-      color: #CC9900 //yellow
-    &.put,
-    &.patch
-      // @extend .api_url.action
-      color: #36F //blue
-    &.delete
-      // @extend .api_url.action
-      color: #C30 //red
-  &:hover
-    & > .action
-      opacity: 1
+.api
+  &__url
+    .action
+      opacity: 0.7
+      &.get
+        color: #4DAB58 //green
+      &.post
+        // @extend .api_url.action
+        color: #CC9900 //yellow
+      &.put,
+      &.patch
+        // @extend .api_url.action
+        color: #36F //blue
+      &.delete
+        // @extend .api_url.action
+        color: #C30 //red
+    &:hover
+      .action
+        opacity: 1
+  &__desc
+    color: rgba(0, 0, 0, 0.5)
 
 .permission
   .name
 
-.ui
-  &.table
-    &.params
-      td
-        &.param
-          &__key
-            vertical-align: text-top
-    &.errors
-      td
-        &.error
-          &__code,
-          &__msg
-            vertical-align: text-top
+.params
+  .param
+    &__key
+      .name
+      .type
+    &__desc
+    &__permission
+    &__validate
+    &__from
+      color: rgba(0, 0, 0, 0.5)
+    &__warning
+
+
+.errors
+  .error
+    &__code,
+    &__msg
 
 
 /* Override */
@@ -41,9 +48,4 @@
   &.table 
     tr
       & > td
-        &:first-child
-          // vertical-align: text-top
-
-      &:first-child 
-        td
-          // border-top: 1px solid #d4d4d5
+        vertical-align: text-top
