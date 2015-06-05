@@ -2,9 +2,11 @@ module OneboxApiDoc
   class Api
 
     attr_reader :_controller_name, :_action, :_method, :_url, :_permissions, :_short_desc,
-      :_desc, :_tags, :_header, :_body, :_response, :_error
+      :_desc, :_tags, :_header, :_body, :_response, :_error, :_api_doc
 
-    def initialize controller_name, action, short_desc="", &block
+    def initialize api_doc, action, short_desc="", &block
+      @_api_doc = api_doc
+      controller_name = api_doc._controller_name
       route = Route.route_for(controller_name, action)
       return nil unless route.present?
       @_controller_name = controller_name.to_s
@@ -38,19 +40,19 @@ module OneboxApiDoc
     end
 
     def header &block
-      @_header = Header.new(&block) if block_given?
+      @_header = Header.new(self, &block) if block_given?
     end
 
     def body &block
-      @_body = Body.new(&block) if block_given?
+      @_body = Body.new(self, &block) if block_given?
     end
 
     def response &block
-      @_response = Response.new(&block) if block_given?
+      @_response = Response.new(self, &block) if block_given?
     end
 
     def error &block
-      @_error = Error.new(&block) if block_given?
+      @_error = Error.new(self, &block) if block_given?
     end
 
     ##############################
@@ -67,25 +69,27 @@ module OneboxApiDoc
     end
 
     class Error
-      attr_reader :_codes
+      attr_reader :_codes, :_api
 
-      def initialize &block
+      def initialize api = nil, &block
         @_codes ||= []
+        @_api = api
         self.instance_eval(&block) if block_given?
       end
 
       def code error_code, message="", &block
-        @_codes << Code.new(error_code, message, &block)
+        @_codes << Code.new(error_code, message, _api, &block)
       end
 
       class Code < ParamContainer
         attr_reader :_code, :_message, :_permissions
 
-        def initialize code, message, &block
+        def initialize code, message, api = nil, &block
           @_code = code
           @_message = message
           @_params = []
           @_permissions = []
+          @_api = api
           self.instance_eval(&block) if block_given?
         end
 
