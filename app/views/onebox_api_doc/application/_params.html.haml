@@ -1,19 +1,19 @@
 - if has_nested and nested_size <= 3
   - nested_size += 1
 
-  %table.ui.celled.structured.table
+  %table.ui.celled.structured.params.table
     %tbody
       %tr
-        %td 
+        %td.param__key
           .ui.header
-            .param__key name*
+            .param__name name*
             .sub.header.param__type String
         %td
           %p.param__desc desc 
       %tr
-        %td 
+        %td.param__key
           .ui.header 
-            .param__key name
+            .param__name name
             .sub.header.param_type String
         %td
           %p.param__from extension_name:version
@@ -26,7 +26,7 @@
               %li.item email pattern
           %p.param__warning warnning: it will be removed next version
       %tr
-        %td 
+        %td.param__key
           .ui.header
             .sub.header Array
         %td

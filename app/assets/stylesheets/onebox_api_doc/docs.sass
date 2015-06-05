@@ -21,6 +21,20 @@
 .permission
   .name
 
+.ui
+  &.table
+    &.params
+      td
+        &.param
+          &__key
+            vertical-align: text-top
+    &.errors
+      td
+        &.error
+          &__code,
+          &__msg
+            vertical-align: text-top
+
 
 /* Override */
 .ui
@@ -28,8 +42,8 @@
     tr
       & > td
         &:first-child
-          vertical-align: text-top
+          // vertical-align: text-top
 
       &:first-child 
         td
-          border-top: 1px solid #d4d4d5
+          // border-top: 1px solid #d4d4d5

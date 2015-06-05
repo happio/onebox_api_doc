@@ -3,8 +3,8 @@ development:
   encoding: unicode
   database: onebox_api_docs_development
   pool: 5
-  username: postgres
-  password: 1234
+  username: Mac
+  password: 
   template: template0
   host: localhost
 
@@ -13,8 +13,8 @@ test:
   encoding: unicode
   database: onebox_api_docs_test
   pool: 5
-  username: postgres
-  password: 1234
+  username: Mac
+  password: 
   template: template0
   host: localhost
 
