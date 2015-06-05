@@ -16,4 +16,5 @@
 //= require jquery_ujs
 
 //= require semantic-ui
-//= require onebox_api_doc/init-semantic-ui
+
+//= require onebox_api_doc/footer

@@ -4,6 +4,7 @@ require "jquery-rails"
 require "sass-rails"
 require "haml-rails"
 require "semantic-ui-sass"
+require "zeroclipboard-rails"
 
 module OneboxApiDoc
 end

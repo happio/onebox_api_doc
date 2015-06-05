@@ -4,7 +4,8 @@
 
 %h1.ui.header.api__url
   %span.action.get GET
-  %span.url /my/url
+  %span.url#copy--data /my/url
+  %a.ui#copy--btn.label{"data-clipboard-target" => "copy--data"} Copy
   .sub.header
     short description
 
