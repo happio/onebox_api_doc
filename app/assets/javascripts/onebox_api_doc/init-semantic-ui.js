@@ -19,6 +19,6 @@ $('.dropdown.display_apis')
   })
 ;
 
-$('.params .param__from')
+$('.params .param__from, .api__note .note--warning')
   .popup()
 ;
