@@ -18,13 +18,23 @@
           %i.param__from.circle.info.icon.link{ data: {content: "extension_name:version", variation: 'inverted', position: 'top center'} } 
         %td
           %p.param__desc desc
-          %p.param__permission permission: Admin, Member, Guest
-          .param_validate
-            %p.header Validate :
-            %ul.ui.bulleted.list
-              %li.item string only
-              %li.item email pattern
-          %p.param__warning warnning: it will be removed next version
+          .ui.list
+            .item.param__permission
+              .header Permission:
+              .description
+                .ui.horizontal.divided.list
+                  .item Admin
+                  .item Member
+                  .item Guest
+            .item.param_validate
+              .header Validates
+              .description
+                \- string only
+                %br 
+                \- email pattern
+            .item.param__warning 
+              .header Warnning
+              .description it will be removed next version
       %tr
         %td.param__key
           .ui.header
