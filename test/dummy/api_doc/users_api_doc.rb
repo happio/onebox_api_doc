@@ -2,44 +2,23 @@ class UsersApiDoc < OneboxApiDoc::ApiDoc
   controller_name :users
   version "1.2.3"
 
-  api :show, 'short_desc' do
-    desc 'description'
+  api :show, 'get user profile' do
+    desc 'get user profile'
     tags :mobile, :web
-    permissions :guest, :admin, :member
+    permissions :admin, :member
     header do
-      param :header_param1, :string, 
-        desc: 'header_param1 desc',
-        permissions: [ :guest, :admin, :member ],
-        required: true,
-        default: 'header_param1 default',
-        validates: {
-          min: -1,
-          max: 10,
-          within: ["a", "b"],
-          pattern: "header_param1 pattern",
-          email: true,
-          min_length: 6,
-          max_length: 10
-        },
-        warning: "header_param1 warning" do
-          param :header_param1_1, :integer, 
-            desc: 'header_param1_1 desc',
-            permissions: [ :guest, :member ],
-            required: false,
-            default: 'header_param1_1 default',
-            validates: {
-              min: 5,
-              max: 15,
-              within: ["c", "d", "e"],
-              pattern: "header_param1_1 pattern",
-              email: false,
-              min_length: 4,
-              max_length: 6
-            } do
-              # param
-              ;
-            end
-        end
+      param "User-id", :string, 
+        desc: 'user id',
+        permissions: [ :member ],
+        required: true
+      param "User-type", :string, 
+        desc: 'user type',
+        permissions: [ :member ],
+        required: true
+      param "Authentication", :string, 
+        desc: 'user token',
+        permissions: [ :member ],
+        required: true
     end
     body do
       param :body_param_1, :string, 
@@ -77,12 +56,56 @@ class UsersApiDoc < OneboxApiDoc::ApiDoc
     end
     error do
       code 404, "" do
-        permissions [:guest, :admin, :member]
+        permissions :guest, :admin, :member
         param :error_code_param_1, :string, 
           desc: '',
-          permissions: [ :guest, :admin, :member ] do
-            ;
-          end
+          permissions: [ :guest, :admin, :member ]
+      end
+    end
+  end
+
+  api :update, 'update user profile' do
+    desc 'update user profile'
+    tags :mobile, :web
+    permissions :member
+    header do
+      param "User-id", :string, 
+        desc: 'user id',
+        permissions: [ :member ],
+        required: true
+      param "User-type", :string, 
+        desc: 'user type',
+        permissions: [ :member ],
+        required: true
+      param "Authentication", :string, 
+        desc: 'user token',
+        permissions: [ :member ],
+        required: true
+    end
+    body do
+      param :first_name, :string, 
+        desc: 'user first name',
+        permissions: [ :member ],
+        required: true
+      param :last_name, :string, 
+        desc: 'user first name',
+        permissions: [ :member ],
+        required: true
+    end
+    response do
+      param :first_name, :string, 
+        desc: 'user first name',
+        permissions: [ :member ]
+      param :last_name, :string, 
+        desc: 'user first name',
+        permissions: [ :member ]
+    end
+    error do
+      code 401, "Unauthorize" do
+        permissions :member
+        param :error_message, :string, 
+          desc: 'error message',
+          permissions: [ :member ]
       end
     end
   end
