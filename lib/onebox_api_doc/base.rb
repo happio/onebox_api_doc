@@ -1,14 +1,11 @@
 module OneboxApiDoc
   class Base
 
-    attr_reader :all_tags, :all_permissions, :core_versions, :extension_versions, :param_groups
+    attr_reader :all_tags, :all_apis, :all_permissions, :default_version,
+      :core_versions, :extension_versions, :param_groups
 
     def initialize
-      @all_tags = []
-      @all_permissions = []
-      @core_versions = []
-      @extension_versions = {}
-      @param_groups = {}
+      set_default_value
     end
 
     def reload_documentation
@@ -28,6 +25,7 @@ module OneboxApiDoc
       api_docs_paths.each do |f|
         unload_api_doc_from_file f
       end
+      set_default_value
     end
 
     def api_docs_paths
@@ -36,6 +34,11 @@ module OneboxApiDoc
 
     def api_docs
       OneboxApiDoc::ApiDoc.subclasses
+    end
+
+    def get_api(version_name, resource_name, action)
+      version = @core_versions.select { |v| v.version == version_name }.first
+      version.get_api(resource_name, action) if version.present?
     end
 
     def add_tag tag_name
@@ -47,20 +50,24 @@ module OneboxApiDoc
       tag
     end
 
-    def add_core_version version
-      version = @core_versions.select { |version| version.name == version.to_s  }.first
+    def add_api api
+      @all_apis << api unless @all_apis.include? api
+    end
+
+    def add_version version_name
+      version = @core_versions.select { |version| version.version == version_name.to_s  }.first
       unless version.present?
-        version = OneboxApiDoc::version.new(version.to_s)
+        version = OneboxApiDoc::Version.new(version_name.to_s)
         core_versions << version
       end
       version
     end
 
-    def add_extension_version extension_name, version
-      all_versions @extension_versions[extension_name.to_s] ||= []
-      version = all_versions.select { |version| version.name == version.to_s  }.first
+    def add_extension_version extension_name, version_name
+      all_versions = @extension_versions[extension_name.to_s] ||= []
+      version = all_versions.select { |version| version.version == version_name.to_s  }.first
       unless version.present?
-        version = OneboxApiDoc::version.new(version.to_s)
+        version = OneboxApiDoc::Version.new(version_name.to_s)
         all_versions << version
       end
       version
@@ -87,6 +94,16 @@ module OneboxApiDoc
     end
 
     private
+
+    def set_default_value
+      @all_tags = []
+      @all_permissions = []
+      @all_apis = []
+      @core_versions = []
+      @extension_versions = {}
+      @param_groups = {}
+      @default_version = OneboxApiDoc::Version.new(OneboxApiDoc::Engine.default_version)
+    end
 
     def load_api_doc_from_file(api_doc_file)
       require api_doc_file
