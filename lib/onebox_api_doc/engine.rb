@@ -10,6 +10,9 @@ module OneboxApiDoc
       # where is your API defined?
       mattr_accessor :api_docs_matcher do "api_doc/*.rb" end
 
+      # default version
+      mattr_accessor :default_version do "0.0" end
+
       def config(&block)
         yield self
       end
