@@ -298,5 +298,61 @@ module OneboxApiDoc
         expect(error_param2._permissions).to eq ["member"]
       end
     end
+
+    describe Api::Error do
+      let(:error) { OneboxApiDoc::Api::Error.new }
+
+      describe "initialize" do
+        it "set default value to @_codes" do
+          expect(error._codes).to eq []
+        end
+      end
+
+      describe "code" do
+        it "add error code to @_codes" do
+          error.code(404, "Not Found")
+          expect(error._codes.size).to eq 1
+          expect(error._codes.first).to be_a OneboxApiDoc::Api::Error::Code
+          expect(error._codes.first._code).to eq 404
+          expect(error._codes.first._message).to eq "Not Found"
+        end
+      end
+
+      describe Api::Error::Code do
+        let(:code) { OneboxApiDoc::Api::Error::Code.new(404, "Not Found") }
+
+        describe "initialize" do
+          it "set correct code, message and set default value for params and permissions" do
+            expect(code._code).to eq 404
+            expect(code._message).to eq "Not Found"
+            expect(code._params).to eq []
+            expect(code._permissions).to eq []
+          end
+        end
+
+        describe "permissions" do
+          it "add permission to _permissions" do
+            code.permissions :admin, :member
+            expect(code._permissions.size).to eq 2
+            expect(code._permissions).to include "admin"
+            expect(code._permissions).to include "member"
+          end
+        end
+
+        describe "param" do
+          it "add param to _params" do
+            code.param :error_message, :string,
+              desc: 'error message',
+              permissions: :admin
+            expect(code._params.size).to eq 1
+            expect(code._params.first).to be_a OneboxApiDoc::Param
+            expect(code._params.first._name).to eq "error_message"
+            expect(code._params.first._type).to eq "String"
+            expect(code._params.first._desc).to eq "error message"
+            expect(code._params.first._permissions).to eq ["admin"]
+          end
+        end
+      end
+    end
   end
 end
