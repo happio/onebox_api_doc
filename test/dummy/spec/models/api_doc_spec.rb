@@ -98,7 +98,8 @@ module OneboxApiDoc
     end
 
     it "set version to doc" do
-      expect(TestApiDoc._version).to eq "1.2.3"
+      expect(TestApiDoc._version).to be_a OneboxApiDoc::Version
+      expect(TestApiDoc._version.version).to eq "1.2.3"
     end
 
     it "set correct api detail" do
@@ -175,17 +176,25 @@ module OneboxApiDoc
         version "0.0.1"
       end
       it "set correct version" do
-        expect(VersionApiDoc._version).to eq "0.0.1"
+        expect(VersionApiDoc._version).to be_a OneboxApiDoc::Version
+        expect(VersionApiDoc._version.version).to eq "0.0.1"
       end
 
       class WithoutVersionApiDoc < ApiDoc
       end
-      it "set controller name according to class name if not calling" do
-        expect(WithoutVersionApiDoc._version).to eq "0.0"
+      it "set version to default version" do
+        expect(WithoutVersionApiDoc._version).to be_a OneboxApiDoc::Version
+        expect(WithoutVersionApiDoc._version).to eq OneboxApiDoc.base.default_version
       end
+
+      it "set correct core versions if it is extension api doc"
     end
 
     describe "api" do
+      before do
+        @base = OneboxApiDoc.base
+      end
+
       class ApiApiDoc < ApiDoc
         controller_name :products
         api :show, 'short_desc' do
@@ -235,6 +244,18 @@ module OneboxApiDoc
         expect(api2._desc).to eq "description"
         expect(api2._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
         expect(api2._permissions).to eq ["guest", "admin", "member"]
+      end
+      it "add api to base apis" do
+        apis = ApiApiDoc._apis
+        apis.each do |api|
+          expect(@base.all_apis).to include api
+        end
+      end
+      it "add api to version" do
+        apis = ApiApiDoc._apis
+        apis.each do |api|
+          expect(ApiApiDoc._version.apis).to include api
+        end
       end
     end
 
