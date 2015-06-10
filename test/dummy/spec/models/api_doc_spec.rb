@@ -5,7 +5,7 @@ module OneboxApiDoc
 
     describe "overall" do
       class TestApiDoc < ApiDoc
-        controller_name :products
+        controller_name :orders
         version "1.2.3"
 
         api :show, 'short_desc' do
@@ -95,7 +95,7 @@ module OneboxApiDoc
       end
 
       it "set controller name and version to doc" do
-        expect(TestApiDoc._controller_name).to eq "products"
+        expect(TestApiDoc._controller_name).to eq "orders"
       end
 
       it "set version to doc" do
@@ -108,7 +108,7 @@ module OneboxApiDoc
         api = TestApiDoc._apis.first
         expect(api._action).to eq "show"
         expect(api._short_desc).to eq "short_desc"
-        expect(api._url).to eq "/products/:id"
+        expect(api._url).to eq "/orders/:id"
         expect(api._method).to eq "GET"
         expect(api._desc).to eq "description"
         expect(api._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
@@ -195,37 +195,38 @@ module OneboxApiDoc
     describe "api" do
       before do
         @base = OneboxApiDoc.base
+
+        class ApiApiDoc < ApiDoc
+          controller_name :orders
+          api :show, 'short_desc' do
+            desc 'description'
+            tags :mobile, :web
+            permissions :guest, :admin, :member
+            header do
+            end
+            body do
+            end
+            response do
+            end
+            error do
+            end
+          end
+          api :update, 'short_desc' do
+            desc 'description'
+            tags :mobile, :web
+            permissions :guest, :admin, :member
+            header do
+            end
+            body do
+            end
+            response do
+            end
+            error do
+            end
+          end
+        end
       end
 
-      class ApiApiDoc < ApiDoc
-        controller_name :products
-        api :show, 'short_desc' do
-          desc 'description'
-          tags :mobile, :web
-          permissions :guest, :admin, :member
-          header do
-          end
-          body do
-          end
-          response do
-          end
-          error do
-          end
-        end
-        api :update, 'short_desc' do
-          desc 'description'
-          tags :mobile, :web
-          permissions :guest, :admin, :member
-          header do
-          end
-          body do
-          end
-          response do
-          end
-          error do
-          end
-        end
-      end
       it "set correct apis" do
         api = ApiApiDoc._apis
         expect(api).to be_an Array
@@ -233,7 +234,7 @@ module OneboxApiDoc
         api1 = api.first
         expect(api1._action).to eq "show"
         expect(api1._short_desc).to eq "short_desc"
-        expect(api1._url).to eq "/products/:id"
+        expect(api1._url).to eq "/orders/:id"
         expect(api1._method).to eq "GET"
         expect(api1._desc).to eq "description"
         expect(api1._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
@@ -241,7 +242,7 @@ module OneboxApiDoc
         api2 = api.last
         expect(api2._action).to eq "update"
         expect(api2._short_desc).to eq "short_desc"
-        expect(api2._url).to eq "/products/:id"
+        expect(api2._url).to eq "/orders/:id"
         expect(api2._method).to eq "PATCH"
         expect(api2._desc).to eq "description"
         expect(api2._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
