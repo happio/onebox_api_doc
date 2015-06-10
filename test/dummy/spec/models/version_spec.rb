@@ -61,7 +61,7 @@ module OneboxApiDoc
       end
       it "return correct hash with controller name as keys and array of api as value" do
         hash = @version.apis_by_resources
-        expect(hash.keys).to eq ["orders", "products", "users"]
+        expect(hash.keys.sort).to eq ["orders", "products", "users"].sort
         product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
         user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
         expect(hash["products"].size).to eq product_apis.size
