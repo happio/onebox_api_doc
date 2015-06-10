@@ -26,15 +26,6 @@ module OneboxApiDoc
       end
       result
     end
-
-    class << self
-      def from_to from, to
-
-      end
-      def from from
-      end
-      def to to
-      end
-    end
+    
   end
 end

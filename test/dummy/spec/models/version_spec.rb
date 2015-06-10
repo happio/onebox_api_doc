@@ -52,5 +52,29 @@ module OneboxApiDoc
         expect(fake_api).to eq nil
       end
     end
+
+    describe "apis_by_resources" do
+      before do
+        @base = OneboxApiDoc.base
+        @base.load_documentation
+        @version = @base.core_versions.select { |v| v.version == "1.2.3" }.first
+      end
+      it "return correct hash with controller name as keys and array of api as value" do
+        hash = @version.apis_by_resources
+        expect(hash.keys).to eq ["orders", "products", "users"]
+        product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
+        user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
+        expect(hash["products"].size).to eq product_apis.size
+        expect(hash["products"].map { |api| api._url }.sort).to eq product_apis.map { |api| api._url }.sort
+        expect(hash["products"].map { |api| api._method }.sort).to eq product_apis.map { |api| api._method }.sort
+        expect(hash["products"].map { |api| api._action }.sort).to eq product_apis.map { |api| api._action }.sort
+        expect(hash["products"].map { |api| api._short_desc }.sort).to eq product_apis.map { |api| api._short_desc }.sort
+        expect(hash["users"].size).to eq user_apis.size
+        expect(hash["users"].map { |api| api._url }.sort).to eq user_apis.map { |api| api._url }.sort
+        expect(hash["users"].map { |api| api._method }.sort).to eq user_apis.map { |api| api._method }.sort
+        expect(hash["users"].map { |api| api._action }.sort).to eq user_apis.map { |api| api._action }.sort
+        expect(hash["users"].map { |api| api._short_desc }.sort).to eq user_apis.map { |api| api._short_desc }.sort
+      end
+    end
   end
 end
