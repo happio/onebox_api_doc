@@ -303,7 +303,7 @@ module OneboxApiDoc
         end
 
         class ParamGroupApiDoc < ApiDoc
-          controller_name :users
+          controller_name :orders
           api :show, 'short_desc' do
             desc 'description'
             tags :mobile, :web
@@ -342,7 +342,7 @@ module OneboxApiDoc
         api1 = api.first
         expect(api1._action).to eq "show"
         expect(api1._short_desc).to eq "short_desc"
-        expect(api1._url).to eq "/users/:id"
+        expect(api1._url).to eq "/orders/:id"
         expect(api1._method).to eq "GET"
         expect(api1._desc).to eq "description"
         expect(api1._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
@@ -372,7 +372,7 @@ module OneboxApiDoc
         api2 = api.last
         expect(api2._action).to eq "update"
         expect(api2._short_desc).to eq "short_desc"
-        expect(api2._url).to eq "/users/:id"
+        expect(api2._url).to eq "/orders/:id"
         expect(api2._method).to eq "PATCH"
         expect(api2._desc).to eq "description"
         expect(api2._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
