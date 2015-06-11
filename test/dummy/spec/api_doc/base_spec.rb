@@ -49,6 +49,21 @@ module OneboxApiDoc
       end
     end
 
+    describe "get_version" do
+      before do
+        base.add_version "0.0.1"
+      end
+      it "return correct version" do
+        version = base.get_version "0.0.1"
+        expect(version).not_to eq nil
+        expect(version.version).to eq "0.0.1"
+      end
+      it "return nil if version not found" do
+        version = base.get_version "0.0.9"
+        expect(version).to eq nil
+      end
+    end
+
     describe "get_api" do
       before do
         @base = OneboxApiDoc.base
@@ -86,6 +101,21 @@ module OneboxApiDoc
       it "return nil if action name not found" do
         fake_api = @base.get_api("1.2.3", :products, :fake_action)
         expect(fake_api).to eq nil
+      end
+    end
+
+    describe "get_tag" do
+      before do
+        base.add_tag :new_tag
+      end
+      it "return correct tag" do
+        tag = base.get_tag :new_tag
+        expect(tag).not_to eq nil
+        expect(tag.name).to eq :new_tag
+      end
+      it "return nil if tag not found" do
+        tag = base.get_tag :fake_tag
+        expect(tag).to eq nil
       end
     end
 

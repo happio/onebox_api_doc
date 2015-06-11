@@ -36,13 +36,21 @@ module OneboxApiDoc
       OneboxApiDoc::ApiDoc.subclasses
     end
 
-    def get_api(version_name, resource_name, action=nil)
-      version = @core_versions.select { |v| v.version == version_name }.first
+    def get_version version_name
+      @core_versions.select { |v| v.version == version_name.to_s }.first
+    end
+
+    def get_api version_name, resource_name, action=nil
+      version = get_version(version_name)
       version.get_api(resource_name, action) if version.present?
     end
 
+    def get_tag tag_name
+      @all_tags.select { |tag| tag.name == tag_name.to_s }.first
+    end
+
     def add_tag tag_name
-      tag = @all_tags.select { |tag| tag.name == tag_name.to_s }.first
+      tag = get_tag tag_name
       unless tag.present?
         tag = OneboxApiDoc::Tag.new(tag_name.to_s)
         @all_tags << tag
@@ -55,7 +63,7 @@ module OneboxApiDoc
     end
 
     def add_version version_name
-      version = @core_versions.select { |version| version.version == version_name.to_s  }.first
+      version = get_version version_name
       unless version.present?
         version = OneboxApiDoc::Version.new(version_name.to_s)
         @core_versions << version
