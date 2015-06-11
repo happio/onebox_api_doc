@@ -14,8 +14,12 @@ module OneboxApiDoc
       extension_name.present?
     end
 
-    def get_api(resource_name, action)
-      apis.select { |api| api._controller_name == resource_name.to_s and api._action == action.to_s }.first
+    def get_api(resource_name, action=nil)
+      if action.present?
+        apis.select { |api| api._controller_name == resource_name.to_s and api._action == action.to_s }.first
+      else
+        apis.select { |api| api._controller_name == resource_name.to_s }
+      end
     end
 
     def apis_by_resources

@@ -32,16 +32,31 @@ module OneboxApiDoc
     describe "get_api" do
       before do
         @base = OneboxApiDoc.base
-        @base.load_documentation
+        @base.reload_documentation
         @version = @base.core_versions.select { |v| v.version == "1.2.3" }.first
       end
-      it "return correct api" do
+      it "return correct api when request with resource name and action name" do
         api = @version.get_api(:products, :update)
         expect(api).not_to eq nil
         api_doc = @base.api_docs.select { |doc| doc._controller_name == "products" and doc._version.version == "1.2.3" }.first
         expect(api_doc._apis).to include api
         expect(api._controller_name).to eq "products"
         expect(api._action).to eq "update"
+      end
+      it "return correct array of api when request with only resource name" do
+        apis = @version.get_api(:products)
+        expect(apis).not_to eq nil
+        expect(apis).to be_an Array
+        api_doc = @base.api_docs.select { |doc| doc._controller_name == "products" and doc._version.version == "1.2.3" }.first
+        expected_apis = api_doc._apis
+        apis.each do |api|
+          expect(api._controller_name).to eq "products"
+        end
+        expect(apis.map { |api| api._controller_name }.sort).to eq expected_apis.map { |api| api._controller_name }.sort
+        expect(apis.map { |api| api._action }.sort).to eq expected_apis.map { |api| api._action }.sort
+        expect(apis.map { |api| api._url }.sort).to eq expected_apis.map { |api| api._url }.sort
+        expect(apis.map { |api| api._method }.sort).to eq expected_apis.map { |api| api._method }.sort
+        expect(apis.map { |api| api._short_desc }.sort).to eq expected_apis.map { |api| api._short_desc }.sort
       end
       it "return nil if resource name not found" do
         fake_api = @version.get_api(:fake_resources, :update)
@@ -56,12 +71,12 @@ module OneboxApiDoc
     describe "apis_by_resources" do
       before do
         @base = OneboxApiDoc.base
-        @base.load_documentation
+        @base.reload_documentation
         @version = @base.core_versions.select { |v| v.version == "1.2.3" }.first
       end
       it "return correct hash with controller name as keys and array of api as value" do
         hash = @version.apis_by_resources
-        expect(hash.keys.sort).to eq ["orders", "products", "users"].sort
+        expect(hash.keys.sort).to eq ["products", "users"].sort
         product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
         user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
         expect(hash["products"].size).to eq product_apis.size
