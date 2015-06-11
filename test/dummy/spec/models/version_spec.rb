@@ -68,14 +68,14 @@ module OneboxApiDoc
       end
     end
 
-    describe "apis_by_resources" do
+    describe "apis_group_by_resources" do
       before do
         @base = OneboxApiDoc.base
         @base.reload_documentation
         @version = @base.core_versions.select { |v| v.version == "1.2.3" }.first
       end
       it "return correct hash with controller name as keys and array of api as value" do
-        hash = @version.apis_by_resources
+        hash = @version.apis_group_by_resources
         expect(hash.keys.sort).to eq ["products", "users"].sort
         product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
         user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis

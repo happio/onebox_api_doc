@@ -22,7 +22,7 @@ module OneboxApiDoc
       end
     end
 
-    def apis_by_resources
+    def apis_group_by_resources
       result = {}
       apis.each do |api|
         result[api._controller_name] ||= []
