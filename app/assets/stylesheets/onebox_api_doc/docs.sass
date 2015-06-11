@@ -1,0 +1,63 @@
+/* URL */
+.api
+  &__url
+    .action
+      opacity: 0.7
+      &.get
+        color: #4DAB58 //green
+      &.post
+        // @extend .api_url.action
+        color: #CC9900 //yellow
+      &.put,
+      &.patch
+        // @extend .api_url.action
+        color: #36F //blue
+      &.delete
+        // @extend .api_url.action
+        color: #C30 //red
+    &:hover
+      .action
+        opacity: 1
+  &__desc
+    color: rgba(black, 0.5)
+  &__note
+    .note
+      &--warning
+        color: rgba(black, 0.5)
+
+.permission
+  .name
+
+.params
+  .param
+    &__key
+      .name
+      .type
+    &__desc
+    &__permission
+    &__validate
+    &__from
+      color: rgba(black, 0.5)
+    &__warning
+      color: #CC9900 //yellow
+      .header,
+      .description
+        opacity: 0.5
+
+
+.errors
+  .error
+    &__code,
+    &__msg
+
+
+/* Override */
+.ui
+  &.table 
+    tr
+      & > td
+        vertical-align: text-top
+  &.grid
+    margin: 0px
+  // &.containner
+    // width: 960px

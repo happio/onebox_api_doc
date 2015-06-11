@@ -1,0 +1,62 @@
+%h2.ui.header.resourec__name Product
+
+.ui.divider
+
+%h1.ui.header.api__url
+  %span.action.get GET
+  %span.url#copy--data /my/url
+  %a.ui#copy--btn.label{"data-clipboard-target" => "copy--data"} Copy
+  .sub.header
+    short description
+
+-# permission section
+.api__permission
+  Permission : 
+  %a.ui.label.name
+    Admin
+  %a.ui.label.name
+    Member
+  %a.ui.label.name
+    Guest
+
+-# long description section
+%br
+%p.description
+  long description Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+-# note section
+.ui.api__note.list
+  .item 
+    .header Note. 
+    .description
+      .list
+        - (1..3).each do |i|
+          .item 
+            %i.note--warning.circle.info.icon.link{ data: {content: "extension_name:version", variation: 'inverted', position: 'left center'} } 
+            .content
+              note of extension #{i} Lorem ipsum dolor sit amet, consectetur
+
+.ui.top.attached.tabular.menu
+  %a.item{"data-tab" => "header"} Header
+  %a.item{"data-tab" => "body"} Body
+  %a.item.active{"data-tab" => "response"} Response
+  %a.item{"data-tab" => "error"} Error
+
+.ui.bottom.attached.tab.segment{"data-tab" => "header"}
+  = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 3}
+
+.ui.bottom.attached.tab.segment{"data-tab" => "body"}
+  = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 2}
+
+.ui.bottom.attached.tab.active.segment{"data-tab" => "response"}
+  = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: 1}
+
+.ui.bottom.attached.tab.segment{"data-tab" => "error"}
+  = render partial: 'onebox_api_doc/application/errors'
+
+

@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %title OneboxApiDoc
+    = stylesheet_link_tag    "onebox_api_doc/application", media: "all"
+    = csrf_meta_tags
+  %body
+
+    .ui.containner.grid
+      .row
+        .four.wide.column
+          = render 'onebox_api_doc/shared/roles'
+          = render 'onebox_api_doc/shared/apis_list'
+        .twelve.wide.column
+          = yield
+      .row
+        .sixteen.wide.column
+          = render 'onebox_api_doc/shared/versions'
+
+    = javascript_include_tag "onebox_api_doc/application"
