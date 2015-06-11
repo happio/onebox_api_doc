@@ -52,13 +52,28 @@ module OneboxApiDoc
     describe "get_api" do
       before do
         @base = OneboxApiDoc.base
-        @base.load_documentation
+        @base.reload_documentation
       end
-      it "return correct api" do
-        api_get_all_product = @base.get_api("1.2.3", :products, :index)
-        expect(api_get_all_product).not_to eq nil
-        expect(api_get_all_product._controller_name).to eq "products"
-        expect(api_get_all_product._action).to eq "index"
+      it "return correct api when request with resource name and action name" do
+        get_all_product_api = @base.get_api("1.2.3", :products, :index)
+        expect(get_all_product_api).not_to eq nil
+        expect(get_all_product_api._controller_name).to eq "products"
+        expect(get_all_product_api._action).to eq "index"
+      end
+      it "return correct array of api when request with only resource name" do
+        product_apis = @base.get_api("1.2.3", :products)
+        expect(product_apis).not_to eq nil
+        expect(product_apis).to be_an Array
+        api_doc = @base.api_docs.select { |doc| doc._controller_name == "products" and doc._version.version == "1.2.3" }.first
+        expected_apis = api_doc._apis
+        product_apis.each do |api|
+          expect(api._controller_name).to eq "products"
+        end
+        expect(product_apis.map { |api| api._controller_name }.sort).to eq expected_apis.map { |api| api._controller_name }.sort
+        expect(product_apis.map { |api| api._action }.sort).to eq expected_apis.map { |api| api._action }.sort
+        expect(product_apis.map { |api| api._url }.sort).to eq expected_apis.map { |api| api._url }.sort
+        expect(product_apis.map { |api| api._method }.sort).to eq expected_apis.map { |api| api._method }.sort
+        expect(product_apis.map { |api| api._short_desc }.sort).to eq expected_apis.map { |api| api._short_desc }.sort
       end
       it "return nil if version not found" do
         fake_api = @base.get_api("9.9.9", :products, :index)

@@ -36,7 +36,7 @@ module OneboxApiDoc
       OneboxApiDoc::ApiDoc.subclasses
     end
 
-    def get_api(version_name, resource_name, action)
+    def get_api(version_name, resource_name, action=nil)
       version = @core_versions.select { |v| v.version == version_name }.first
       version.get_api(resource_name, action) if version.present?
     end
@@ -58,7 +58,7 @@ module OneboxApiDoc
       version = @core_versions.select { |version| version.version == version_name.to_s  }.first
       unless version.present?
         version = OneboxApiDoc::Version.new(version_name.to_s)
-        core_versions << version
+        @core_versions << version
       end
       version
     end
@@ -106,7 +106,7 @@ module OneboxApiDoc
     end
 
     def load_api_doc_from_file(api_doc_file)
-      require api_doc_file
+      load api_doc_file
       api_doc_file.gsub(/\A.*\/api_doc\//,"").gsub(/\.\w*\Z/,"").camelize
     end
 
