@@ -57,7 +57,7 @@ class UsersApiDoc < ApiDoc
   api :show, 'get user profile' do
     desc 'get user profile'
     tags :mobile, :web            # tags make you be able to group your apis
-    permissions :member           # permissions specify that this api can be call be which roles of your app
+    permissions :member           # permissions specify that this api can be call by which user roles of your app
     header do
       param "User-id", :string,   # param can be used in header, body, response and code
         desc: 'user id',
@@ -97,14 +97,14 @@ end
 * [Configuration Reference](#configuration-reference)
 * [Document Routes Integration](#document-route-integration)
 * [DSL Reference](#dsl-reference)
-  * Api Doc Description
-  * Api Description
-    * Header Description
-    * Body Description
-    * Response Description
-    * Error Description
-      * Error Code Description
-  * Param Description
+  * [Api Doc Description](#api-doc-description)
+  * [Api Description](#api-description)
+    * [Header Description](#header-description)
+    * [Body Description](#body-description)
+    * [Response Description](#response-description)
+    * [Error Description](#error-description)
+      * [Error Code Description](#error-code-description)
+  * [Nested Param Description](#nested-param-description)
 
 
 # Configuration Reference
@@ -157,12 +157,311 @@ mount OneboxApiDoc::Engine => "/api"
 
 ## Api Doc Description
 
-The following keywords are available (all are optional):
+The following keywords are available:
 
 _**controller_name**_
-  controller name or resource name. For example: users, notes
+
+  describe controller name or resource name of all apis in the document. For example: users, notes
   if not specified the resource name will according to the file name
 
 _**version**_
-  version of the api document, if not specified all apis in this document will be in default version
+
+  describe version of all apis in the document, if not specified all apis in this document will be in default version
+
+_**api**_
+
+  describe api by action name and provide a short description. The first parameter is action name. The second parameter is short description. The third parameter is a block of an api detail (see [Api Description](#api-description) for detail). The second and third parameter are optional.
+
+**Example:**
+
+```ruby
+# api_doc/notes_api_doc.rb
+class NotesApiDoc < ApiDoc
+  controller_name :notes
+  version "0.1"
+
+  api :index, 'get all notes' do
+    ...
+  end
+end
+```
+
+
+## Api Description
+
+The following keywords are available:
+
+_**desc**_
+
+  full description of api
+
+_**tags**_
+
+  array of tag name
+
+_**permissions**_
+
+  array of user roles that have access to the api
+
+_**header**_
+
+  describe request header of api (see [Header Description](#header-description) for detail)
+
+_**body**_
+
+  describe request body of api (see [Body Description](#body-description) for detail)
+
+_**response**_
+
+  describe response body of api (see [Response Description](#response-description) for detail)
+
+_**error**_
+
+  describe every possible error that can happen when calling api (see [Error Description](#error-description) for detail)
+
+**Example:**
+
+```ruby
+# api_doc/products_api_doc.rb
+class ProductsApiDoc < ApiDoc
+  controller_name :products
+  version "0.1"
+
+  api :index, 'get all products' do
+    desc 'get all products'
+    tags :mobile, :web
+    permissions :admin, :member, :guest
+    header do
+      ...
+    end
+    body do
+      ...
+    end
+    response do
+      ...
+    end
+    error do
+      ...
+    end
+  end
+end
+```
+
+
+### Header Description
+
+The following keywords are available:
+
+_**param**_
+
+  describe every possible parameter of request header. The first parameter is parameter name. The second parameter is type of parameter. The second parameter is require but the first one can be blank. And the following keywords are available for options:
+
+  _**desc**_
+
+    full description of parameter
+
+  _**permissions**_
+
+    array of user roles that have access to the parameter
+
+  _**required**_
+
+    parameter requirement, default is false
+
+  _**default**_
+
+    default value of parameter
+
+  _**validates**_
+
+    parameter validations
+
+  _**warning**_
+
+    warning message for parameter
+
+  And the last part is block of an nested parameters (see [Nested Parameter Description](nested-parameter-description))
+
+**Example:**
+
+```ruby
+# api_doc/products_api_doc.rb
+class ProductsApiDoc < ApiDoc
+  controller_name :products
+  version "0.1"
+
+  api :index, 'get all products' do
+    desc 'get all products'
+    tags :mobile, :web
+    permissions :admin, :member, :guest
+    header do
+      param "User-Id", :string,
+        desc: 'user id',
+        permissions: [ :guest, :admin, :member ],
+        required: true,
+        default: nil,
+        validates: { min: -1 }
+    end
+    body do
+      ...
+    end
+    response do
+      ...
+    end
+    error do
+      ...
+    end
+  end
+end
+```
+
+
+### Body Description
+
+The following keywords are available:
+
+_**param**_
+
+  describe every possible parameter of request body. The first parameter is parameter name. The second parameter is type of parameter. The second parameter is require but the first one can be blank. And the following keywords are available for options:
+
+  _**desc**_
+
+    full description of parameter
+
+  _**permissions**_
+
+    array of user roles that have access to the parameter
+
+  _**required**_
+
+    parameter requirement, default is false
+
+  _**default**_
+
+    default value of parameter
+
+  _**validates**_
+
+    parameter validations
+
+  _**warning**_
+
+    warning message for parameter
+
+  And the last part is block of an nested parameters (see [Nested Parameter Description](nested-parameter-description))
+
+**Example:**
+
+```ruby
+# api_doc/addresses_api_doc.rb
+class AddressessApiDoc < ApiDoc
+  controller_name :addresses
+  version "0.1"
+
+  api :create, 'create an address' do
+    desc 'create an address'
+    tags :mobile, :web
+    permissions :guest
+    header do
+      ...
+    end
+    body do
+      param "address", :object,
+        desc: 'address attributes',
+        permissions: [ :guest ] do
+          param :address_no, :string,
+            desc: 'address number',
+            permissions: [ :guest ]
+          param :road, :string,
+            desc: 'road',
+            permissions: [ :guest ]
+          param :postcode, :string,
+            desc: 'postal code',
+            permissions: [ :guest ]
+        end
+    end
+    response do
+      ...
+    end
+    error do
+      ...
+    end
+  end
+end
+```
+
+
+### Response Description
+
+The following keywords are available:
+
+_**param**_
+
+  describe every possible parameter of response body. The first parameter is parameter name. The second parameter is type of parameter. The second parameter is require but the first one can be blank. And the following keywords are available for options:
+
+  _**desc**_
+
+    full description of parameter
+
+  _**permissions**_
+
+    array of user roles that have access to the parameter
+
+  _**required**_
+
+    parameter requirement, default is false
+
+  _**default**_
+
+    default value of parameter
+
+  _**validates**_
+
+    parameter validations
+
+  _**warning**_
+
+    warning message for parameter
+
+  And the last part is block of an nested parameters (see [Nested Parameter Description](nested-parameter-description))
+
+**Example:**
+
+```ruby
+# api_doc/products_api_doc.rb
+class ProductsApiDoc < ApiDoc
+  controller_name :products
+  version "0.1"
+
+  api :index, 'get all products' do
+    desc 'get all products'
+    tags :mobile, :web
+    permissions :admin, :member, :guest
+    header do
+      ...
+    end
+    body do
+      ...
+    end
+    response do
+      param "", :array,
+        desc: 'array of product',
+        permissions: [ :guest, :admin, :member ] do
+          param "product", :object,
+            desc: 'product object',
+            permissions: [ :guest, :admin, :member ] do
+              ...
+            end
+        end
+    end
+    error do
+      ...
+    end
+  end
+end
+```
+
+
+
+
 
