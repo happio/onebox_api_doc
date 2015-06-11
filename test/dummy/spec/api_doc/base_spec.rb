@@ -111,7 +111,7 @@ module OneboxApiDoc
       it "return correct tag" do
         tag = base.get_tag :new_tag
         expect(tag).not_to eq nil
-        expect(tag.name).to eq :new_tag
+        expect(tag.name).to eq "new_tag"
       end
       it "return nil if tag not found" do
         tag = base.get_tag :fake_tag
