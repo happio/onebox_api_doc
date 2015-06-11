@@ -186,7 +186,7 @@ module OneboxApiDoc
       end
       it "set version to default version" do
         expect(WithoutVersionApiDoc._version).to be_a OneboxApiDoc::Version
-        expect(WithoutVersionApiDoc._version).to eq OneboxApiDoc.base.default_version
+        expect(WithoutVersionApiDoc._version.version).to eq OneboxApiDoc.base.default_version.version
       end
 
       it "set correct core versions if it is extension api doc"
@@ -263,25 +263,30 @@ module OneboxApiDoc
     end
 
     describe "def_param_group" do
-      class DefParamGroupApiDoc < ApiDoc
-        def_param_group :user_header do
-          param :user_id, :string, 
-            desc: 'user id',
-            permissions: :member,
-            required: true
-          param :user_type, :string, 
-            desc: 'user type',
-            permissions: :member,
-            required: true
-          param :user_auth, :string, 
-            desc: 'user authentication',
-            permissions: :member,
-            required: true
+
+      before do
+        @base = OneboxApiDoc.base
+        class DefParamGroupApiDoc < ApiDoc
+          def_param_group :user_header do
+            param :user_id, :string, 
+              desc: 'user id',
+              permissions: :member,
+              required: true
+            param :user_type, :string, 
+              desc: 'user type',
+              permissions: :member,
+              required: true
+            param :user_auth, :string, 
+              desc: 'user authentication',
+              permissions: :member,
+              required: true
+          end
         end
       end
+
       it "add param group to base" do
-        expect(OneboxApiDoc.base.param_groups).to be_an Hash
-        expect(OneboxApiDoc.base.param_groups.keys).to include "user_header"
+        expect(@base.param_groups).to be_an Hash
+        expect(@base.param_groups.keys).to include "user_header"
       end
     end
 
