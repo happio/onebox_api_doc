@@ -7,6 +7,11 @@ module OneboxApiDoc
 
     describe "GET index" do
 
+      before do
+        @base = OneboxApiDoc.base
+        @base.reload_documentation
+      end
+
       context "request with only version" do
         it "do not assigns @apis or @api" do
           get :index, { version: "1.2.3" }
@@ -32,12 +37,11 @@ module OneboxApiDoc
           end
         end
         it "assigns @apis_group_by_resources" do
-          OneboxApiDoc.base.reload_documentation
           get :index, { version: "1.2.3" }
           apis_group_by_resources = assigns(:apis_group_by_resources)
 
-          product_apis = OneboxApiDoc.base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
-          user_apis = OneboxApiDoc.base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
+          product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
+          user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
 
           expect(apis_group_by_resources).to be_an Hash
           expect(apis_group_by_resources.keys.sort).to eq ["products", "users"].sort
@@ -82,12 +86,11 @@ module OneboxApiDoc
           end
         end
         it "assigns @apis_group_by_resources" do
-          OneboxApiDoc.base.reload_documentation
           get :index, { version: "1.2.3", resource_name: "products" }
           apis_group_by_resources = assigns(:apis_group_by_resources)
 
-          product_apis = OneboxApiDoc.base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
-          user_apis = OneboxApiDoc.base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
+          product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
+          user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
 
           expect(apis_group_by_resources).to be_an Hash
           expect(apis_group_by_resources.keys.sort).to eq ["products", "users"].sort
@@ -131,12 +134,11 @@ module OneboxApiDoc
           end
         end
         it "assigns @apis_group_by_resources" do
-          OneboxApiDoc.base.reload_documentation
           get :index, { version: "1.2.3", resource_name: "products", action_name: "index" }
           apis_group_by_resources = assigns(:apis_group_by_resources)
 
-          product_apis = OneboxApiDoc.base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
-          user_apis = OneboxApiDoc.base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
+          product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
+          user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
 
           expect(apis_group_by_resources).to be_an Hash
           expect(apis_group_by_resources.keys.sort).to eq ["products", "users"].sort
