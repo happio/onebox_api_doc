@@ -26,6 +26,10 @@ module OneboxApiDoc
       # render nothing: true
     end
 
+    def example
+      
+    end
+
     private
 
     def api_params
