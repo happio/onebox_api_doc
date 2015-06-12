@@ -1,0 +1,1 @@
+$("#api-details").html("<%=j render partial: 'onebox_api_doc/application/api_details', locals: { api: @api } %>");
