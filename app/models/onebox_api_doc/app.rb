@@ -4,9 +4,8 @@ module OneboxApiDoc
     attr_accessor :name
 
     def initialize name
-      super()
       self.name = name.to_s
-      self
+      super
     end
   end
 end

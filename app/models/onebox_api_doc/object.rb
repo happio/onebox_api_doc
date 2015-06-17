@@ -3,9 +3,8 @@ module OneboxApiDoc
 
     attr_accessor :id
 
-    def initialize options=[]
+    def initialize *options
       self.id = OneboxApiDoc.base.next_index(self.class.name)
-      self
     end
     
   end
