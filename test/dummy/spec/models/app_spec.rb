@@ -11,8 +11,17 @@ module OneboxApiDoc
         app = OneboxApiDoc::App.new :new_app
         expect(app).not_to eq nil
         expect(app.name).to eq "new_app"
-        expect(app.id).to eq 1
-        expect(@base.index[:app]).to eq 1
+      end
+    end
+
+    describe "is_extension?" do
+      it "return false if app name is main" do
+        app = OneboxApiDoc::App.new :main
+        expect(app.is_extension?).to eq false
+      end
+      it "return true if app name is not main" do
+        app = OneboxApiDoc::App.new :not_main
+        expect(app.is_extension?).to eq true
       end
     end
   end
