@@ -11,8 +11,6 @@ module OneboxApiDoc
         permission = OneboxApiDoc::Permission.new :new_permission
         expect(permission).not_to eq nil
         expect(permission.name).to eq "new_permission"
-        expect(permission.id).to eq 1
-        expect(@base.index[:permission]).to eq 1
       end
     end
   end
