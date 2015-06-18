@@ -11,8 +11,6 @@ module OneboxApiDoc
         resource = OneboxApiDoc::Resource.new :new_resource
         expect(resource).not_to eq nil
         expect(resource.name).to eq "new_resource"
-        expect(resource.id).to eq 1
-        expect(@base.index[:resource]).to eq 1
       end
     end
   end

@@ -1,11 +1,10 @@
 module OneboxApiDoc
-  class Resource < OneboxApiDoc::Object
+  class Resource
     
     attr_accessor :name
 
     def initialize name
       self.name = name.to_s
-      super
     end
   end
 end
