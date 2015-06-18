@@ -1,5 +1,5 @@
 module OneboxApiDoc
-  class Error < OneboxApiDoc::Object
+  class Error
     
     attr_accessor :code, :message, :permission_ids, :param_ids
 
@@ -8,7 +8,6 @@ module OneboxApiDoc
       self.message = message
       self.permission_ids = permission_ids
       self.param_ids = param_ids
-      super
     end
   end
 end
