@@ -6,29 +6,33 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
     desc 'get all products'
     tags :mobile, :web
     permissions :admin, :member, :guest
-    header do
-    end
-    body do
+    request do
+      header do
+      end
+      body do
+      end
     end
     response do
-      param "", :array,
-        desc: "array of product" do
-          param :id, :integer, 
-            desc: 'product id',
-            permissions: [ :admin, :member, :guest ]
-          param :name, :string, 
-            desc: 'product name',
-            permissions: [ :admin, :member, :guest ]
-          param :description, :string, 
-            desc: 'product description',
-            permissions: [ :admin, :member, :guest ]
-          param :status, :string, 
-            desc: 'product status (online or offline)',
-            permissions: [ :admin ],
-            validates: {
-              within: ["online", "offline"]
-            }
-        end
+      body do
+        param "", :array,
+          desc: "array of product" do
+            param :id, :integer, 
+              desc: 'product id',
+              permissions: [ :admin, :member, :guest ]
+            param :name, :string, 
+              desc: 'product name',
+              permissions: [ :admin, :member, :guest ]
+            param :description, :string, 
+              desc: 'product description',
+              permissions: [ :admin, :member, :guest ]
+            param :status, :string, 
+              desc: 'product status (online or offline)',
+              permissions: [ :admin ],
+              validates: {
+                within: ["online", "offline"]
+              }
+          end
+      end
     end
   end
 
@@ -36,51 +40,55 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
     desc 'create a product'
     tags :mobile, :web
     permissions :admin
-    header do
-      param "User-id", :string, 
-        desc: 'admin user id',
-        permissions: [ :admin ],
-        required: true
-      param "User-type", :string, 
-        desc: 'admin user type',
-        permissions: [ :admin ],
-        required: true
-      param "Authentication", :string, 
-        desc: 'admin token',
-        permissions: [ :admin ],
-        required: true
-    end
-    body do
-      param :id, :integer, 
-        desc: 'product id',
-        permissions: [ :admin ],
-        required: true,
-        validates: {
-          min: 1
-        }
-      param :name, :string, 
-        desc: 'product name',
-        permissions: [ :admin ]
-      param :description, :string, 
-        desc: 'product description',
-        permissions: [ :admin ]
-      param :status, :string, 
-        desc: 'product status (online or offline)',
-        permissions: [ :admin ],
-        validates: {
-          within: ["online", "offline"]
-        }
+    request do
+      header do
+        param "User-id", :string, 
+          desc: 'admin user id',
+          permissions: [ :admin ],
+          required: true
+        param "User-type", :string, 
+          desc: 'admin user type',
+          permissions: [ :admin ],
+          required: true
+        param "Authentication", :string, 
+          desc: 'admin token',
+          permissions: [ :admin ],
+          required: true
+      end
+      body do
+        param :id, :integer, 
+          desc: 'product id',
+          permissions: [ :admin ],
+          required: true,
+          validates: {
+            min: 1
+          }
+        param :name, :string, 
+          desc: 'product name',
+          permissions: [ :admin ]
+        param :description, :string, 
+          desc: 'product description',
+          permissions: [ :admin ]
+        param :status, :string, 
+          desc: 'product status (online or offline)',
+          permissions: [ :admin ],
+          validates: {
+            within: ["online", "offline"]
+          }
+      end
     end
     response do
-      param :name, :string, 
-        desc: 'product name',
-        permissions: [ :admin ]
-      param :description, :string, 
-        desc: 'product description',
-        permissions: [ :admin ]
-      param :status, :string, 
-        desc: 'product status (online or offline)',
-        permissions: [ :admin ]
+      body do
+        param :name, :string, 
+          desc: 'product name',
+          permissions: [ :admin ]
+        param :description, :string, 
+          desc: 'product description',
+          permissions: [ :admin ]
+        param :status, :string, 
+          desc: 'product status (online or offline)',
+          permissions: [ :admin ]
+      end
     end
     error do
       code 404, "Not Found" do
@@ -96,27 +104,31 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
     desc 'get a specify product'
     tags :mobile, :web
     permissions :guest, :admin, :member
-    header do
-    end
-    body do
-      param :id, :integer, 
-        desc: 'product id',
-        permissions: [ :guest, :admin, :member ],
-        required: true,
-        validates: {
-          min: 1
-        }
+    request do
+      header do
+      end
+      body do
+        param :id, :integer, 
+          desc: 'product id',
+          permissions: [ :guest, :admin, :member ],
+          required: true,
+          validates: {
+            min: 1
+          }
+      end
     end
     response do
-      param :name, :string, 
-        desc: 'product name',
-        permissions: [ :guest, :admin, :member ]
-      param :description, :string, 
-        desc: 'product description',
-        permissions: [ :guest, :admin, :member ]
-      param :status, :string, 
-        desc: 'product status (online or offline)',
-        permissions: [ :admin ]
+      body do
+        param :name, :string, 
+          desc: 'product name',
+          permissions: [ :guest, :admin, :member ]
+        param :description, :string, 
+          desc: 'product description',
+          permissions: [ :guest, :admin, :member ]
+        param :status, :string, 
+          desc: 'product status (online or offline)',
+          permissions: [ :admin ]
+      end
     end
     error do
       code 404, "Not Found" do
@@ -132,51 +144,55 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
     desc 'update a specify product'
     tags :mobile, :web
     permissions :admin
-    header do
-      param "User-id", :string, 
-        desc: 'admin user id',
-        permissions: [ :admin ],
-        required: true
-      param "User-type", :string, 
-        desc: 'admin user type',
-        permissions: [ :admin ],
-        required: true
-      param "Authentication", :string, 
-        desc: 'admin token',
-        permissions: [ :admin ],
-        required: true
-    end
-    body do
-      param :id, :integer, 
-        desc: 'product id',
-        permissions: [ :admin ],
-        required: true,
-        validates: {
-          min: 1
-        }
-      param :name, :string, 
-        desc: 'product name',
-        permissions: [ :admin ]
-      param :description, :string, 
-        desc: 'product description',
-        permissions: [ :admin ]
-      param :status, :string, 
-        desc: 'product status (online or offline)',
-        permissions: [ :admin ],
-        validates: {
-          within: ["online", "offline"]
-        }
+    request do
+      header do
+        param "User-id", :string, 
+          desc: 'admin user id',
+          permissions: [ :admin ],
+          required: true
+        param "User-type", :string, 
+          desc: 'admin user type',
+          permissions: [ :admin ],
+          required: true
+        param "Authentication", :string, 
+          desc: 'admin token',
+          permissions: [ :admin ],
+          required: true
+      end
+      body do
+        param :id, :integer, 
+          desc: 'product id',
+          permissions: [ :admin ],
+          required: true,
+          validates: {
+            min: 1
+          }
+        param :name, :string, 
+          desc: 'product name',
+          permissions: [ :admin ]
+        param :description, :string, 
+          desc: 'product description',
+          permissions: [ :admin ]
+        param :status, :string, 
+          desc: 'product status (online or offline)',
+          permissions: [ :admin ],
+          validates: {
+            within: ["online", "offline"]
+          }
+      end
     end
     response do
-      param :name, :string, 
-        desc: 'product name',
-        permissions: [ :admin ]
-      param :description, :string, 
-        desc: 'product description',
-        permissions: [ :admin ]
-      param :status, :string, 
-        desc: 'product status (online or offline)',
-        permissions: [ :admin ]
+      body do
+        param :name, :string, 
+          desc: 'product name',
+          permissions: [ :admin ]
+        param :description, :string, 
+          desc: 'product description',
+          permissions: [ :admin ]
+        param :status, :string, 
+          desc: 'product status (online or offline)',
+          permissions: [ :admin ]
+      end
     end
     error do
       code 404, "Not Found" do
@@ -192,26 +208,30 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
     desc 'delete a specify product'
     tags :mobile, :web
     permissions :admin
-    header do
-      param "User-id", :string, 
-        desc: 'admin user id',
-        permissions: [ :admin ],
-        required: true
-      param "User-type", :string, 
-        desc: 'admin user type',
-        permissions: [ :admin ],
-        required: true
-      param "Authentication", :string, 
-        desc: 'admin token',
-        permissions: [ :admin ],
-        required: true
-    end
-    body do
+    request do
+      header do
+        param "User-id", :string, 
+          desc: 'admin user id',
+          permissions: [ :admin ],
+          required: true
+        param "User-type", :string, 
+          desc: 'admin user type',
+          permissions: [ :admin ],
+          required: true
+        param "Authentication", :string, 
+          desc: 'admin token',
+          permissions: [ :admin ],
+          required: true
+      end
+      body do
+      end
     end
     response do
-      param :success, :boolean, 
-        desc: 'success or not',
-        permissions: [ :admin ]
+      body do
+        param :success, :boolean, 
+          desc: 'success or not',
+          permissions: [ :admin ]
+      end
     end
     error do
       code 404, "Not Found" do
