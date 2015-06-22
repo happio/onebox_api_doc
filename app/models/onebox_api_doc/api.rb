@@ -55,8 +55,12 @@ module OneboxApiDoc
       self.permission_ids ||= []
       self.tag_ids ||= []
       self.error_ids ||= []
-      self.request ||= { header: [], body: [] }
-      self.response ||= { header: [], body: [] }
+      self.request ||= OpenStruct.new(
+        header: ParamContainer.new(doc_id: doc_id), 
+        body: ParamContainer.new(doc_id: doc_id))
+      self.response ||= OpenStruct.new(
+        header: ParamContainer.new(doc_id: doc_id), 
+        body: ParamContainer.new(doc_id: doc_id))
     end
 
     # ##############################

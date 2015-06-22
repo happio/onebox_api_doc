@@ -151,14 +151,16 @@ module OneboxApiDoc
 
       it "set default api request and response" do
         api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, url: "/users/:id", short_desc: "get user profile"
-        expect(api.request).to be_a Hash
-        expect(api.request.keys).to eq [:header, :body]
-        expect(api.request[:header]).to eq []
-        expect(api.request[:body]).to eq []
-        expect(api.response).to be_a Hash
-        expect(api.response.keys).to eq [:header, :body]
-        expect(api.response[:header]).to eq []
-        expect(api.response[:body]).to eq []
+        expect(api.request).to be_an OpenStruct
+        expect(api.request.header).to be_a ParamContainer
+        expect(api.request.header.params).to eq []
+        expect(api.request.body).to be_a ParamContainer
+        expect(api.request.body.params).to eq []
+        expect(api.response).to be_a OpenStruct
+        expect(api.response.header).to be_a ParamContainer
+        expect(api.response.header.params).to eq []
+        expect(api.response.body).to be_a ParamContainer
+        expect(api.response.body.params).to eq []
       end
     end
 
