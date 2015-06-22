@@ -8,7 +8,7 @@ module OneboxApiDoc
 
     describe "initialize" do
       it "set correct id and name" do
-        app = OneboxApiDoc::App.new :new_app
+        app = OneboxApiDoc::App.new name: :new_app
         expect(app).not_to eq nil
         expect(app.name).to eq "new_app"
       end
@@ -16,11 +16,11 @@ module OneboxApiDoc
 
     describe "is_extension?" do
       it "return false if app name is main" do
-        app = OneboxApiDoc::App.new :main
+        app = OneboxApiDoc::App.new name: :main
         expect(app.is_extension?).to eq false
       end
       it "return true if app name is not main" do
-        app = OneboxApiDoc::App.new :not_main
+        app = OneboxApiDoc::App.new name: :not_main
         expect(app.is_extension?).to eq true
       end
     end
