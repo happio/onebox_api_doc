@@ -1,5 +1,5 @@
 module OneboxApiDoc
-  class Param
+  class Param < BaseObject
 
     # attr_reader :_name, :_type, :_desc, :_permissions, :_required, 
     # :_default_value, :_warning, :_validates, :_params
@@ -30,21 +30,12 @@ module OneboxApiDoc
     #   self.instance_exec(&block)
     # end
 
-    attr_accessor :name, :type, :desc, :required, :default_value, :warning, 
+    attr_accessor :doc_id, :name, :type, :desc, :required, :default, :warning, 
       :validates, :permission_ids, :from_version_id, :parent_id
       # from_version_id is for when extension add param to specific api
 
-    def initialize name, type, options={}, &block
-      self.name = name.to_s
-      self.type = type.to_s.capitalize
-      self.desc = options[:desc]
-      self.parent_id = options[:parent_id]
-      self.required = options[:required]
-      self.default_value = options[:default]
-      self.warning = options[:warning]
-      self.from_version_id = options[:from_version_id]
-      self.permission_ids = options[:permission_ids]
-      self.validates = validation_messages(options[:validates] || {})
+    def initialize *attrs, &block
+      super(*attrs)
       OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(self, &block) if block_given?
     end
 
@@ -52,7 +43,29 @@ module OneboxApiDoc
       OneboxApiDoc.base.nested_params_of(self.object_id)
     end
 
+    def doc
+      OneboxApiDoc.base.docs.select { |doc| doc.object_id == self.doc_id }.first
+    end
+
+    def parent
+      self.doc.params.select { |param| param.object_id == self.parent_id }.first
+    end
+
+    def permissions
+      self.doc.permissions.select { |permission| self.permission_ids.include? permission.object_id }
+    end
+
+    def permissions=(permission_names)
+      self.permission_ids = permission_names.map { |permission_name| self.doc.add_permission(name: permission_name) }
+    end
+
     private
+
+    def set_default_value
+      self.permission_ids ||= []
+      self.validates = validation_messages(self.validates || {})
+      self.type = self.type.capitalize
+    end
 
     def validation_messages validates={}
       validates.map do |key, value|
