@@ -6,13 +6,20 @@ module OneboxApiDoc
     describe "initialize" do
       before do
         class SampleObject < BaseObject
-          attr_accessor :name
+          attr_accessor :name, :reference_ids
         end
       end
 
       it "set attribute values" do
-        sample = OneboxApiDoc::SampleObject.new(name: "sample")
+        sample = OneboxApiDoc::SampleObject.new(name: "sample", reference_ids: [1,2,3,4])
         expect(sample.name).to eq "sample"
+        expect(sample.reference_ids).to eq [1,2,3,4]
+      end
+
+      it "convert symbol attribute values to string" do
+        sample = OneboxApiDoc::SampleObject.new(name: :sample, reference_ids: [1,2,3,4])
+        expect(sample.name).to eq "sample"
+        expect(sample.reference_ids).to eq [1,2,3,4]
       end
 
       it "set default value" do
