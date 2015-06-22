@@ -1,5 +1,5 @@
 module OneboxApiDoc
-  class Version
+  class Version < BaseObject
     
     # attr_accessor :extension_name, :version, :apis
 
@@ -11,11 +11,6 @@ module OneboxApiDoc
     # end
 
     attr_accessor :app_id, :name
-
-    def initialize name, app_id
-      self.name = name.to_s
-      self.app_id = app_id
-    end
 
     def is_extension?
       OneboxApiDoc.base.apps.select { |app| app.object_id == self.app_id }.first.is_extension?

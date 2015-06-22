@@ -9,23 +9,23 @@ module OneboxApiDoc
 
     describe "initialize" do
       # it "set correct param name and type" do
-      #   @param = OneboxApiDoc::Param.new :status, :string
+      #   @param = OneboxApiDoc::Param.new 1, :status, :string
       #   expect(@param._name).to eq "status"
       #   expect(@param._type).to eq "String"
       # end
 
       # it "'s name is optional" do
-      #   @param = OneboxApiDoc::Param.new '', :integer
+      #   @param = OneboxApiDoc::Param.new 1, '', :integer
       #   expect(@param).not_to eq nil
       #   expect(@param._name).to eq ""
       # end
 
       # it "'s type is require" do
-      #   expect{ @param = OneboxApiDoc::Param.new :status }.to raise_error
+      #   expect{ @param = OneboxApiDoc::Param.new 1, :status }.to raise_error
       # end
 
       # it "set correct param options" do
-      #   @param = OneboxApiDoc::Param.new :status, :string, 
+      #   @param = OneboxApiDoc::Param.new 1, :status, :string, 
       #     desc: 'status',
       #     permissions: [ :guest, :admin, :member ],
       #     required: false,
@@ -37,7 +37,7 @@ module OneboxApiDoc
       # end
 
       # it "'s others option is optional" do
-      #   @param = OneboxApiDoc::Param.new :address, :object do
+      #   @param = OneboxApiDoc::Param.new 1, :address, :object do
       #     param :address, :string,
       #       desc: 'address',
       #       permissions: [ :guest, :admin, :member ],
@@ -47,7 +47,7 @@ module OneboxApiDoc
       # end
 
       # it "'s block is optional" do
-      #   @param = OneboxApiDoc::Param.new :address, :object, 
+      #   @param = OneboxApiDoc::Param.new 1, :address, :object, 
       #     desc: 'address object',
       #     permissions: [ :guest, :admin, :member ],
       #     required: true
@@ -55,23 +55,23 @@ module OneboxApiDoc
       # end
 
       it "set correct id name and type" do
-        @param = OneboxApiDoc::Param.new :status, :string
+        @param = OneboxApiDoc::Param.new 1, :status, :string
         expect(@param.name).to eq "status"
         expect(@param.type).to eq "String"
       end
 
       it "'s name is optional" do
-        @param = OneboxApiDoc::Param.new '', :integer
+        @param = OneboxApiDoc::Param.new 1, '', :integer
         expect(@param).not_to eq nil
         expect(@param.name).to eq ""
       end
 
       it "'s type is require" do
-        expect{ @param = OneboxApiDoc::Param.new :status }.to raise_error
+        expect{ @param = OneboxApiDoc::Param.new 1, :status }.to raise_error
       end
 
       it "set correct param options" do
-        @param = OneboxApiDoc::Param.new :status, :string, 
+        @param = OneboxApiDoc::Param.new 1, :status, :string, 
           desc: 'status',
           permission_ids: [ 3,4,5 ],
           required: false,
@@ -87,38 +87,38 @@ module OneboxApiDoc
       end
 
       it "'s others option is optional" do
-        @param = OneboxApiDoc::Param.new :address, :object
+        @param = OneboxApiDoc::Param.new 1, :address, :object
         expect(@param).not_to eq nil
       end
 
       describe "validations" do
         it "set correct validation message" do
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { min: -1 }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { min: -1 }
           expect(@param.validates).to include 'cannot be less than -1'
 
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { max: 10 }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { max: 10 }
           expect(@param.validates).to include 'cannot be more than 10'
 
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { within: ["online", "offline", "all"] }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { within: ["online", "offline", "all"] }
           expect(@param.validates).to include 'must be within ["online", "offline", "all"]'
 
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { pattern: "/[A-Za-z0-9]/" }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { pattern: "/[A-Za-z0-9]/" }
           expect(@param.validates).to include 'must match format /[A-Za-z0-9]/'
 
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { email: true }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { email: true }
           expect(@param.validates).to include 'must be in email format'
 
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { min_length: 6 }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { min_length: 6 }
           expect(@param.validates).to include 'cannot have length less than 6'
 
-          @param = OneboxApiDoc::Param.new :status, :string, validates: { max_length: 10 }
+          @param = OneboxApiDoc::Param.new 1, :status, :string, validates: { max_length: 10 }
           expect(@param.validates).to include 'cannot have length more than 10'
         end
       end
 
       # describe "nested params" do
       #   it "set correct nested param" do
-      #     @param = OneboxApiDoc::Param.new :address, :object, 
+      #     @param = OneboxApiDoc::Param.new 1, :address, :object, 
       #     desc: 'address object',
       #     permissions: [ :guest, :admin, :member ],
       #     required: true do
@@ -148,7 +148,7 @@ module OneboxApiDoc
 
       describe "nested params" do
         it "set correct parent_id" do
-          @param = OneboxApiDoc::Param.new :address, :object, 
+          @param = OneboxApiDoc::Param.new 1, :address, :object, 
           desc: 'address object',
           permissions: [ :guest, :admin, :member ],
           required: true,
