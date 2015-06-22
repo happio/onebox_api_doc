@@ -39,7 +39,7 @@ module OneboxApiDoc
 
     describe "initialize" do
       it "set correct id and name" do
-        tag = OneboxApiDoc::Tag.new :new_tag
+        tag = OneboxApiDoc::Tag.new name: :new_tag
         expect(tag).not_to eq nil
         expect(tag.name).to eq "new_tag"
       end

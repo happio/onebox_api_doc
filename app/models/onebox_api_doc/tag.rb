@@ -1,5 +1,5 @@
 module OneboxApiDoc
-  class Tag
+  class Tag < BaseObject
     
     # attr_accessor :name, :apis
 
@@ -19,9 +19,6 @@ module OneboxApiDoc
     # end
 
     attr_accessor :name
-
-    def initialize name
-      self.name = name.to_s
-    end
+    
   end
 end
