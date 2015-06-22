@@ -4,6 +4,7 @@ module OneboxApiDoc
   describe Api do
     before do
       @base = OneboxApiDoc.base
+      @doc = @base.add_doc(ApiDoc, 33, 44)
     end
 
     describe "initialize" do
@@ -133,13 +134,14 @@ module OneboxApiDoc
       # end
 
       it "set correct id and api detail" do
-        api = OneboxApiDoc::Api.new 44 , 3, :show, :get, "/users/:id", "get user profile", desc: "description",
+        api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, url: "/users/:id", short_desc: "get user profile", desc: "description",
           tag_ids: [3,5,7,9], error_ids: [5,6,7,8]
         expect(api).not_to eq nil
-        expect(api.doc_id).to eq 44
-        expect(api.resource_id).to eq 3
-        expect(api.action).to eq :show
-        expect(api.method).to eq :GET
+        expect(api.doc_id).to eq @doc.object_id
+        expect(api.resource_id).to eq @doc.resource_id
+        expect(api.version_id).to eq @doc.version_id
+        expect(api.action).to eq 'show'
+        expect(api.method).to eq 'GET'
         expect(api.url).to eq "/users/:id"
         expect(api.short_desc).to eq "get user profile"
         expect(api.desc).to eq "description"
@@ -148,7 +150,7 @@ module OneboxApiDoc
       end
 
       it "set default api request and response" do
-        api = OneboxApiDoc::Api.new 44, 3, :show, :get, "/users/:id", "get user profile"
+        api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, url: "/users/:id", short_desc: "get user profile"
         expect(api.request).to be_a Hash
         expect(api.request.keys).to eq [:header, :body]
         expect(api.request[:header]).to eq []
@@ -158,6 +160,34 @@ module OneboxApiDoc
         expect(api.response[:header]).to eq []
         expect(api.response[:body]).to eq []
       end
+    end
+
+    describe "doc" do
+      it "return correct doc"
+    end
+
+    describe "resource" do
+      it "return correct resource"
+    end
+
+    describe "version" do
+      it "return correct version"
+    end
+
+    describe "tags" do
+      it "return correct tags"
+    end
+
+    describe "tags=()" do
+      it "set correct tag_ids"
+    end
+
+    describe "errors" do
+      it "return correct errors"
+    end
+
+    describe "errors=()" do
+      it "set correct error_ids"
     end
 
     # describe "desc" do

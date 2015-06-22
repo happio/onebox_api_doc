@@ -1,5 +1,5 @@
 module OneboxApiDoc
-  class Api
+  class Api < BaseObject
 
     # attr_reader :_controller_name, :_action, :_method, :_url, :_permissions, :_short_desc,
     #   :_desc, :_tags, :_header, :_body, :_response, :_error, :_api_doc
@@ -8,20 +8,6 @@ module OneboxApiDoc
     attr_accessor :action, :method, :url, :permission_ids, :desc, :short_desc, :tag_ids, :error_ids
     attr_accessor :request
     attr_accessor :response
-
-    def initialize doc_id, resource_id, action, method, url, short_desc="", options={}
-      self.doc_id = doc_id
-      self.resource_id = resource_id
-      self.action = action.to_sym
-      self.method = method.to_s.upcase.to_sym
-      self.url = url
-      self.short_desc = short_desc
-      self.desc = options[:desc]
-      self.tag_ids = options[:tag_ids]
-      self.error_ids = options[:error_ids]
-      self.request = { header: [], body: [] }
-      self.response = { header: [], body: [] }
-    end
 
     # def initialize controller_name, action, short_desc="", &block
     #   route = Route.route_for(controller_name, action)
@@ -38,6 +24,39 @@ module OneboxApiDoc
 
     def doc
       OneboxApiDoc.base.docs.select { |doc| doc.object_id == self.doc_id }.first
+    end
+
+    def resource
+      doc.resource
+    end
+
+    def version
+      doc.version
+    end
+
+    def tags
+    end
+
+    def tags=()
+    end
+
+    def errors
+    end
+
+    def error=()
+    end
+
+    private
+
+    def set_default_value
+      self.version_id = doc.version_id
+      self.resource_id = doc.resource_id
+      self.method = self.method.upcase
+      self.permission_ids ||= []
+      self.tag_ids ||= []
+      self.error_ids ||= []
+      self.request ||= { header: [], body: [] }
+      self.response ||= { header: [], body: [] }
     end
 
     # ##############################
