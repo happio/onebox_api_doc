@@ -1,21 +1,21 @@
 module OneboxApiDoc
-  class ApiDoc
+  class ApiDoc < BaseObject
 
     attr_accessor :tags, :permissions, :apis, :params, :errors
     attr_accessor :version_id, :resource_id
 
-    def initialize version_id, resource_id
-      self.version_id = version_id
-      self.resource_id = resource_id
-      self.tags = []
-      self.permissions = []
-      self.apis = []
-      self.params = []
-      self.errors = []
-    end
+    # def initialize version_id, resource_id
+    #   self.version_id = version_id
+    #   self.resource_id = resource_id
+    #   self.tags = []
+    #   self.permissions = []
+    #   self.apis = []
+    #   self.params = []
+    #   self.errors = []
+    # end
 
     def resource
-      OneboxApiDoc.base.resources.select { |resource| resource.object_id == self.resource_id }.first
+      @resource ||= OneboxApiDoc.base.resources.detect { |resource| resource.object_id == self.resource_id }
     end
 
     def add_api action, short_desc, &block
@@ -25,7 +25,7 @@ module OneboxApiDoc
       url = route[:path]
       method = route[:method]
       unless self.apis.map(&:action).include? action
-        api = OneboxApiDoc::Api.new(self.object_id, self.resource_id, action, method, url, short_desc)
+        api = OneboxApiDoc::Api.new(doc_id: self.object_id, resource_id: self.resource_id, action: action, method: method, url: url, short_desc: short_desc)
         self.apis << api
       else
         api = self.apis.select { |api| api.action == action }.first
@@ -34,15 +34,26 @@ module OneboxApiDoc
       api
     end
 
-    # def add_param name, type, options={}, &block
-    #   param = OneboxApiDoc::Param.new(name, type, options)
-    #   ParamContainerDefinition.new(param, &block) if block_given?
-    #   self.params << param
-    # end
+    def add_param name, type, options={}, &block
+      param = OneboxApiDoc::Param.new( {doc_id: self.object_id, name: name, type: type}.merge options, &block)
+      self.params << param
+      param
+    end
+
+    def add_error api, error_status, error_message, &block
+      error = OneboxApiDoc::Error.new(doc_id: self.object_id, code: error_status, message: error_message, &block)
+      if block_given?
+        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new(api, &block)
+        error.param_ids = error_detail.param_ids
+        error.permission_ids = error_detail.permission_ids
+      end
+      self.errors << error
+      error
+    end
 
     def add_tag tag_name
       unless self.tags.map(&:name).include? tag_name.to_s
-        tag = OneboxApiDoc::Tag.new(tag_name)
+        tag = OneboxApiDoc::Tag.new(name: tag_name)
         tags << tag
         tag
       else
@@ -52,11 +63,11 @@ module OneboxApiDoc
 
     def add_permission permission_name
       unless self.permissions.map(&:name).include? permission_name.to_s
-        permission = OneboxApiDoc::Permission.new(permission_name)
-        permissions << permission
+        permission = OneboxApiDoc::Permission.new(name: permission_name)
+        self.permissions << permission
         permission
       else
-        permissions.select { |permission| permission.name == permission_name }.first
+        self.permissions.select { |permission| permission.name == permission_name.to_s }.first
       end
     end
 
