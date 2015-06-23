@@ -35,9 +35,15 @@ module OneboxApiDoc
     end
 
     def tags
+      doc.tags.select { |tag| self.tag_ids.include? tag.object_id }
+    end
+
+    def permissions
+      doc.permissions.select { |permission| self.permission_ids.include? permission.object_id }
     end
 
     def errors
+      doc.errors.select { |error| self.error_ids.include? error.object_id }
     end
 
     private
