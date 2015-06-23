@@ -14,14 +14,14 @@ module OneboxApiDoc
       if api_params[:version].present?
 
         # set apis group by resource
-        @apis_group_by_resources = base.get_version(api_params[:version]).apis_group_by_resources
+        # @apis_group_by_resources = base.get_version(api_params[:version]).apis_group_by_resources
 
-        # set display api(s)
-        if api_params[:resource_name].present? and api_params[:action_name].present?
-          @api = base.get_api(api_params[:version], api_params[:resource_name], api_params[:action_name])
-        elsif api_params[:resource_name].present?
-          @apis = base.get_api(api_params[:version], api_params[:resource_name])
-        end
+        # # set display api(s)
+        # if api_params[:resource_name].present? and api_params[:action_name].present?
+        #   @api = base.get_api(api_params[:version], api_params[:resource_name], api_params[:action_name])
+        # elsif api_params[:resource_name].present?
+        #   @apis = base.get_api(api_params[:version], api_params[:resource_name])
+        # end
       end
       # render nothing: true
     end
