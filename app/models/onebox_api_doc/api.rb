@@ -23,27 +23,21 @@ module OneboxApiDoc
     # end
 
     def doc
-      OneboxApiDoc.base.docs.select { |doc| doc.object_id == self.doc_id }.first
+      @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }
     end
 
     def resource
-      doc.resource
+      @resource ||= doc.resource
     end
 
     def version
-      doc.version
+      @version ||= doc.version
     end
 
     def tags
     end
 
-    def tags=()
-    end
-
     def errors
-    end
-
-    def error=()
     end
 
     private

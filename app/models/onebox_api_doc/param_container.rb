@@ -4,11 +4,11 @@ module OneboxApiDoc
     attr_accessor :doc_id, :param_ids
 
     def params
-      doc.params.select { |param| self.param_ids.include? param.object_id }
+      @params ||= doc.params.select { |param| self.param_ids.include? param.object_id }
     end
 
     def doc
-      OneboxApiDoc.base.docs.select { |doc| doc.object_id == self.doc_id }.first
+      @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }
     end
     
     private

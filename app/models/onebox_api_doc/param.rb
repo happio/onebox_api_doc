@@ -40,19 +40,19 @@ module OneboxApiDoc
     end
 
     def params
-      OneboxApiDoc.base.nested_params_of(self.object_id)
+      @params ||= OneboxApiDoc.base.nested_params_of(self.object_id)
     end
 
     def doc
-      OneboxApiDoc.base.docs.select { |doc| doc.object_id == self.doc_id }.first
+      @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }
     end
 
     def parent
-      self.doc.params.select { |param| param.object_id == self.parent_id }.first
+      @parent ||= self.doc.params.detect { |param| param.object_id == self.parent_id }
     end
 
     def permissions
-      self.doc.permissions.select { |permission| self.permission_ids.include? permission.object_id }
+      @permissions ||= self.doc.permissions.select { |permission| self.permission_ids.include? permission.object_id }
     end
 
     def permissions=(permission_names)

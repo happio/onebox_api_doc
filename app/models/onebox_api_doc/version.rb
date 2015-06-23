@@ -13,7 +13,11 @@ module OneboxApiDoc
     attr_accessor :app_id, :name
 
     def is_extension?
-      OneboxApiDoc.base.apps.select { |app| app.object_id == self.app_id }.first.is_extension?
+      app.is_extension?
+    end
+
+    def app
+      @app ||= OneboxApiDoc.base.apps.detect { |app| app.object_id == self.app_id }
     end
 
     # def get_api(resource_name, action=nil)
