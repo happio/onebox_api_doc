@@ -18,6 +18,10 @@ module OneboxApiDoc
       @resource ||= OneboxApiDoc.base.resources.detect { |resource| resource.object_id == self.resource_id }
     end
 
+    def version
+      @version ||= OneboxApiDoc.base.versions.detect { |version| version.object_id == self.version_id }
+    end
+
     def add_api action, short_desc, &block
       resource_name = self.resource.name
       route = Route.route_for(resource_name, action)
@@ -28,14 +32,15 @@ module OneboxApiDoc
         api = OneboxApiDoc::Api.new(doc_id: self.object_id, resource_id: self.resource_id, action: action, method: method, url: url, short_desc: short_desc)
         self.apis << api
       else
-        api = self.apis.select { |api| api.action == action }.first
+        api = self.apis.detect { |api| api.action == action }
       end
       OneboxApiDoc::ApiDefinition.new(api, &block) if block_given?
       api
     end
 
     def add_param name, type, options={}, &block
-      param = OneboxApiDoc::Param.new( {doc_id: self.object_id, name: name, type: type}.merge options, &block)
+      options = {doc_id: self.object_id, name: name, type: type}.merge(options)
+      param = OneboxApiDoc::Param.new(options, &block)
       self.params << param
       param
     end
@@ -43,7 +48,7 @@ module OneboxApiDoc
     def add_error api, error_status, error_message, &block
       error = OneboxApiDoc::Error.new(doc_id: self.object_id, code: error_status, message: error_message, &block)
       if block_given?
-        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new(api, &block)
+        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new(api.doc, &block)
         error.param_ids = error_detail.param_ids
         error.permission_ids = error_detail.permission_ids
       end
@@ -57,7 +62,7 @@ module OneboxApiDoc
         tags << tag
         tag
       else
-        tags.select { |tag| tag.name == tag_name }.first
+        tags.detect { |tag| tag.name == tag_name }
       end
     end
 
@@ -67,17 +72,21 @@ module OneboxApiDoc
         self.permissions << permission
         permission
       else
-        self.permissions.select { |permission| permission.name == permission_name.to_s }.first
+        self.permissions.detect { |permission| permission.name == permission_name.to_s }
       end
+    end
+
+    def nested_params_of param_id
+      self.params.select { |param| param.parent_id == param_id }
     end
 
     class << self
 
       cattr_accessor :api_doc
 
-      attr_accessor :_controller_name, :_version, :_default_version, :_apis
-      # for extension
-      attr_accessor :_extension_name, :_core_versions
+      # attr_accessor :_controller_name, :_version, :_default_version, :_apis
+      # # for extension
+      # attr_accessor :_extension_name, :_core_versions
       
       def inherited(subclass)
         # subclass._controller_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
