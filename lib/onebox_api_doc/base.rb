@@ -42,14 +42,14 @@ module OneboxApiDoc
 
     # main_app
     def main_app
-      app ||= OneboxApiDoc::App.new("main")
+      app ||= OneboxApiDoc::App.new(name: "main")
       self.apps << app unless self.apps.include? app
       app
     end
 
     # default version
     def default_version
-      version ||= OneboxApiDoc::Version.new(OneboxApiDoc::Engine.default_version, main_app.object_id)
+      version ||= OneboxApiDoc::Version.new(name: OneboxApiDoc::Engine.default_version, app_id: main_app.object_id)
       self.versions << version unless self.versions.include? version
       version
     end
@@ -73,7 +73,7 @@ module OneboxApiDoc
 
     def add_resource resource_name
       unless self.resources.map(&:name).include? resource_name
-        resource = OneboxApiDoc::Resource.new(resource_name)
+        resource = OneboxApiDoc::Resource.new(name: resource_name)
         self.resources << resource
         resource
       else
@@ -83,7 +83,7 @@ module OneboxApiDoc
 
     def add_version version_name
       unless self.versions.map(&:name).include? version_name
-        version = OneboxApiDoc::Version.new(version_name, main_app.object_id)
+        version = OneboxApiDoc::Version.new(name: version_name, app_id: main_app.object_id)
         self.versions << version
         version
       else
@@ -93,7 +93,7 @@ module OneboxApiDoc
 
     def add_app app_name
       unless self.apps.map(&:name).include? app_name
-        app = OneboxApiDoc::App.new(app_name)
+        app = OneboxApiDoc::App.new(name: app_name)
         self.apps << app
         app
       else
@@ -104,7 +104,7 @@ module OneboxApiDoc
     def add_doc klass, version_id, resource_id
       doc = self.docs.select { |doc| doc.class == klass and doc.version_id == version_id and doc.resource_id == resource_id }.first
       unless doc.present?
-        doc = klass.new(version_id, resource_id)
+        doc = klass.new(version_id: version_id, resource_id: resource_id)
         self.docs << doc
         doc
       else
@@ -112,11 +112,11 @@ module OneboxApiDoc
       end
     end
 
-    def add_param name, type, options={}, &block
-      param = OneboxApiDoc::Param.new(name, type, options, &block)
-      self.params << param
-      param
-    end
+    # def add_param name, type, options={}, &block
+    #   param = OneboxApiDoc::Param.new(name, type, options, &block)
+    #   self.params << param
+    #   param
+    # end
 
     # def add_param action, short_desc=""
     #   OneboxApiDoc::Api.new(action, short_desc, &block)
