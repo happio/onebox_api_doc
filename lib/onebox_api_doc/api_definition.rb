@@ -22,16 +22,16 @@ module OneboxApiDoc
     def request &block
       if block_given?
         request = RequestResponseDefinition.new(api, &block)
-        api.request[:header] = request.header_param_ids
-        api.request[:body] = request.body_param_ids
+        api.request.header.param_ids = request.header_param_ids
+        api.request.body.param_ids = request.body_param_ids
       end
     end
 
     def response &block
       if block_given?
         response = RequestResponseDefinition.new(api, &block)
-        api.response[:header] = response.header_param_ids
-        api.response[:body] = response.body_param_ids
+        api.response.header.param_ids = response.header_param_ids
+        api.response.body.param_ids = response.body_param_ids
       end
     end
 
@@ -53,35 +53,36 @@ module OneboxApiDoc
 
       def header &block
         if block_given?
-          params = ParamContainerDefinition.new(api, &block)
+          params = ParamContainerDefinition.new(self.api.doc, &block)
           @header_param_ids = params.param_ids
         end
       end
 
       def body &block
         if block_given?
-          params = ParamContainerDefinition.new(api, &block)
+          params = ParamContainerDefinition.new(self.api.doc, &block)
           @body_param_ids = params.param_ids
         end
       end
     end
 
     class ParamContainerDefinition
-      attr_reader :parent_object, :param_ids
+      attr_reader :doc, :parent_id, :param_ids
 
-      def initialize parent_object=nil, &block
-        @parent_object = parent_object
+      def initialize doc, _parent_id=nil, &block
+        @doc = doc
+        @parent_id = _parent_id
         @param_ids = []
         self.instance_eval(&block) if block_given?
       end
 
       def param name, type, options={}, &block
-        options[:parent_id] = self.parent_object.object_id if self.parent_object.is_a? OneboxApiDoc::Param
-        if options[:permissions].present? and self.parent_object.doc.present?
-          options[:permission_ids] = options[:permissions].map { |permission_name| self.parent_object.doc.add_permission(permission_name).object_id }
+        options[:parent_id] = self.parent_id if self.parent_id.present?
+        if options[:permissions].present? and self.doc.present?
+          options[:permission_ids] = options[:permissions].map { |permission_name| self.doc.add_permission(permission_name).object_id }
         end
-        param = self.parent_object.doc.add_param(name, type, options, &block)
-        @param_ids << param.object_id
+        param = self.doc.add_param(name, type, options, &block)
+        @param_ids << param.object_id unless self.parent_id.present?
       end
     end
 
@@ -102,13 +103,13 @@ module OneboxApiDoc
     class ErrorDefinition < ParamContainerDefinition
       attr_reader :permission_ids
 
-      def initialize parent_object, &block
+      def initialize doc, &block
         @permission_ids = []
         super
       end
 
       def permissions *permissions
-        @permission_ids = permissions.map{ |permission| parent_object.doc.add_permission(permission).object_id }
+        @permission_ids = permissions.map{ |permission| doc.add_permission(permission).object_id }
       end
 
 
