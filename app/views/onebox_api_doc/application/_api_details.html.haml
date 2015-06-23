@@ -5,7 +5,7 @@
   .ui.divider
 
   %h1.ui.header.api__url
-    %span.action.get
+    %span.action.get{ "class" => "#{api._method.downcase}"}
       = api._method
     %span.url#url-path
       = api._url
