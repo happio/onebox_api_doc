@@ -1,0 +1,12 @@
+.ui.bottom.attached.tab.segment{ "class" => "#{active}", "data-tab" => "#{type}" }
+  .ui.top.attached.tabular.menu
+    .item{"data-tab"=>"#{type}/header"}
+      Header
+      %a.ui.copy--btn.label{"data-clipboard-text" => "url-path"} Copy
+    .body.item{ "class" => "#{active}", "data-tab"=>"#{type}/body" }
+      Body
+      %a.ui.copy--btn.label{"data-clipboard-text" => "url-path"} Copy
+  .ui.bottom.attached.tab.segment{"data-tab"=>"#{type}/header"}
+    = render partial: 'onebox_api_doc/application/example/params', locals: { has_nested: true, nested_size: 1}
+  .ui.bottom.attached.tab.segment{ "class" => "#{active}", "data-tab"=>"#{type}/body" }
+    = render partial: 'onebox_api_doc/application/example/params', locals: { has_nested: true, nested_size: 3}

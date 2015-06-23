@@ -7,9 +7,9 @@
   %h1.ui.header.api__url
     %span.action.get
       = api._method
-    %span.url#copy--data
+    %span.url#url-path
       = api._url
-    %a.ui#copy--btn.label{"data-clipboard-target" => "copy--data"} Copy
+    %a.ui.copy--btn.label{"data-clipboard-target" => "url-path"} Copy
     .sub.header
       = api._short_desc
 

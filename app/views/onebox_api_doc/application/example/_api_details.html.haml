@@ -6,8 +6,8 @@
 
   %h1.ui.header.api__url
     %span.action.get GET
-    %span.url#copy--data /my/url
-    %a.ui#copy--btn.label{"data-clipboard-target" => "copy--data"} Copy
+    %span.url#url-path /my/url
+    %a.ui.copy--btn.label{"data-clipboard-target" => "url-path"} Copy
     .sub.header
       short description
 
@@ -44,19 +44,12 @@
                 note of extension #{i} Lorem ipsum dolor sit amet, consectetur
 
   .ui.top.attached.tabular.menu
-    %a.item{"data-tab" => "header"} Header
-    %a.item{"data-tab" => "body"} Body
+    %a.item{"data-tab" => "request"} Request
     %a.item.active{"data-tab" => "response"} Response
     %a.item{"data-tab" => "error"} Error
 
-  .ui.bottom.attached.tab.segment{"data-tab" => "header"}
-    = render partial: 'onebox_api_doc/application/example/params', locals: { has_nested: true, nested_size: 3}
-
-  .ui.bottom.attached.tab.segment{"data-tab" => "body"}
-    = render partial: 'onebox_api_doc/application/example/params', locals: { has_nested: true, nested_size: 2}
-
-  .ui.bottom.attached.tab.active.segment{"data-tab" => "response"}
-    = render partial: 'onebox_api_doc/application/example/params', locals: { has_nested: true, nested_size: 1}
+  = render partial: 'onebox_api_doc/application/example/params_containner', locals: { type: 'request', active: '' }
+  = render partial: 'onebox_api_doc/application/example/params_containner', locals: { type: 'response', active: 'active' }
 
   .ui.bottom.attached.tab.segment{"data-tab" => "error"}
     = render partial: 'onebox_api_doc/application/example/errors'
