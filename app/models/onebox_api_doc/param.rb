@@ -35,12 +35,12 @@ module OneboxApiDoc
       # from_version_id is for when extension add param to specific api
 
     def initialize *attrs, &block
-      super(*attrs)
-      OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(self, &block) if block_given?
+      super
+      OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(self.doc, self.object_id, &block) if block_given?
     end
 
     def params
-      @params ||= OneboxApiDoc.base.nested_params_of(self.object_id)
+      @params ||= doc.nested_params_of(self.object_id)
     end
 
     def doc
@@ -75,7 +75,7 @@ module OneboxApiDoc
         when :max
           "cannot be more than #{value}"
         when :within
-          "must be within #{value.to_s}"
+          "must be within #{value.map(&:to_s)}"
         when :pattern
           "must match format #{value}"
         when :email
