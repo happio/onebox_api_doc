@@ -169,7 +169,7 @@ module OneboxApiDoc
       # end
     end
 
-    context "class methods", thth: true do
+    context "class methods" do
       describe "inherited class" do
         it "add api doc object to base class" do
           expect(@base).to receive(:add_doc)
@@ -266,6 +266,9 @@ module OneboxApiDoc
                   param :error_status, :integer, 
                     desc: 'error status',
                     permissions: [ :member ]
+                  param :error_message, :string, 
+                    desc: 'error message',
+                    permissions: [ :member ]
                 end
               end
             end
@@ -276,15 +279,16 @@ module OneboxApiDoc
           expected_permission_ids = @doc.permissions.select { |permission| permission.name == "member" }.map(&:object_id)
 
           api = @doc.apis.first
-          expect(api.action).to eq :show
+          expect(api.action).to eq 'show'
           expect(api.short_desc).to eq "get user profile"
           expect(api.desc).to eq "get full user profile"
           expect(api.tag_ids).to eq expected_tag_ids
           expect(api.permission_ids).to eq expected_permission_ids
+
           api_request = api.request
           expect(api_request[:header].size).to eq 2
-          api_request_header_param1 = @base.params.select { |param| param.object_id == api_request[:header].first }.first
-          api_request_header_param2 = @base.params.select { |param| param.object_id == api_request[:header].second }.first
+          api_request_header_param1 = api.doc.params.select { |param| param.object_id == api_request[:header].first }.first
+          api_request_header_param2 = api.doc.params.select { |param| param.object_id == api_request[:header].second }.first
           expect(api_request_header_param1.name).to eq "user_id"
           expect(api_request_header_param1.type).to eq "String"
           expect(api_request_header_param1.desc).to eq "user id"
@@ -295,6 +299,39 @@ module OneboxApiDoc
           expect(api_request_header_param2.desc).to eq "user token"
           expect(api_request_header_param2.permission_ids).to eq expected_permission_ids
           expect(api_request_header_param2.required).to eq true
+          expect(api_request[:body].size).to eq 0
+
+          api_response = api.response
+          expect(api_response[:header].size).to eq 0
+          expect(api_response[:body].size).to eq 2
+          api_response_body_param1 = api.doc.params.select { |param| param.object_id == api_response[:body].first }.first
+          api_response_body_param2 = api.doc.params.select { |param| param.object_id == api_response[:body].second }.first
+          expect(api_response_body_param1.name).to eq "name"
+          expect(api_response_body_param1.type).to eq "String"
+          expect(api_response_body_param1.desc).to eq "user name"
+          expect(api_response_body_param1.permission_ids).to eq expected_permission_ids
+          expect(api_response_body_param2.name).to eq "age"
+          expect(api_response_body_param2.type).to eq "Integer"
+          expect(api_response_body_param2.desc).to eq "user age"
+          expect(api_response_body_param2.permission_ids).to eq expected_permission_ids
+
+          expected_error_ids = api.doc.errors.select { |error| error.code == 401 }.map(&:object_id)
+          expect(api.error_ids).to eq expected_error_ids
+          api_error = api.doc.errors.select { |error| error.object_id == api.error_ids.first }.first
+          expect(api_error.code).to eq 401
+          expect(api_error.message).to eq "Unauthorize"
+          expect(api_error.permission_ids).to eq expected_permission_ids
+          expect(api_error.param_ids.size).to eq 2
+          api_error_param1 = api.doc.params.select { |param| param.object_id == api_error.param_ids.first }.first
+          api_error_param2 = api.doc.params.select { |param| param.object_id == api_error.param_ids.second }.first
+          expect(api_error_param1.name).to eq "error_status"
+          expect(api_error_param1.type).to eq "Integer"
+          expect(api_error_param1.desc).to eq "error status"
+          expect(api_error_param1.permission_ids).to eq expected_permission_ids
+          expect(api_error_param2.name).to eq "error_message"
+          expect(api_error_param2.type).to eq "String"
+          expect(api_error_param2.desc).to eq "error message"
+          expect(api_error_param2.permission_ids).to eq expected_permission_ids
         end
         it "set api short desc to blank if not send" do
           class Api3ApiDoc < ApiDoc
@@ -302,7 +339,7 @@ module OneboxApiDoc
             api :show
           end
           @doc = @base.docs.select { |doc| doc.class == Api3ApiDoc }.first
-          api = @doc.apis.select { |api| api.action == :show }.first
+          api = @doc.apis.select { |api| api.action == 'show' }.first
           expect(api.short_desc).to eq ""
         end
       end
