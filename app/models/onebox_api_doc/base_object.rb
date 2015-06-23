@@ -3,7 +3,7 @@ module OneboxApiDoc
     
     include ActiveRecord::AttributeAssignment
 
-    def initialize *attrs
+    def initialize *attrs, &block
       attrs.map { |hash| hash.transform_values! { |value| value.is_a?(Symbol)? value.to_s : value } }
       assign_attributes(*attrs)
       set_default_value
