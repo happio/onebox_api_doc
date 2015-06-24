@@ -7,7 +7,7 @@ module OneboxApiDoc
     end
 
     describe "initialize" do
-      it "set correct id and name" do
+      it "set correct name" do
         app = OneboxApiDoc::App.new name: :new_app
         expect(app).not_to eq nil
         expect(app.name).to eq "new_app"
