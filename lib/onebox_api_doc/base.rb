@@ -1,12 +1,12 @@
 module OneboxApiDoc
   class Base
 
-    attr_reader :all_tags, :all_apis, :all_permissions, #:default_version,
-      :core_versions, :extension_versions, :param_groups
+    # attr_reader :all_tags, :all_apis, :all_permissions, #:default_version,
+    #   :core_versions, :extension_versions, :param_groups
 
 
     attr_accessor :apps, :versions, :resources, :docs, :params
-    attr_writer :main_app#, :default_version
+    # attr_writer :main_app #, :default_version
 
     # attributes for indexing
     attr_reader :index
@@ -42,16 +42,66 @@ module OneboxApiDoc
 
     # main_app
     def main_app
-      app ||= OneboxApiDoc::App.new(name: "main")
-      self.apps << app unless self.apps.include? app
-      app
+      main_app = self.apps.detect { |app| app.name == "main" }
+      unless main_app.present?
+        main_app = OneboxApiDoc::App.new(name: "main")
+        self.apps << main_app
+        main_app
+      else
+        main_app
+      end
+    end
+
+    def extension_apps
+      self.apps.select { |app| app.name != "main" }
     end
 
     # default version
     def default_version
-      version ||= OneboxApiDoc::Version.new(name: OneboxApiDoc::Engine.default_version, app_id: main_app.object_id)
-      self.versions << version unless self.versions.include? version
-      version
+      default_version = self.versions.detect { |version| version.name == OneboxApiDoc::Engine.default_version and version.app_id == main_app.object_id }
+      unless default_version.present?
+        default_version = OneboxApiDoc::Version.new(name: OneboxApiDoc::Engine.default_version, app_id: main_app.object_id)
+        self.versions << default_version
+        default_version
+      else
+        default_version
+      end
+    end
+
+    # get api by version, resource and action (optional)
+    def get_api options={}
+      version_name = options[:version]
+      resource_name = options[:resource_name]
+      action_name = options[:action_name]
+      doc = get_doc(version_name, resource_name)
+      return action_name.present? ? nil : [] unless doc.present?
+      doc.get_apis(action_name)
+    end
+
+    def get_version version_name
+      self.versions.detect { |version| version.name == version_name.to_s }
+    end
+
+    def get_resource resource_name
+      self.resources.detect { |resource| resource.name == resource_name.to_s }
+    end
+
+    def get_doc version_name, resource_name
+      version_id = self.get_version(version_name).object_id
+      resource_id = self.get_resource(resource_name).object_id
+      self.docs.detect { |doc| doc.version_id == version_id and doc.resource_id == resource_id }
+    end
+
+    def get_app app_name
+      self.apps.detect { |app| app.name == app_name.to_s }
+    end
+
+    def main_versions
+      self.versions.select { |version| not version.is_extension? }
+    end
+
+    def extension_versions
+      self.versions.select { |version| version.is_extension? }
     end
 
     # def api_docs
@@ -72,37 +122,54 @@ module OneboxApiDoc
     # end
 
     def add_resource resource_name
+      resource_name = resource_name.to_s
       unless self.resources.map(&:name).include? resource_name
         resource = OneboxApiDoc::Resource.new(name: resource_name)
         self.resources << resource
         resource
       else
-        self.resources.select { |resource| resource.name == resource_name }.first
+        self.resources.detect { |resource| resource.name == resource_name }
       end
     end
 
     def add_version version_name
-      unless self.versions.map(&:name).include? version_name
+      version_name = version_name.to_s
+      version = self.versions.detect { |version| version.name == version_name and version.app_id == main_app.object_id }
+      unless version.present?
         version = OneboxApiDoc::Version.new(name: version_name, app_id: main_app.object_id)
         self.versions << version
         version
       else
-        self.versions.select { |version| version.name == version_name }.first
+        version
+      end
+    end
+
+    def add_extension_version version_name, extension_name
+      extension = self.add_app extension_name
+      extension_version = self.versions.detect { |version| version.name == version_name and version.app_id == extension.object_id }
+      unless extension_version.present?
+        extension_version = OneboxApiDoc::Version.new(name: version_name, app_id: extension.object_id)
+        self.versions << extension_version
+        extension_version
+      else
+        extension_version
       end
     end
 
     def add_app app_name
-      unless self.apps.map(&:name).include? app_name
+      app_name = app_name.to_s
+      app = self.get_app app_name
+      unless app.present?
         app = OneboxApiDoc::App.new(name: app_name)
         self.apps << app
         app
       else
-        self.apps.select { |app| app.name == app_name }.first
+        app
       end
     end
 
     def add_doc klass, version_id, resource_id
-      doc = self.docs.select { |doc| doc.class == klass and doc.version_id == version_id and doc.resource_id == resource_id }.first
+      doc = self.docs.detect { |doc| doc.class == klass and doc.version_id == version_id and doc.resource_id == resource_id }
       unless doc.present?
         doc = klass.new(version_id: version_id, resource_id: resource_id)
         self.docs << doc
@@ -177,18 +244,7 @@ module OneboxApiDoc
       end
     end
 
-    # Model Indexing
-    def next_index klass_name
-      klass_name = klass_name.demodulize.underscore.to_sym
-      @index[klass_name] ||= 0
-      @index[klass_name] += 1
-    end
-
-    # Param Helper
-    def nested_params_of param_id
-      # all_params.select { |param| param.parent_id == param_id }
-    end
-
+    
     private
 
     def set_default_value
