@@ -9,19 +9,6 @@ module OneboxApiDoc
     attr_accessor :request
     attr_accessor :response
 
-    # def initialize controller_name, action, short_desc="", &block
-    #   route = Route.route_for(controller_name, action)
-    #   return nil unless route.present?
-    #   @_controller_name = controller_name.to_s
-    #   @_url = route[:path]
-    #   @_method = route[:method]
-    #   @_action = action.to_s
-    #   @_short_desc = short_desc
-    #   @_permissions = []
-    #   @_tags = []
-    #   self.instance_eval(&block) if block_given?
-    # end
-
     def doc
       @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }
     end
@@ -46,12 +33,16 @@ module OneboxApiDoc
       doc.errors.select { |error| self.error_ids.include? error.object_id }
     end
 
+    def is_extension?
+      version.is_extension?
+    end
+
     private
 
     def set_default_value
       self.version_id = doc.version_id
       self.resource_id = doc.resource_id
-      self.method = self.method.upcase
+      self.method = self.method.upcase if self.method.present?
       self.permission_ids ||= []
       self.tag_ids ||= []
       self.error_ids ||= []
