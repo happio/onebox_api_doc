@@ -149,22 +149,26 @@ module OneboxApiDoc
     end
 
     def add_tag tag_name
-      unless self.tags.map(&:name).include? tag_name.to_s
+      tag_name = tag_name.to_s
+      tag = tags.detect { |tag| tag.name == tag_name }
+      unless tag.present?
         tag = OneboxApiDoc::Tag.new(name: tag_name)
         tags << tag
         tag
       else
-        tags.detect { |tag| tag.name == tag_name }
+        tag
       end
     end
 
     def add_permission permission_name
-      unless self.permissions.map(&:name).include? permission_name.to_s
+      permission_name = permission_name.to_s
+      permission = self.permissions.detect { |permission| permission.name == permission_name }
+      unless permission.present?
         permission = OneboxApiDoc::Permission.new(name: permission_name)
         self.permissions << permission
         permission
       else
-        self.permissions.detect { |permission| permission.name == permission_name.to_s }
+        permission
       end
     end
 

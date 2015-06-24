@@ -56,7 +56,8 @@ module OneboxApiDoc
     end
 
     def permissions=(permission_names)
-      self.permission_ids = permission_names.map { |permission_name| self.doc.add_permission(name: permission_name) }
+      self.permission_ids = permission_names.map { |permission_name| doc.add_permission(permission_name.to_s).object_id }
+      permissions
     end
 
     private
