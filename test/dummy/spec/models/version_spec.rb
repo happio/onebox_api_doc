@@ -42,6 +42,14 @@ module OneboxApiDoc
       end
     end
 
+    describe "app" do
+      it "return correct app" do
+        main_app = @base.add_app("main")
+        version = OneboxApiDoc::Version.new name: "0.0.4", app_id: main_app.object_id
+        expect(version.app).to eq main_app
+      end
+    end
+
     # describe "get_api" do
     #   before do
     #     @base = OneboxApiDoc.base
