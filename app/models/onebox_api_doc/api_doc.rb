@@ -2,17 +2,7 @@ module OneboxApiDoc
   class ApiDoc < BaseObject
 
     attr_accessor :tags, :permissions, :apis, :params, :errors
-    attr_accessor :version_id, :resource_id
-
-    # def initialize version_id, resource_id
-    #   self.version_id = version_id
-    #   self.resource_id = resource_id
-    #   self.tags = []
-    #   self.permissions = []
-    #   self.apis = []
-    #   self.params = []
-    #   self.errors = []
-    # end
+    attr_accessor :version_id, :resource_id, :extension_name
 
     def resource
       @resource ||= OneboxApiDoc.base.resources.detect { |resource| resource.object_id == self.resource_id }
@@ -20,6 +10,18 @@ module OneboxApiDoc
 
     def version
       @version ||= OneboxApiDoc.base.versions.detect { |version| version.object_id == self.version_id }
+    end
+
+    def app
+      version.app
+    end
+
+    def get_apis action=nil
+      if action.present?
+        self.apis.detect { |api| api.action == action.to_s }
+      else
+        self.apis
+      end
     end
 
     def add_api action, short_desc, &block
@@ -115,6 +117,12 @@ module OneboxApiDoc
       #   @_extension_name = name.to_s
       # end
 
+      # for extension
+      def extension_name extension_name
+        self.api_doc.add_app extension_name
+        self.api_doc.extension_name = extension_name
+      end
+
       # core_version is for extension
       # def version version, core_version: {}
       #   if core_version.blank?
@@ -126,11 +134,11 @@ module OneboxApiDoc
       # end
 
       # core_version is for extension
-      def version name, core_version: {}
+      def version version_name, core_version: {}
         if core_version.blank?
-          self.api_doc.version_id = OneboxApiDoc.base.add_version(name).object_id
+          self.api_doc.version_id = OneboxApiDoc.base.add_version(version_name).object_id
         else
-          self.api_doc.version_id = OneboxApiDoc.base.add_extension_version(name).object_id
+          self.api_doc.version_id = OneboxApiDoc.base.add_extension_version(version_name, self.api_doc.extension_name).object_id
         end
       end
 
