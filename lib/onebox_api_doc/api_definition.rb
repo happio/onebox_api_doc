@@ -79,16 +79,17 @@ module OneboxApiDoc
       def param name, type, options={}, &block
         options[:parent_id] = self.parent_id if self.parent_id.present?
         if options[:permissions].present? and self.doc.present?
+          options[:permissions] = [options[:permissions]] unless options[:permissions].is_a? Array
           options[:permission_ids] = options[:permissions].map { |permission_name| self.doc.add_permission(permission_name).object_id }
         end
         param = self.doc.add_param(name, type, options, &block)
         @param_ids << param.object_id unless self.parent_id.present?
       end
 
-      # def param_group name
-      #   block = OneboxApiDoc.base.get_param_group(name)
-      #   self.instance_exec(&block)
-      # end
+      def param_group name
+        block = self.doc.get_param_group(name)
+        self.instance_exec(&block)
+      end
     end
 
     class ErrorContainerDefinition
