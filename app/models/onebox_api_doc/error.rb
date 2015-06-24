@@ -15,10 +15,6 @@ module OneboxApiDoc
       @permissions ||= self.doc.permissions.select { |permission| self.permission_ids.include? permission.object_id }
     end
 
-    def permissions=(permission_names)
-      self.permission_ids = permission_names.map { |permission_name| self.doc.add_permission(name: permission_name) }
-    end
-
     private
 
     def set_default_value
