@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class ApiDoc < BaseObject
 
-    attr_accessor :tags, :permissions, :apis, :params, :errors
+    attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups
     attr_accessor :version_id, :resource_id, :extension_name
 
     def resource
@@ -49,6 +49,7 @@ module OneboxApiDoc
 
     def add_error api, error_status, error_message, &block
       error = OneboxApiDoc::Error.new(doc_id: self.object_id, code: error_status, message: error_message, &block)
+      api.error_ids << error.object_id
       if block_given?
         error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new(api.doc, &block)
         error.param_ids = error_detail.param_ids
@@ -75,6 +76,21 @@ module OneboxApiDoc
         permission
       else
         self.permissions.detect { |permission| permission.name == permission_name.to_s }
+      end
+    end
+
+    # Params Group
+    def add_param_group(name, &block)
+      key = name.to_s
+      @param_groups[key] = block
+    end
+
+    def get_param_group(name)
+      key = name.to_s
+      if @param_groups.has_key?(key)
+        return @param_groups[key]
+      else
+        raise "param group #{key} not defined"
       end
     end
 
@@ -153,9 +169,9 @@ module OneboxApiDoc
         self.api_doc.add_api action, short_desc, &block
       end
 
-      # def def_param_group name, &block
-      #   OneboxApiDoc.base.add_param_group name, &block
-      # end
+      def def_param_group name, &block
+        # OneboxApiDoc.base.add_param_group name, &block
+      end
 
       # def set_core_versions core_version
       #   # all_core_versions = OneboxApiDoc.base.core_versions
