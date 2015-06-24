@@ -320,11 +320,10 @@ module OneboxApiDoc
           class InheritedApiDoc < ApiDoc
           end
         end
-        it "set @@api_doc" do
-          class InheritedApiDoc < ApiDoc
-          end
-          expected_doc = @base.docs.detect { |doc| doc.class == InheritedApiDoc }
-          expect(InheritedApiDoc.api_doc).to eq expected_doc
+        it "return correct api doc" do
+          api_doc = ApiDoc.inherited(InheritedApiDoc)
+          expect(api_doc.resource.name).to eq "inheriteds"
+          expect(api_doc.version.name).to eq OneboxApiDoc.base.default_version.name
         end
       end
 
@@ -342,6 +341,16 @@ module OneboxApiDoc
           expected_resource = @base.resources.detect { |resource| resource.name == "users" }
           doc = @base.docs.detect { |doc| doc.class == ControllerNameApiDoc }
           expect(doc.resource_id).to eq expected_resource.object_id
+        end
+      end
+
+      describe "extension_name" do
+        it "set extension_name of api doc" do
+          class ExtensionNameApiDoc < ApiDoc
+            extension_name :extension_name
+          end
+          doc = @base.docs.detect { |doc| doc.class == ExtensionNameApiDoc }
+          expect(doc.extension_name).to eq 'extension_name'
         end
       end
 
@@ -516,6 +525,67 @@ module OneboxApiDoc
         end
       end
 
+      describe "app" do
+        before do
+          class AppApiDoc < ApiDoc
+            version :test_version
+          end
+        end
+        it "return correct app" do
+          expected_app = @base.versions.detect { |version| version.name == "test_version" }.app
+          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AppApiDoc }
+          expect(api_doc.app).to eq expected_app
+        end
+      end
+
+      describe "get_apis" do
+        context "action_name is not nil" do
+          before do
+            class GetApisApiDoc < ApiDoc
+              controller_name :users
+              api :show, "get user profile"
+            end
+            @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::GetApisApiDoc }
+          end
+          it "return correct api object" do
+            api = @api_doc.get_apis(:show)
+            expect(api).to be_an OneboxApiDoc::Api
+            expect(api.action).to eq 'show'
+            expect(api.doc_id).to eq @api_doc.object_id
+          end
+          it "return nil if api with action does not exist" do
+            api = @api_doc.get_apis(:index)
+            expect(api).to eq nil
+          end
+        end
+        context "action_name is nil" do
+          it "return correct array of api object" do
+            class GetApis2ApiDoc < ApiDoc
+              controller_name :users
+              api :show, "get user profile"
+              api :update, "update user profile"
+            end
+            api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::GetApis2ApiDoc }
+
+            apis = api_doc.get_apis
+            expect(apis).to be_an Array
+            expect(apis.size).to eq 2
+            apis.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.doc_id).to eq api_doc.object_id
+            end
+          end
+          it "return blank array if there is no api" do
+            class GetApis3ApiDoc < ApiDoc
+            end
+            api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::GetApis3ApiDoc }
+
+            apis = api_doc.get_apis
+            expect(apis).to eq []
+          end
+        end
+      end
+
       describe "add_api" do
         before do
           class AddApiApiDoc < ApiDoc
@@ -676,6 +746,46 @@ module OneboxApiDoc
         it "return correct permission" do
           permission = @api_doc.add_permission(:permission_name)
           expect(permission.name).to eq 'permission_name'
+        end
+      end
+
+      describe "nested_params_of" do
+        before do
+          class NestedParamApiDoc < ApiDoc
+          end
+          @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::NestedParamApiDoc }
+        end
+        it "return correct array of params which are child of given param id" do
+          parent_param = @api_doc.add_param :user, :object do
+            param :user_name, :string
+            param :user_age, :integer
+            param :user_bd, :date
+          end
+          nested_params = @api_doc.nested_params_of parent_param.object_id
+          expect(nested_params).to be_an Array
+          expect(nested_params.size).to eq 3
+          nested_params.each do |param|
+            expect(param).to be_an OneboxApiDoc::Param
+            expect(param.parent_id).to eq parent_param.object_id
+          end
+          param1 = nested_params.first
+          expect(param1.name).to eq 'user_name'
+          expect(param1.type).to eq 'String'
+          param2 = nested_params.second
+          expect(param2.name).to eq 'user_age'
+          expect(param2.type).to eq 'Integer'
+          param3 = nested_params.third
+          expect(param3.name).to eq 'user_bd'
+          expect(param3.type).to eq 'Date'
+        end
+        it "return blank array if param with the given id have no child" do
+          parent_param = @api_doc.add_param :order, :object
+          nested_params = @api_doc.nested_params_of parent_param.object_id
+          expect(nested_params).to eq []
+        end
+        it "return blank array if param with the given id does not exist" do
+          nested_params = @api_doc.nested_params_of :fake_id
+          expect(nested_params).to eq []
         end
       end
     end
