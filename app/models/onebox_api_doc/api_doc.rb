@@ -10,15 +10,8 @@ module OneboxApiDoc
     class << self
 
       cattr_accessor :api_doc
-
-      # attr_accessor :_controller_name, :_version, :_default_version, :_apis
-      # # for extension
-      # attr_accessor :_extension_name, :_core_versions
       
       def inherited(subclass)
-        # subclass._controller_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
-        # subclass._version = OneboxApiDoc.base.default_version
-        # subclass._core_versions = []
 
         resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
         resource = OneboxApiDoc.base.add_resource(resource_name)
@@ -30,32 +23,14 @@ module OneboxApiDoc
       ####### Setter Methods #######
       ##############################
 
-      # def controller_name name
-      #   @_controller_name = name.to_s
-      # end
       def controller_name name
         self.api_doc.resource_id = OneboxApiDoc.base.add_resource(name).object_id
       end
 
       # for extension
-      # def extension_name name
-      #   @_extension_name = name.to_s
-      # end
-
-      # for extension
       def extension_name extension_name
         self.api_doc.extension_name = extension_name.to_s
       end
-
-      # core_version is for extension
-      # def version version, core_version: {}
-      #   if core_version.blank?
-      #     @_version = OneboxApiDoc.base.add_version version.to_s
-      #   elsif @_extension_name.present?
-      #     @_version = OneboxApiDoc.base.add_extension_version @_extension_name, version.to_s
-      #     set_core_versions core_version
-      #   end
-      # end
 
       # core_version is for extension
       def version version_name, core_version: {}
@@ -66,19 +41,12 @@ module OneboxApiDoc
         end
       end
 
-      # def api action, short_desc="", &block
-      #   @_apis ||= []
-      #   api = OneboxApiDoc::Api.new(_controller_name, action, short_desc, &block)
-      #   @_apis << api
-      #   @_version.apis << api
-      #   OneboxApiDoc.base.add_api api
-      # end
       def api action, short_desc="", &block
         self.api_doc.add_api action, short_desc, &block
       end
 
       def def_param_group name, &block
-        # OneboxApiDoc.base.add_param_group name, &block
+        self.api_doc.add_param_group name, &block
       end
 
       # def set_core_versions core_version
@@ -172,20 +140,20 @@ module OneboxApiDoc
       end
     end
 
-    # Params Group
-    # def add_param_group(name, &block)
-    #   key = name.to_s
-    #   @param_groups[key] = block
-    # end
+    # Params Group methods
+    def add_param_group(name, &block)
+      key = name.to_s
+      self.param_groups[key] = block
+    end
 
-    # def get_param_group(name)
-    #   key = name.to_s
-    #   if @param_groups.has_key?(key)
-    #     return @param_groups[key]
-    #   else
-    #     raise "param group #{key} not defined"
-    #   end
-    # end
+    def get_param_group(name)
+      key = name.to_s
+      if self.param_groups.has_key?(key)
+        return self.param_groups[key]
+      else
+        raise "param group #{key} not defined"
+      end
+    end
 
     def nested_params_of param_id
       self.params.select { |param| param.parent_id == param_id }
@@ -199,6 +167,7 @@ module OneboxApiDoc
       self.apis = []
       self.params = []
       self.errors = []
+      self.param_groups = {}
     end
 
   end

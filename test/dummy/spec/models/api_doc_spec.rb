@@ -790,253 +790,174 @@ module OneboxApiDoc
       end
     end
 
-    # describe "controller_name" do
-    #   class ControllerNameApiDoc < ApiDoc
-    #     controller_name :test_controller_names
-    #   end
-    #   it "set correct controller name" do
-    #     expect(ControllerNameApiDoc._controller_name).to eq "test_controller_names"
-    #   end
+    describe "add_param_group" do
+      before do
+        class AddParamGroupApiDoc < ApiDoc
+        end
+        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamGroupApiDoc }
+      end
+      it "add param group" do
+        @api_doc.add_param_group :sample do
+          puts "do something"
+        end
+        expect(@api_doc.param_groups.keys).to include "sample"
+        expect(@api_doc.param_groups["sample"]).to be_a Proc
+      end
+    end
 
-    #   class WithoutControllerNameApiDoc < ApiDoc
-    #   end
-    #   it "set controller name according to class name if not calling" do
-    #     expect(WithoutControllerNameApiDoc._controller_name).to eq "without_controller_names"
-    #   end
-    # end
+    describe "get_param_group" do
+      before do
+        class AddParamGroupApiDoc < ApiDoc
+        end
+        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamGroupApiDoc }
+        @block = Proc.new { puts "do something" }
+        @api_doc.param_groups["sample"] = @block
+      end
+      it "return correct proc" do
+        param_group = @api_doc.get_param_group :sample
+        expect(param_group).to be_a Proc
+        expect(param_group).to eq @block
+      end
+    end
 
-    # describe "version" do
-    #   class VersionApiDoc < ApiDoc
-    #     version "0.0.1"
-    #   end
-    #   it "set correct version" do
-    #     expect(VersionApiDoc._version).to be_a OneboxApiDoc::Version
-    #     expect(VersionApiDoc._version.version).to eq "0.0.1"
-    #   end
+    describe "def_param_group" do
 
-    #   class WithoutVersionApiDoc < ApiDoc
-    #   end
-    #   it "set version to default version" do
-    #     expect(WithoutVersionApiDoc._version).to be_a OneboxApiDoc::Version
-    #     expect(WithoutVersionApiDoc._version.version).to eq OneboxApiDoc.base.default_version.version
-    #   end
+      before do
+        @base = OneboxApiDoc.base
+        class DefParamGroupApiDoc < ApiDoc
+          def_param_group :user_header do
+            param :user_id, :string, 
+              desc: 'user id',
+              permissions: :member,
+              required: true
+            param :user_type, :string, 
+              desc: 'user type',
+              permissions: :member,
+              required: true
+            param :user_auth, :string, 
+              desc: 'user authentication',
+              permissions: :member,
+              required: true
+          end
+        end
+        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::DefParamGroupApiDoc }
+      end
 
-    #   it "set correct core versions if it is extension api doc"
-    # end
+      it "add param group to base" do
+        expect(@api_doc.param_groups).to be_an Hash
+        expect(@api_doc.param_groups.keys).to include "user_header"
+      end
+    end
 
-    # describe "api" do
-    #   before do
-    #     @base = OneboxApiDoc.base
+    describe "param_group" do
+      before do
+        class ParamGroupApiDoc < ApiDoc
+          controller_name :orders
 
-    #     class ApiApiDoc < ApiDoc
-    #       controller_name :orders
-    #       api :show, 'short_desc' do
-    #         desc 'description'
-    #         tags :mobile, :web
-    #         permissions :guest, :admin, :member
-    #         header do
-    #         end
-    #         body do
-    #         end
-    #         response do
-    #         end
-    #         error do
-    #         end
-    #       end
-    #       api :update, 'short_desc' do
-    #         desc 'description'
-    #         tags :mobile, :web
-    #         permissions :guest, :admin, :member
-    #         header do
-    #         end
-    #         body do
-    #         end
-    #         response do
-    #         end
-    #         error do
-    #         end
-    #       end
-    #     end
-    #   end
+          def_param_group :user_header do
+            param :user_id, :string, 
+              desc: 'user id',
+              permissions: :member,
+              required: true
+            param :user_type, :string, 
+              desc: 'user type',
+              permissions: :member,
+              required: true
+            param :user_auth, :string, 
+              desc: 'user authentication',
+              permissions: :member,
+              required: true
+          end
 
-    #   it "set correct apis" do
-    #     api = ApiApiDoc._apis
-    #     expect(api).to be_an Array
-    #     expect(api.size).to eq 2
-    #     api1 = api.first
-    #     expect(api1._action).to eq "show"
-    #     expect(api1._short_desc).to eq "short_desc"
-    #     expect(api1._url).to eq "/orders/:id"
-    #     expect(api1._method).to eq "GET"
-    #     expect(api1._desc).to eq "description"
-    #     expect(api1._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-    #     expect(api1._permissions).to eq ["guest", "admin", "member"]
-    #     api2 = api.last
-    #     expect(api2._action).to eq "update"
-    #     expect(api2._short_desc).to eq "short_desc"
-    #     expect(api2._url).to eq "/orders/:id"
-    #     expect(api2._method).to eq "PATCH"
-    #     expect(api2._desc).to eq "description"
-    #     expect(api2._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-    #     expect(api2._permissions).to eq ["guest", "admin", "member"]
-    #   end
-    #   it "add api to base apis" do
-    #     apis = ApiApiDoc._apis
-    #     apis.each do |api|
-    #       expect(@base.all_apis).to include api
-    #     end
-    #   end
-    #   it "add api to version" do
-    #     apis = ApiApiDoc._apis
-    #     apis.each do |api|
-    #       expect(ApiApiDoc._version.apis).to include api
-    #     end
-    #   end
-    # end
+          api :show, 'short_desc' do
+            desc 'description'
+            tags :mobile, :web
+            permissions :guest, :admin, :member
+            request do
+              header do
+                param_group :user_header
+              end
+            end
+          end
+          api :update, 'short_desc' do
+            desc 'description'
+            tags :mobile, :web
+            permissions :guest, :admin, :member
+            request do
+              header do
+                param_group :user_header
+              end
+            end
+          end
+        end
+        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::ParamGroupApiDoc }
+      end
 
-    # describe "def_param_group" do
+      it "add param group to base" do
+        apis = @api_doc.apis
+        expect(apis).to be_an Array
+        expect(apis.size).to eq 2
+        api1 = apis.first
+        expect(api1.action).to eq "show"
+        expect(api1.short_desc).to eq "short_desc"
+        expect(api1.url).to eq "/orders/:id"
+        expect(api1.method).to eq "GET"
+        expect(api1.desc).to eq "description"
+        expect(api1.tags.map(&:name)).to eq ["mobile", "web"]
+        expect(api1.permissions.map(&:name)).to eq ["guest", "admin", "member"]
+        api1_header_params = api1.request.header.params
+        expect(api1_header_params).to be_an Array
+        expect(api1_header_params.size).to eq 3
+        api1_header_params1 = api1_header_params.shift
+        expect(api1_header_params1.name).to eq "user_id"
+        expect(api1_header_params1.type).to eq "String"
+        expect(api1_header_params1.desc).to eq "user id"
+        expect(api1_header_params1.permissions.map(&:name)).to eq ["member"]
+        expect(api1_header_params1.required).to eq true
+        api1_header_params2 = api1_header_params.shift
+        expect(api1_header_params2.name).to eq "user_type"
+        expect(api1_header_params2.type).to eq "String"
+        expect(api1_header_params2.desc).to eq "user type"
+        expect(api1_header_params2.permissions.map(&:name)).to eq ["member"]
+        expect(api1_header_params2.required).to eq true
+        api1_header_params3 = api1_header_params.shift
+        expect(api1_header_params3.name).to eq "user_auth"
+        expect(api1_header_params3.type).to eq "String"
+        expect(api1_header_params3.desc).to eq "user authentication"
+        expect(api1_header_params3.permissions.map(&:name)).to eq ["member"]
+        expect(api1_header_params3.required).to eq true
 
-    #   before do
-    #     @base = OneboxApiDoc.base
-    #     class DefParamGroupApiDoc < ApiDoc
-    #       def_param_group :user_header do
-    #         param :user_id, :string, 
-    #           desc: 'user id',
-    #           permissions: :member,
-    #           required: true
-    #         param :user_type, :string, 
-    #           desc: 'user type',
-    #           permissions: :member,
-    #           required: true
-    #         param :user_auth, :string, 
-    #           desc: 'user authentication',
-    #           permissions: :member,
-    #           required: true
-    #       end
-    #     end
-    #   end
-
-    #   it "add param group to base" do
-    #     expect(@base.param_groups).to be_an Hash
-    #     expect(@base.param_groups.keys).to include "user_header"
-    #   end
-    # end
-
-    # describe "param_group" do
-    #   before do
-    #     OneboxApiDoc.base.add_param_group :user_header do
-    #       param :user_id, :string, 
-    #         desc: 'user id',
-    #         permissions: :member,
-    #         required: true
-    #       param :user_type, :string, 
-    #         desc: 'user type',
-    #         permissions: :member,
-    #         required: true
-    #       param :user_auth, :string, 
-    #         desc: 'user authentication',
-    #         permissions: :member,
-    #         required: true
-    #     end
-
-    #     class ParamGroupApiDoc < ApiDoc
-    #       controller_name :orders
-    #       api :show, 'short_desc' do
-    #         desc 'description'
-    #         tags :mobile, :web
-    #         permissions :guest, :admin, :member
-    #         header do
-    #           param_group :user_header
-    #         end
-    #         body do
-    #         end
-    #         response do
-    #         end
-    #         error do
-    #         end
-    #       end
-    #       api :update, 'short_desc' do
-    #         desc 'description'
-    #         tags :mobile, :web
-    #         permissions :guest, :admin, :member
-    #         header do
-    #           param_group :user_header
-    #         end
-    #         body do
-    #         end
-    #         response do
-    #         end
-    #         error do
-    #         end
-    #       end
-    #     end
-    #   end
-
-    #   it "add param group to base" do
-    #     api = ParamGroupApiDoc._apis
-    #     expect(api).to be_an Array
-    #     expect(api.size).to eq 2
-    #     api1 = api.first
-    #     expect(api1._action).to eq "show"
-    #     expect(api1._short_desc).to eq "short_desc"
-    #     expect(api1._url).to eq "/orders/:id"
-    #     expect(api1._method).to eq "GET"
-    #     expect(api1._desc).to eq "description"
-    #     expect(api1._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-    #     expect(api1._permissions).to eq ["guest", "admin", "member"]
-    #     api1_header_params = api1._header._params
-    #     expect(api1_header_params).to be_an Array
-    #     expect(api1_header_params.size).to eq 3
-    #     api1_header_params1 = api1_header_params.shift
-    #     expect(api1_header_params1._name).to eq "user_id"
-    #     expect(api1_header_params1._type).to eq "String"
-    #     expect(api1_header_params1._desc).to eq "user id"
-    #     expect(api1_header_params1._permissions).to eq ["member"]
-    #     expect(api1_header_params1._required).to eq true
-    #     api1_header_params2 = api1_header_params.shift
-    #     expect(api1_header_params2._name).to eq "user_type"
-    #     expect(api1_header_params2._type).to eq "String"
-    #     expect(api1_header_params2._desc).to eq "user type"
-    #     expect(api1_header_params2._permissions).to eq ["member"]
-    #     expect(api1_header_params2._required).to eq true
-    #     api1_header_params3 = api1_header_params.shift
-    #     expect(api1_header_params3._name).to eq "user_auth"
-    #     expect(api1_header_params3._type).to eq "String"
-    #     expect(api1_header_params3._desc).to eq "user authentication"
-    #     expect(api1_header_params3._permissions).to eq ["member"]
-    #     expect(api1_header_params3._required).to eq true
-
-    #     api2 = api.last
-    #     expect(api2._action).to eq "update"
-    #     expect(api2._short_desc).to eq "short_desc"
-    #     expect(api2._url).to eq "/orders/:id"
-    #     expect(api2._method).to eq "PATCH"
-    #     expect(api2._desc).to eq "description"
-    #     expect(api2._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-    #     expect(api2._permissions).to eq ["guest", "admin", "member"]
-    #     api2_header_params = api2._header._params
-    #     expect(api2_header_params).to be_an Array
-    #     expect(api2_header_params.size).to eq 3
-    #     api2_header_params1 = api2_header_params.shift
-    #     expect(api2_header_params1._name).to eq "user_id"
-    #     expect(api2_header_params1._type).to eq "String"
-    #     expect(api2_header_params1._desc).to eq "user id"
-    #     expect(api2_header_params1._permissions).to eq ["member"]
-    #     expect(api2_header_params1._required).to eq true
-    #     api2_header_params2 = api2_header_params.shift
-    #     expect(api2_header_params2._name).to eq "user_type"
-    #     expect(api2_header_params2._type).to eq "String"
-    #     expect(api2_header_params2._desc).to eq "user type"
-    #     expect(api2_header_params2._permissions).to eq ["member"]
-    #     expect(api2_header_params2._required).to eq true
-    #     api2_header_params3 = api2_header_params.shift
-    #     expect(api2_header_params3._name).to eq "user_auth"
-    #     expect(api2_header_params3._type).to eq "String"
-    #     expect(api2_header_params3._desc).to eq "user authentication"
-    #     expect(api2_header_params3._permissions).to eq ["member"]
-    #     expect(api2_header_params3._required).to eq true
-    #   end
-    # end
+        api2 = apis.last
+        expect(api2.action).to eq "update"
+        expect(api2.short_desc).to eq "short_desc"
+        expect(api2.url).to eq "/orders/:id"
+        expect(api2.method).to eq "PATCH"
+        expect(api2.desc).to eq "description"
+        expect(api2.tags.map(&:name)).to eq ["mobile", "web"]
+        expect(api2.permissions.map(&:name)).to eq ["guest", "admin", "member"]
+        api2_header_params = api2.request.header.params
+        expect(api2_header_params).to be_an Array
+        expect(api2_header_params.size).to eq 3
+        api2_header_params1 = api2_header_params.shift
+        expect(api2_header_params1.name).to eq "user_id"
+        expect(api2_header_params1.type).to eq "String"
+        expect(api2_header_params1.desc).to eq "user id"
+        expect(api2_header_params1.permissions.map(&:name)).to eq ["member"]
+        expect(api2_header_params1.required).to eq true
+        api2_header_params2 = api2_header_params.shift
+        expect(api2_header_params2.name).to eq "user_type"
+        expect(api2_header_params2.type).to eq "String"
+        expect(api2_header_params2.desc).to eq "user type"
+        expect(api2_header_params2.permissions.map(&:name)).to eq ["member"]
+        expect(api2_header_params2.required).to eq true
+        api2_header_params3 = api2_header_params.shift
+        expect(api2_header_params3.name).to eq "user_auth"
+        expect(api2_header_params3.type).to eq "String"
+        expect(api2_header_params3.desc).to eq "user authentication"
+        expect(api2_header_params3.permissions.map(&:name)).to eq ["member"]
+        expect(api2_header_params3.required).to eq true
+      end
+    end
 
   end
 end
