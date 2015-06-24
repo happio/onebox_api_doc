@@ -84,6 +84,11 @@ module OneboxApiDoc
         param = self.doc.add_param(name, type, options, &block)
         @param_ids << param.object_id unless self.parent_id.present?
       end
+
+      # def param_group name
+      #   block = OneboxApiDoc.base.get_param_group(name)
+      #   self.instance_exec(&block)
+      # end
     end
 
     class ErrorContainerDefinition
@@ -96,7 +101,6 @@ module OneboxApiDoc
 
       def code error_status, error_message="", &block
         error = self.api.doc.add_error(api, error_status, error_message, &block)
-        api.error_ids << error.object_id
       end
     end
 

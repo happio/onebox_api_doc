@@ -229,20 +229,20 @@ module OneboxApiDoc
 
 
 
-    # Params Group
-    def add_param_group(name, &block)
-      key = name.to_s
-      @param_groups[key] = block
-    end
+    # # Params Group
+    # def add_param_group(name, &block)
+    #   key = name.to_s
+    #   @param_groups[key] = block
+    # end
 
-    def get_param_group(name)
-      key = name.to_s
-      if @param_groups.has_key?(key)
-        return @param_groups[key]
-      else
-        raise "param group #{key} not defined"
-      end
-    end
+    # def get_param_group(name)
+    #   key = name.to_s
+    #   if @param_groups.has_key?(key)
+    #     return @param_groups[key]
+    #   else
+    #     raise "param group #{key} not defined"
+    #   end
+    # end
 
     
     private
@@ -254,8 +254,6 @@ module OneboxApiDoc
       # @core_versions = []
       # @extension_versions = {}
       # @param_groups = {}
-
-      # @index = {}
       
       self.apps = []
       self.versions = []
