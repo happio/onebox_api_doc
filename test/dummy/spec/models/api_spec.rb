@@ -4,7 +4,9 @@ module OneboxApiDoc
   describe Api do
     before do
       @base = OneboxApiDoc.base
-      @doc = @base.add_doc(ApiDoc, 33, 44)
+      @version = @base.default_version
+      @resource = @base.add_resource :product
+      @doc = @base.add_doc(ApiDoc, @version.object_id, @resource.object_id)
     end
 
     describe "initialize" do
@@ -134,8 +136,9 @@ module OneboxApiDoc
       # end
 
       it "set correct id and api detail" do
-        api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, url: "/users/:id", short_desc: "get user profile", desc: "description",
-          tag_ids: [3,5,7,9], error_ids: [5,6,7,8]
+        api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: [3,5,7,9], error_ids: [5,6,7,8], permission_ids: [9,8,7,6]
         expect(api).not_to eq nil
         expect(api.doc_id).to eq @doc.object_id
         expect(api.resource_id).to eq @doc.resource_id
@@ -147,10 +150,12 @@ module OneboxApiDoc
         expect(api.desc).to eq "description"
         expect(api.tag_ids).to eq [3,5,7,9]
         expect(api.error_ids).to eq [5,6,7,8]
+        expect(api.permission_ids).to eq [9,8,7,6]
       end
 
       it "set default api request and response" do
-        api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, url: "/users/:id", short_desc: "get user profile"
+        api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile"
         expect(api.request).to be_an OpenStruct
         expect(api.request.header).to be_a ParamContainer
         expect(api.request.header.params).to eq []
@@ -165,31 +170,118 @@ module OneboxApiDoc
     end
 
     describe "doc" do
-      it "return correct doc"
+      before do
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: [3,5,7,9], error_ids: [5,6,7,8]
+      end
+      it "return correct doc" do
+        doc = @api.doc
+        expect(doc).to eq @doc
+      end
     end
 
     describe "resource" do
-      it "return correct resource"
+      before do
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: [3,5,7,9], error_ids: [5,6,7,8]
+      end
+      it "return correct resource" do
+        resource = @api.resource
+        expect(resource).to eq @resource
+      end
     end
 
     describe "version" do
-      it "return correct version"
+      before do
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: [3,5,7,9], error_ids: [5,6,7,8]
+      end
+      it "return correct version" do
+        version = @api.version
+        expect(version).to eq @version
+      end
     end
 
     describe "tags" do
-      it "return correct tags"
+      before do
+        @tags = []
+        @tags << @doc.add_tag(:tag1)
+        @tags << @doc.add_tag(:tag2)
+        @tags << @doc.add_tag(:tag3)
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: @tags.map(&:object_id), error_ids: [5,6,7,8]
+      end
+      it "return correct tags" do
+        tags = @api.tags
+        expect(tags).to be_an Array
+        expect(tags.size).to be > 0 and eq @tags.size
+        tags.each do |tag|
+          expect(tag).to be_an OneboxApiDoc::Tag
+        end
+        expect(tags).to eq @tags
+      end
     end
 
-    describe "tags=()" do
-      it "set correct tag_ids"
+    describe "permissions" do
+      before do
+        @permissions = []
+        @permissions << @doc.add_permission(:permission1)
+        @permissions << @doc.add_permission(:permission2)
+        @permissions << @doc.add_permission(:permission3)
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: [3,5,7,9], error_ids: [5,6,7,8], permission_ids: @permissions.map(&:object_id)
+      end
+      it "return correct permissions" do
+        permissions = @api.permissions
+        expect(permissions).to be_an Array
+        expect(permissions.size).to be > 0 and eq @permissions.size
+        permissions.each do |permission|
+          expect(permission).to be_an OneboxApiDoc::Permission
+        end
+        expect(permissions).to eq @permissions
+      end
     end
 
     describe "errors" do
-      it "return correct errors"
+      before do
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
+          url: "/users/:id", short_desc: "get user profile", desc: "description",
+          tag_ids: [3,5,7,9], permission_ids: [5,6,7,8]
+        @errors = []
+        @errors << @doc.add_error(@api, 401, 'Not Found')
+        @errors << @doc.add_error(@api, 400, 'Bad Request')
+      end
+      it "return correct errors" do
+        errors = @api.errors
+        expect(errors).to be_an Array
+        expect(errors.size).to be > 0 and eq @errors.size
+        errors.each do |error|
+          expect(error).to be_an OneboxApiDoc::Error
+        end
+        expect(errors).to eq @errors
+      end
     end
 
-    describe "errors=()" do
-      it "set correct error_ids"
+    describe "is_extension?" do
+      it "return true if its version is extension version" do
+        @version = @base.default_version
+        @resource = @base.add_resource :product
+        @doc = @base.add_doc(ApiDoc, @version.object_id, @resource.object_id)
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show
+        expect(@api.is_extension?).to eq false
+      end
+      it "return false if its version is main version" do
+        @version = @base.add_extension_version '0.3', :extension_name
+        @resource = @base.add_resource :product
+        @doc = @base.add_doc(ApiDoc, @version.object_id, @resource.object_id)
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show
+        expect(@api.is_extension?).to eq true
+      end
     end
 
     # describe "desc" do
