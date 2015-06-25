@@ -1,6 +1,5 @@
 class UsersApiDoc < OneboxApiDoc::ApiDoc
   controller_name :users
-  # version "1.2.3"
 
   api :show, 'get user profile' do
     desc 'get user profile'
