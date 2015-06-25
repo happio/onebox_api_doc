@@ -9,14 +9,18 @@ module OneboxApiDoc
     #####################
     class << self
 
-      cattr_accessor :doc, :resource_id
+      cattr_accessor :doc, :resource_name, :version_id, :_extension_name
       
       def inherited(subclass)
-        resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
-        resource = OneboxApiDoc.base.add_resource(resource_name)
-        self.resource_id = resource.object_id
+        self.resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
+        # resource = OneboxApiDoc.base.add_resource(resource_name)
+        # self.resource_id = resource.object_id
         version = OneboxApiDoc.base.default_version
-        self.doc = OneboxApiDoc.base.add_doc(version.object_id)
+        self.version_id = version.object_id
+        # self.doc = OneboxApiDoc.base.add_doc(version.object_id)
+        # self.version_name = OneboxApiDoc.base.default_version.name
+        self.doc = nil
+        subclass
       end
 
       ##############################
@@ -24,28 +28,43 @@ module OneboxApiDoc
       ##############################
 
       def controller_name name
-        self.resource_id = OneboxApiDoc.base.add_resource(name).object_id
+        # self.resource_id = OneboxApiDoc.base.add_resource(name).object_id
+        self.resource_name = name
       end
 
       # for extension
       def extension_name extension_name
-        self.doc.extension_name = extension_name.to_s
+        # self.doc.extension_name = extension_name.to_s
+        self._extension_name = extension_name.to_s
       end
 
       # core_version is for extension
       def version version_name, core_version: {}
+        # p "version_name #{version_name}"
         if core_version.blank?
-          self.doc.version_id = OneboxApiDoc.base.add_version(version_name).object_id
+          # version = OneboxApiDoc.base.add_version(version_name)
+          # self.doc.version_id = OneboxApiDoc.base.add_version(version_name).object_id
+          # self.version_id = OneboxApiDoc.base.add_version(version_name).object_id
+          version = OneboxApiDoc.base.add_version(version_name.to_s)
         else
-          self.doc.version_id = OneboxApiDoc.base.add_extension_version(version_name, self.doc.extension_name).object_id
+          # version = OneboxApiDoc.base.add_extension_version(version_name, self.doc.extension_name)
+          # self.doc.version_id = OneboxApiDoc.base.add_extension_version(version_name, self.doc.extension_name).object_id
+          # self.version_id = OneboxApiDoc.base.add_extension_version(version_name, self.doc._extension_name).object_id
+          version = OneboxApiDoc.base.add_extension_version(version_name.to_s, self.doc._extension_name)
         end
+        # self.doc = OneboxApiDoc.base.add_doc(version)
+        self.version_id = version.object_id
+        version
       end
 
       def api action, short_desc="", &block
-        self.doc.add_api(self.resource_id, action, short_desc, &block)
+        set_up_doc
+        resource = OneboxApiDoc.base.add_resource(self.resource_name)
+        self.doc.add_api(resource.object_id, action, short_desc, &block)
       end
 
       def def_param_group name, &block
+        set_up_doc
         self.doc.add_param_group name, &block
       end
 
@@ -54,6 +73,11 @@ module OneboxApiDoc
       #   # ...
       #   # TODO: set core version incase of this is extension api doc
       # end
+
+      def set_up_doc
+        self.doc ||= OneboxApiDoc.base.add_doc(self.version_id)
+        # p "self.doc #{self.doc} version #{self.version_id}"
+      end
 
     end
 

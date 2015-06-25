@@ -39,7 +39,6 @@ module OneboxApiDoc
     end
 
     def add_api resource_id, action, short_desc, &block
-      # resource_name = self.resource.name
       self.resource_ids << resource_id unless self.resource_ids.include? resource_id
       resource_name = OneboxApiDoc.base.resources.detect { |resource| resource.object_id == resource_id }.name
       route = Route.route_for(resource_name, action)
