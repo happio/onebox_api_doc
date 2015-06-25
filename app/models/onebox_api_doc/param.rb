@@ -34,6 +34,10 @@ module OneboxApiDoc
     private
 
     def set_default_value
+      @params = nil
+      @doc = nil
+      @parent = nil
+      @permissions = nil
       self.permission_ids ||= []
       self.validates = validation_messages(self.validates || {})
       self.type = self.type.capitalize

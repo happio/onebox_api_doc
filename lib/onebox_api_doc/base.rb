@@ -33,37 +33,37 @@ module OneboxApiDoc
     end
 
     def main_app
-      main_app = self.apps.detect { |app| app.name == "main" }
-      unless main_app.present?
-        main_app = OneboxApiDoc::App.new(name: "main")
-        self.apps << main_app
-        main_app
+      @main_app ||= self.apps.detect { |app| app.name == "main" }
+      unless @main_app.present?
+        @main_app = OneboxApiDoc::App.new(name: "main")
+        self.apps << @main_app
+        @main_app
       else
-        main_app
+        @main_app
       end
     end
 
     def extension_apps
-      self.apps.select { |app| app.name != "main" }
+      @extension_apps ||= self.apps.select { |app| app.name != "main" }
     end
 
     def default_version
-      default_version = self.versions.detect { |version| version.name == OneboxApiDoc::Engine.default_version and version.app_id == main_app.object_id }
-      unless default_version.present?
-        default_version = OneboxApiDoc::Version.new(name: OneboxApiDoc::Engine.default_version, app_id: main_app.object_id)
-        self.versions << default_version
-        default_version
+      @default_version ||= self.versions.detect { |version| version.name == OneboxApiDoc::Engine.default_version and version.app_id == main_app.object_id }
+      unless @default_version.present?
+        @default_version = OneboxApiDoc::Version.new(name: OneboxApiDoc::Engine.default_version, app_id: main_app.object_id)
+        self.versions << @default_version
+        @default_version
       else
-        default_version
+        @default_version
       end
     end
 
     def main_versions
-      self.versions.select { |version| not version.is_extension? }
+      @main_versions ||= self.versions.select { |version| not version.is_extension? }
     end
 
     def lastest_main_version
-      main_versions.sort { |version1, version2| Gem::Version.new(version1.name) <=> Gem::Version.new(version2.name) }.last
+      @lastest_main_version ||= main_versions.sort { |version1, version2| Gem::Version.new(version1.name) <=> Gem::Version.new(version2.name) }.last
     end
 
     def extension_versions extension_name = nil
@@ -181,6 +181,12 @@ module OneboxApiDoc
     private
 
     def set_default_value
+      @main_app = nil
+      @extension_apps = nil
+      @default_version = nil
+      @main_versions = nil
+      @lastest_main_version = nil
+
       self.apps = []
       self.versions = []
       self.docs = []

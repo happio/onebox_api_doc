@@ -10,6 +10,12 @@ module OneboxApiDoc
     def app
       @app ||= OneboxApiDoc.base.apps.detect { |app| app.object_id == self.app_id }
     end
+
+    private
+
+    def set_default_version
+      @app = nil
+    end
     
   end
 end

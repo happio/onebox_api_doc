@@ -22,11 +22,13 @@ module OneboxApiDoc
 
     def apis_group_by_resource
       result = {}
-      self.apis.each do |api|
-        result[api.resource.name] ||= []
-        result[api.resource.name] << api
+      unless @apis_group_by_resource.present?
+        self.apis.each do |api|
+          result[api.resource.name] ||= []
+          result[api.resource.name] << api
+        end
       end
-      result
+      @apis_group_by_resource ||= result
     end
 
     def get_apis resource_name, action=nil
@@ -124,6 +126,9 @@ module OneboxApiDoc
     private
 
     def set_default_value
+      @resource = nil
+      @version = nil
+      @apis_group_by_resource = nil
       self.resource_ids = []
       self.tags = []
       self.permissions = []

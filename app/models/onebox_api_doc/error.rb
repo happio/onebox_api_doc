@@ -18,6 +18,9 @@ module OneboxApiDoc
     private
 
     def set_default_value
+      @doc = nil
+      @params = nil
+      @permissions = nil
       self.permission_ids ||= []
       self.param_ids ||= []
     end
