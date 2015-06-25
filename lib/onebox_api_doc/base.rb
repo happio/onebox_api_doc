@@ -15,13 +15,13 @@ module OneboxApiDoc
       set_default_value
     end
 
-    # loading documentation
-    def reload_documentation
-      unload_documentation
-      load_documentation
+    # loading document
+    def reload_document
+      unload_document
+      load_document
     end
 
-    def load_documentation
+    def load_document
       rails_mark_classes_for_reload
 
       api_docs_paths.each do |f|
@@ -29,7 +29,7 @@ module OneboxApiDoc
       end
     end
 
-    def unload_documentation
+    def unload_document
       api_docs_paths.each do |f|
         unload_api_doc_from_file f
       end
@@ -303,7 +303,7 @@ module OneboxApiDoc
     # We need to reload all the controller classes to rebuild the
     # docs, therefore we just force to reload all the code. This
     # happens only when reload_controllers is set to true and only
-    # when showing the documentation.
+    # when showing the document.
     #
     # If cache_classes is set to false, it does nothing,
     # as this would break loading of the api doc.
