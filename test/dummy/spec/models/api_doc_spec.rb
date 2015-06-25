@@ -106,12 +106,14 @@ module OneboxApiDoc
             end
           end
         end
-        @doc = @base.docs.detect { |doc| doc.class == TestApiDoc }
+        # @doc = @base.docs.detect { |doc| doc.class == TestApiDoc }
+        @doc = @base.docs.last
       end
 
-      it "set controller name and version to doc" do
-        expect(@doc.resource).to be_an OneboxApiDoc::Resource
-        expect(@doc.resource.name).to eq "products"
+      it "set resources to doc" do
+        expect(@doc.resources).to be_an Array
+        expect(@doc.resources.size).to eq 1
+        expect(@doc.resources.first.name).to eq 'products'
       end
 
       it "set version to doc" do
@@ -320,10 +322,13 @@ module OneboxApiDoc
           class InheritedApiDoc < ApiDoc
           end
         end
-        it "return correct api doc" do
-          api_doc = ApiDoc.inherited(InheritedApiDoc)
-          expect(api_doc.resource.name).to eq "inheriteds"
-          expect(api_doc.version.name).to eq OneboxApiDoc.base.default_version.name
+        it "return doc with correct version and preset ApiDoc resource id" do
+          doc = ApiDoc.inherited(InheritedApiDoc)
+          expect(InheritedApiDoc.resource_id).not_to eq nil
+          resource = @base.resources.detect { |resource| resource.object_id == InheritedApiDoc.resource_id }
+          expect(resource.name).to eq 'inheriteds'
+          expect(doc).to be_an OneboxApiDoc::Doc
+          expect(doc.version.name).to eq OneboxApiDoc.base.default_version.name
         end
       end
 
@@ -338,9 +343,9 @@ module OneboxApiDoc
           class ControllerNameApiDoc < ApiDoc
             controller_name :users
           end
-          expected_resource = @base.resources.detect { |resource| resource.name == "users" }
-          doc = @base.docs.detect { |doc| doc.class == ControllerNameApiDoc }
-          expect(doc.resource_id).to eq expected_resource.object_id
+          expect(ControllerNameApiDoc.resource_id).not_to eq nil
+          resource = @base.resources.detect { |resource| resource.object_id == ControllerNameApiDoc.resource_id }
+          expect(resource.name).to eq 'users'
         end
       end
 
@@ -349,7 +354,7 @@ module OneboxApiDoc
           class ExtensionNameApiDoc < ApiDoc
             extension_name :extension_name
           end
-          doc = @base.docs.detect { |doc| doc.class == ExtensionNameApiDoc }
+          doc = @base.docs.last
           expect(doc.extension_name).to eq 'extension_name'
         end
       end
@@ -366,7 +371,7 @@ module OneboxApiDoc
             version "0.0.1"
           end
           expected_version = @base.versions.detect { |version| version.name == "0.0.1" }
-          doc = @base.docs.detect { |doc| doc.class == VersionApiDoc }
+          doc = @base.docs.last
           expect(doc.version_id).to eq expected_version.object_id
         end
       end
@@ -379,7 +384,7 @@ module OneboxApiDoc
           class ApiApiDoc < ApiDoc
             controller_name :users
           end
-          @doc = @base.docs.select { |doc| doc.class == ApiApiDoc }.first
+          @doc = @base.docs.last
           @doc.apis = []
           expect(@doc).to receive(:add_api)
           ApiApiDoc.api :show, "get user profile"
@@ -426,7 +431,7 @@ module OneboxApiDoc
               end
             end
           end
-          @doc = @base.docs.select { |doc| doc.class == Api2ApiDoc }.first
+          @doc = @base.docs.last
 
           expected_tag_ids = @doc.tags.select { |tag| ["mobile", "web"].include? tag.name }.map(&:object_id)
           expected_permission_ids = @doc.permissions.select { |permission| permission.name == "member" }.map(&:object_id)
@@ -491,7 +496,7 @@ module OneboxApiDoc
             controller_name :users
             api :show
           end
-          @doc = @base.docs.select { |doc| doc.class == Api3ApiDoc }.first
+          @doc = @base.docs.last
           api = @doc.apis.select { |api| api.action == 'show' }.first
           expect(api.short_desc).to eq ""
         end
@@ -499,16 +504,26 @@ module OneboxApiDoc
     end
 
     describe "instance methods" do
-      describe "resource" do
+      describe "resources" do
         before do
-          class ResourceApiDoc < ApiDoc
-            controller_name :test_resources
-          end
+          @base.send(:set_default_value)
         end
         it "return correct resource" do
-          expected_resource = @base.resources.detect { |resource| resource.name == "test_resources" }
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::ResourceApiDoc }
-          expect(api_doc.resource).to eq expected_resource
+          class ResourceApiDoc < ApiDoc
+            controller_name :users
+            api :show, ''
+          end
+          class ResourceApi2Doc < ApiDoc
+            controller_name :products
+            api :show, ''
+          end
+
+          doc = @base.docs.last
+          expected_resource = [
+            @base.resources.detect { |resource| resource.name == "users" },
+            @base.resources.detect { |resource| resource.name == "products" }
+          ]
+          expect(doc.resources).to eq expected_resource
         end
       end
 
@@ -520,8 +535,8 @@ module OneboxApiDoc
         end
         it "return correct version" do
           expected_version = @base.versions.detect { |version| version.name == "test_version" }
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::Version2ApiDoc }
-          expect(api_doc.version).to eq expected_version
+          doc = @base.docs.last
+          expect(doc.version).to eq expected_version
         end
       end
 
@@ -533,28 +548,37 @@ module OneboxApiDoc
         end
         it "return correct app" do
           expected_app = @base.versions.detect { |version| version.name == "test_version" }.app
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AppApiDoc }
-          expect(api_doc.app).to eq expected_app
+          doc = @base.docs.last
+          expect(doc.app).to eq expected_app
         end
       end
 
       describe "get_apis" do
+        before do
+          @base.send(:set_default_value)
+        end
         context "action_name is not nil" do
-          before do
+          it "return correct api object" do
             class GetApisApiDoc < ApiDoc
               controller_name :users
               api :show, "get user profile"
             end
-            @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::GetApisApiDoc }
-          end
-          it "return correct api object" do
-            api = @api_doc.get_apis(:show)
+            doc = @base.docs.last
+
+            api = doc.get_apis(:users, :show)
             expect(api).to be_an OneboxApiDoc::Api
             expect(api.action).to eq 'show'
-            expect(api.doc_id).to eq @api_doc.object_id
+            expect(api.resource.name).to eq 'users'
+            expect(api.doc_id).to eq doc.object_id
           end
           it "return nil if api with action does not exist" do
-            api = @api_doc.get_apis(:index)
+            class GetApis1ApiDoc < ApiDoc
+              controller_name :users
+              api :show, "get user profile"
+            end
+            doc = @base.docs.last
+
+            api = doc.get_apis(:users, :index)
             expect(api).to eq nil
           end
         end
@@ -565,22 +589,22 @@ module OneboxApiDoc
               api :show, "get user profile"
               api :update, "update user profile"
             end
-            api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::GetApis2ApiDoc }
+            doc = @base.docs.last
 
-            apis = api_doc.get_apis
+            apis = doc.get_apis(:users)
             expect(apis).to be_an Array
             expect(apis.size).to eq 2
             apis.each do |api|
               expect(api).to be_an OneboxApiDoc::Api
-              expect(api.doc_id).to eq api_doc.object_id
+              expect(api.doc_id).to eq doc.object_id
             end
           end
           it "return blank array if there is no api" do
             class GetApis3ApiDoc < ApiDoc
             end
-            api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::GetApis3ApiDoc }
+            doc = @base.docs.last
 
-            apis = api_doc.get_apis
+            apis = doc.get_apis(:users)
             expect(apis).to eq []
           end
         end
@@ -591,25 +615,26 @@ module OneboxApiDoc
           class AddApiApiDoc < ApiDoc
             controller_name :products
           end
+          @resource = @base.add_resource :products
         end
         it "add new api to doc.apis" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddApiApiDoc }
-          expect{ api_doc.add_api(:show, 'sample short description') }.to change(api_doc.apis, :count).by 1
+          doc = @base.docs.last
+          expect{ doc.add_api(@resource.object_id, :show, 'sample short description') }.to change(doc.apis, :count).by 1
         end
         it "add correct api" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddApiApiDoc }
-          api_doc.add_api(:show, 'sample short description')
-          api = api_doc.apis.last
-          expect(api.doc_id).to eq api_doc.object_id
+          doc = @base.docs.last
+          doc.add_api(@resource.object_id, :show, 'sample short description')
+          api = doc.apis.last
+          expect(api.doc_id).to eq doc.object_id
           expect(api.method).to eq "GET"
           expect(api.action).to eq "show"
           expect(api.url).to eq "/products/:id"
           expect(api.short_desc).to eq "sample short description"
         end
         it "return correct api" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddApiApiDoc }
-          api = api_doc.add_api(:index, 'sample short description')
-          expect(api.doc_id).to eq api_doc.object_id
+          doc = @base.docs.last
+          api = doc.add_api(@resource.object_id, :index, 'sample short description')
+          expect(api.doc_id).to eq doc.object_id
           expect(api.method).to eq "GET"
           expect(api.action).to eq "index"
           expect(api.url).to eq "/products"
@@ -624,21 +649,21 @@ module OneboxApiDoc
           end
         end
         it "add new param to doc.params" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamApiDoc }
-          expect{ api_doc.add_param(:param0, :integer) }.to change(api_doc.params, :count).by 1
+          doc = @base.docs.last
+          expect{ doc.add_param(:param0, :integer) }.to change(doc.params, :count).by 1
         end
         it "add correct param" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamApiDoc }
-          api_doc.add_param(:param1, :string)
-          param = api_doc.params.last
-          expect(param.doc_id).to eq api_doc.object_id
+          doc = @base.docs.last
+          doc.add_param(:param1, :string)
+          param = doc.params.last
+          expect(param.doc_id).to eq doc.object_id
           expect(param.name).to eq 'param1'
           expect(param.type).to eq 'String'
         end
         it "return correct param" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamApiDoc }
-          param = api_doc.add_param(:param2, :float)
-          expect(param.doc_id).to eq api_doc.object_id
+          doc = @base.docs.last
+          param = doc.add_param(:param2, :float)
+          expect(param.doc_id).to eq doc.object_id
           expect(param.name).to eq 'param2'
           expect(param.type).to eq 'Float'
         end
@@ -649,32 +674,33 @@ module OneboxApiDoc
           class AddErrorApiDoc < ApiDoc
             controller_name :products
           end
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddErrorApiDoc }
-          @api = api_doc.add_api(:index, 'get all products')
+          doc = @base.docs.last
+          @resource = @base.add_resource :products
+          @api = doc.add_api(@resource.object_id, :index, 'get all products')
         end
         it "add new error to doc.errors" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddErrorApiDoc }
-          expect{ api_doc.add_error(@api, 401, 'Unauthorize') }.to change(api_doc.errors, :count).by 1
+          doc = @base.docs.last
+          expect{ doc.add_error(@api, 401, 'Unauthorize') }.to change(doc.errors, :count).by 1
         end
         it "add correct error" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddErrorApiDoc }
-          api_doc.add_error(@api, 401, 'Unauthorize')
-          error = api_doc.errors.last
-          expect(error.doc_id).to eq api_doc.object_id
+          doc = @base.docs.last
+          doc.add_error(@api, 401, 'Unauthorize')
+          error = doc.errors.last
+          expect(error.doc_id).to eq doc.object_id
           expect(error.code).to eq 401
           expect(error.message).to eq 'Unauthorize'
         end
         it "return correct error" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddErrorApiDoc }
-          error = api_doc.add_error(@api, 401, 'Unauthorize')
-          expect(error.doc_id).to eq api_doc.object_id
+          doc = @base.docs.last
+          error = doc.add_error(@api, 401, 'Unauthorize')
+          expect(error.doc_id).to eq doc.object_id
           expect(error.code).to eq 401
           expect(error.message).to eq 'Unauthorize'
         end
         it "init ErrorDefinition to get data from block if block given" do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddErrorApiDoc }
+          doc = @base.docs.last
           expect_any_instance_of(OneboxApiDoc::ApiDefinition::ErrorDefinition).to receive :permissions
-          error = api_doc.add_error(@api, 401, 'Unauthorize') do
+          error = doc.add_error(@api, 401, 'Unauthorize') do
             permissions :guest, :admin, :member
             param :error_message, :string, 
               desc: 'error message',
@@ -682,14 +708,14 @@ module OneboxApiDoc
           end
         end
         it 'set correct data from block if block given' do
-          api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddErrorApiDoc }
-          error = api_doc.add_error(@api, 401, 'Unauthorize') do
+          doc = @base.docs.last
+          error = doc.add_error(@api, 401, 'Unauthorize') do
             permissions :guest, :admin, :member
             param :error_message, :string, 
               desc: 'error message',
               permissions: [ :guest, :admin, :member ]
           end
-          expect(error.doc_id).to eq api_doc.object_id
+          expect(error.doc_id).to eq doc.object_id
           expect(error.code).to eq 401
           expect(error.message).to eq 'Unauthorize'
           expect(error.param_ids.size).to eq 1
@@ -702,23 +728,23 @@ module OneboxApiDoc
           class AddTagApiDoc < ApiDoc
             controller_name :products
           end
-          @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddTagApiDoc }
-          @api_doc.tags = []
+          @doc = @base.docs.last
+          @doc.tags = []
         end
         it "add new tag to doc.tags" do
-          expect{ @api_doc.add_tag(:tag_name) }.to change(@api_doc.tags, :count).by 1
+          expect{ @doc.add_tag(:tag_name) }.to change(@doc.tags, :count).by 1
         end
         it "dose not add new tag to doc.tags if tag with this name already exist" do
-          @api_doc.add_tag(:tag_name)
-          expect{ @api_doc.add_tag(:tag_name) }.not_to change(@api_doc.tags, :count)
+          @doc.add_tag(:tag_name)
+          expect{ @doc.add_tag(:tag_name) }.not_to change(@doc.tags, :count)
         end
         it "add correct tag" do
-          @api_doc.add_tag(:tag_name)
-          tag = @api_doc.tags.detect { |tag| tag.name == 'tag_name' }
+          @doc.add_tag(:tag_name)
+          tag = @doc.tags.detect { |tag| tag.name == 'tag_name' }
           expect(tag.name).to eq 'tag_name'
         end
         it "return correct tag" do
-          tag = @api_doc.add_tag(:tag_name)
+          tag = @doc.add_tag(:tag_name)
           expect(tag.name).to eq 'tag_name'
         end
       end
@@ -728,23 +754,23 @@ module OneboxApiDoc
           class AddTagApiDoc < ApiDoc
             controller_name :products
           end
-          @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddTagApiDoc }
-          @api_doc.permissions = []
+          @doc = @base.docs.last
+          @doc.permissions = []
         end
         it "add new permission to doc.permissions" do
-          expect{ @api_doc.add_permission(:permission_name) }.to change(@api_doc.permissions, :count).by 1
+          expect{ @doc.add_permission(:permission_name) }.to change(@doc.permissions, :count).by 1
         end
         it "dose not add new permission to doc.permissions if permission with this name already exist" do
-          @api_doc.add_permission(:permission_name)
-          expect{ @api_doc.add_permission(:permission_name) }.not_to change(@api_doc.permissions, :count)
+          @doc.add_permission(:permission_name)
+          expect{ @doc.add_permission(:permission_name) }.not_to change(@doc.permissions, :count)
         end
         it "add correct permission" do
-          @api_doc.add_permission(:permission_name)
-          permission = @api_doc.permissions.detect { |permission| permission.name == 'permission_name' }
+          @doc.add_permission(:permission_name)
+          permission = @doc.permissions.detect { |permission| permission.name == 'permission_name' }
           expect(permission.name).to eq 'permission_name'
         end
         it "return correct permission" do
-          permission = @api_doc.add_permission(:permission_name)
+          permission = @doc.add_permission(:permission_name)
           expect(permission.name).to eq 'permission_name'
         end
       end
@@ -753,15 +779,15 @@ module OneboxApiDoc
         before do
           class NestedParamApiDoc < ApiDoc
           end
-          @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::NestedParamApiDoc }
+          @doc = @base.docs.last
         end
         it "return correct array of params which are child of given param id" do
-          parent_param = @api_doc.add_param :user, :object do
+          parent_param = @doc.add_param :user, :object do
             param :user_name, :string
             param :user_age, :integer
             param :user_bd, :date
           end
-          nested_params = @api_doc.nested_params_of parent_param.object_id
+          nested_params = @doc.nested_params_of parent_param.object_id
           expect(nested_params).to be_an Array
           expect(nested_params.size).to eq 3
           nested_params.each do |param|
@@ -779,12 +805,12 @@ module OneboxApiDoc
           expect(param3.type).to eq 'Date'
         end
         it "return blank array if param with the given id have no child" do
-          parent_param = @api_doc.add_param :order, :object
-          nested_params = @api_doc.nested_params_of parent_param.object_id
+          parent_param = @doc.add_param :order, :object
+          nested_params = @doc.nested_params_of parent_param.object_id
           expect(nested_params).to eq []
         end
         it "return blank array if param with the given id does not exist" do
-          nested_params = @api_doc.nested_params_of :fake_id
+          nested_params = @doc.nested_params_of :fake_id
           expect(nested_params).to eq []
         end
       end
@@ -794,14 +820,14 @@ module OneboxApiDoc
       before do
         class AddParamGroupApiDoc < ApiDoc
         end
-        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamGroupApiDoc }
+        @doc = @base.docs.last
       end
       it "add param group" do
-        @api_doc.add_param_group :sample do
+        @doc.add_param_group :sample do
           puts "do something"
         end
-        expect(@api_doc.param_groups.keys).to include "sample"
-        expect(@api_doc.param_groups["sample"]).to be_a Proc
+        expect(@doc.param_groups.keys).to include "sample"
+        expect(@doc.param_groups["sample"]).to be_a Proc
       end
     end
 
@@ -809,12 +835,12 @@ module OneboxApiDoc
       before do
         class AddParamGroupApiDoc < ApiDoc
         end
-        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::AddParamGroupApiDoc }
+        @doc = @base.docs.last
         @block = Proc.new { puts "do something" }
-        @api_doc.param_groups["sample"] = @block
+        @doc.param_groups["sample"] = @block
       end
       it "return correct proc" do
-        param_group = @api_doc.get_param_group :sample
+        param_group = @doc.get_param_group :sample
         expect(param_group).to be_a Proc
         expect(param_group).to eq @block
       end
@@ -840,17 +866,18 @@ module OneboxApiDoc
               required: true
           end
         end
-        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::DefParamGroupApiDoc }
+        @doc = @base.docs.last
       end
 
       it "add param group to base" do
-        expect(@api_doc.param_groups).to be_an Hash
-        expect(@api_doc.param_groups.keys).to include "user_header"
+        expect(@doc.param_groups).to be_an Hash
+        expect(@doc.param_groups.keys).to include "user_header"
       end
     end
 
     describe "param_group" do
       before do
+        @base.send(:set_default_value)
         class ParamGroupApiDoc < ApiDoc
           controller_name :orders
 
@@ -890,11 +917,11 @@ module OneboxApiDoc
             end
           end
         end
-        @api_doc = @base.docs.detect { |doc| doc.class == OneboxApiDoc::ParamGroupApiDoc }
+        @doc = @base.docs.last
       end
 
       it "add param group to base" do
-        apis = @api_doc.apis
+        apis = @doc.apis
         expect(apis).to be_an Array
         expect(apis.size).to eq 2
         api1 = apis.first
