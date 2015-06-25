@@ -94,8 +94,11 @@ module OneboxApiDoc
       resource_name = options[:resource_name]
       action_name = options[:action_name]
       doc = get_doc(version_name)
-      return action_name.present? ? nil : [] unless doc.present?
-      doc.get_apis(resource_name, action_name)
+      if doc.present?
+        doc.get_apis(resource_name, action_name)
+      else
+        action_name.present? ? nil : []
+      end
     end
 
     def get_version version_name
