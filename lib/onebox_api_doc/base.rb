@@ -66,12 +66,16 @@ module OneboxApiDoc
       main_versions.sort { |version1, version2| Gem::Version.new(version1.name) <=> Gem::Version.new(version2.name) }.last
     end
 
-    def extension_versions
-      self.versions.select { |version| version.is_extension? }
+    def extension_versions extension_name = nil
+      if extension_name.present?
+        self.versions.select { |version| version.is_extension? }
+      else
+        self.versions.select { |version| version.is_extension? and version.name == extension_name.to_s }
+      end
     end
 
-    def lastest_extension_version
-      extension_versions.sort { |version1, version2| Gem::Version.new(version1.name) <=> Gem::Version.new(version2.name) }.last
+    def lastest_extension_version extension_name = nil
+      extension_versions(extension_name).sort { |version1, version2| Gem::Version.new(version1.name) <=> Gem::Version.new(version2.name) }.last
     end
 
     # group apis by resource name
