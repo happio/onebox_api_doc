@@ -80,16 +80,12 @@ module OneboxApiDoc
     # return hash with resource name as key and array of api object as value
     def apis_group_by_resource(version = nil)
       version = default_version unless version.present?
-      result = {}
-      self.docs.select { |doc| doc.version_id == version.object_id }.each do |doc|
-        result[doc.resource.name] = doc.apis
-      end
-      result
+      get_doc(version.name).apis_group_by_resource
     end
 
     def get_tags(version = nil)
       version = default_version unless version.present?
-      self.docs.detect { |doc| doc.version_id == version.object_id }.tags
+      get_doc(version.name).tags
     end
 
     # get api by version, resource and action (optional)
