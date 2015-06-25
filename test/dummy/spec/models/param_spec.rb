@@ -5,7 +5,7 @@ module OneboxApiDoc
 
     before do
       @base = OneboxApiDoc.base
-      @doc = @base.add_doc(ApiDoc, 1, 1)
+      @doc = @base.add_doc(1)
     end
 
     describe "initialize" do
