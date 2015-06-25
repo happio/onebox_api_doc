@@ -2,16 +2,11 @@ module OneboxApiDoc
   class Doc < BaseObject
 
     attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups
-    # attr_accessor :version_id, :resource_id, :extension_name
     attr_accessor :version_id, :extension_name, :resource_ids
 
     ########################
     ### Instance Methods ###
     ########################
-
-    # def resource
-    #   @resource ||= OneboxApiDoc.base.resources.detect { |resource| resource.object_id == self.resource_id }
-    # end
 
     def resources
       @resources ||= OneboxApiDoc.base.resources.select { |resource| self.resource_ids.include? resource.object_id }
