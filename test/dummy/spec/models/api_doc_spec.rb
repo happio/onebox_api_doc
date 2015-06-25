@@ -250,69 +250,6 @@ module OneboxApiDoc
         expect(error_param1.desc).to eq "error message"
         expect(error_param1.permissions.map(&:name)).to eq [ 'guest', 'admin', 'member' ]
       end
-
-      # it "set controller name and version to doc" do
-      #   expect(TestApiDoc._controller_name).to eq "orders"
-      # end
-
-      # it "set version to doc" do
-      #   expect(TestApiDoc._version).to be_a OneboxApiDoc::Version
-      #   expect(TestApiDoc._version.version).to eq "1.2.3"
-      # end
-
-      # it "set correct api detail" do
-      #   expect(TestApiDoc._apis).not_to be_blank
-      #   api = TestApiDoc._apis.first
-      #   expect(api._action).to eq "show"
-      #   expect(api._short_desc).to eq "short_desc"
-      #   expect(api._url).to eq "/orders/:id"
-      #   expect(api._method).to eq "GET"
-      #   expect(api._desc).to eq "description"
-      #   expect(api._tags.map { |tag| tag.name }).to eq ["mobile", "web"]
-      #   expect(api._permissions).to eq ["guest", "admin", "member"]
-
-      #   expect(api._header).to be_a OneboxApiDoc::Api::Header
-      #   header = api._header
-      #   expect(header._params).to be_an Array
-      #   header_param1 = header._params.first
-      #   expect(header_param1._name).to eq "header_param1"
-      #   expect(header_param1._type).to eq "String"
-      #   expect(header_param1._desc).to eq "header_param1 desc"
-      #   expect(header_param1._permissions).to eq ["guest", "admin", "member"]
-      #   expect(header_param1._required).to eq true
-      #   expect(header_param1._default_value).to eq "header_param1 default"
-      #   expect(header_param1._validates).to be_an Array
-      #   expect(header_param1._validates).to include 'cannot be less than -1'
-      #   expect(header_param1._validates).to include 'cannot be more than 10'
-      #   expect(header_param1._validates).to include 'must be within ["a", "b"]'
-      #   expect(header_param1._validates).to include 'must match format header_param1 pattern'
-      #   expect(header_param1._validates).to include 'must be in email format'
-      #   expect(header_param1._validates).to include 'cannot have length less than 6'
-      #   expect(header_param1._validates).to include 'cannot have length more than 10'
-      #   expect(header_param1._warning).to eq "header_param1 warning"
-      #   expect(header_param1._params).to be_an Array
-      #   header_param1_1 = header_param1._params.first
-      #   expect(header_param1_1._name).to eq "header_param1_1"
-      #   expect(header_param1_1._type).to eq "Integer"
-      #   expect(header_param1_1._desc).to eq "header_param1_1 desc"
-      #   expect(header_param1_1._permissions).to eq [ "guest", "member" ]
-      #   expect(header_param1_1._required).to eq false
-      #   expect(header_param1_1._default_value).to eq "header_param1_1 default"
-      #   expect(header_param1_1._validates).to be_an Array
-      #   expect(header_param1_1._validates).to include 'cannot be less than 5'
-      #   expect(header_param1_1._validates).to include 'cannot be more than 15'
-      #   expect(header_param1_1._validates).to include 'must be within ["c", "d", "e"]'
-      #   expect(header_param1_1._validates).to include 'must match format header_param1_1 pattern'
-      #   expect(header_param1_1._validates).not_to include 'must be in email format'
-      #   expect(header_param1_1._validates).to include 'cannot have length less than 4'
-      #   expect(header_param1_1._validates).to include 'cannot have length more than 6'
-      #   expect(header_param1_1._warning).to eq nil
-      #   expect(header_param1_1._params).to be_an Array
-
-      #   expect(api._body).to be_a OneboxApiDoc::Api::Body
-      #   expect(api._response).to be_a OneboxApiDoc::Api::Response
-      #   expect(api._error).to be_a OneboxApiDoc::Api::Error
-      # end
     end
 
     describe "class methods" do
