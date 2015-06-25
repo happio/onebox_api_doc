@@ -5,6 +5,8 @@ module OneboxApiDoc
 
     before do
       @base = OneboxApiDoc.base
+      @base.send(:set_default_value)
+      @base.unload_document
     end
 
     describe "initialize" do
@@ -21,34 +23,34 @@ module OneboxApiDoc
       end
     end
 
-    describe "reload_documentation" do
+    describe "reload_document" do
       it "unload document and load it again" do
-        expect(@base).to receive :load_documentation
-        expect(@base).to receive :unload_documentation
-        @base.reload_documentation
+        expect(@base).to receive :load_document
+        expect(@base).to receive :unload_document
+        @base.reload_document
       end
     end
 
-    describe "load_documentation" do
+    describe "load_document", hhh: true do
       it "load document class" do
-        @base.load_documentation
+        @base.load_document
         expect{ UsersApiDoc }.not_to raise_error
       end
     end
 
-    describe "unload_documentation" do
+    describe "unload_document" do
       it "does not load document class if the class wasn't load yet" do
-        @base.unload_documentation
+        @base.unload_document
         expect{ UsersApiDoc }.to raise_error
       end
       it "unload document class if the class was loaded" do
-        @base.load_documentation
-        @base.unload_documentation
+        @base.load_document
+        @base.unload_document
         expect{ UsersApiDoc }.to raise_error
       end
       it "reset attributes to default value" do
         expect(@base).to receive :set_default_value
-        @base.unload_documentation
+        @base.unload_document
       end
     end
 
@@ -112,7 +114,7 @@ module OneboxApiDoc
 
     describe "get api" do
       before do
-        @base.reload_documentation
+        @base.reload_document
       end
       context 'call with action' do
         it 'return correct api object' do
@@ -192,22 +194,16 @@ module OneboxApiDoc
     describe "get_doc" do
       before do
         @version = @base.default_version
-        @resource = @base.add_resource :products
-        @base.add_doc ProductsApiDoc, @version.object_id, @resource.object_id
+        @base.add_doc @version.object_id
       end
       it "return correct doc" do
-        doc = @base.get_doc @version.name, @resource.name
+        doc = @base.get_doc @version.name
         expect(doc).not_to eq nil
-        expect(doc).to be_a ProductsApiDoc
+        expect(doc).to be_a OneboxApiDoc::Doc
         expect(doc.version).to eq @version
-        expect(doc.resource).to eq @resource
       end
       it "return nil if version not found" do
-        doc = @base.get_doc :fake_version, @resource.name
-        expect(doc).to eq nil
-      end
-      it "return nil if resource not found" do
-        doc = @base.get_doc @version.name, :fake_resource
+        doc = @base.get_doc :fake_version
         expect(doc).to eq nil
       end
     end
@@ -281,7 +277,7 @@ module OneboxApiDoc
     # describe "get_api" do
       # before do
       #   @base = OneboxApiDoc.base
-      #   @base.reload_documentation
+      #   @base.reload_document
       # end
       # it "return correct api when request with resource name and action name" do
       #   get_all_product_api = @base.get_api("1.2.3", :products, :index)
@@ -443,21 +439,18 @@ module OneboxApiDoc
       before do
         @base.send(:set_default_value)
         @version = @base.default_version
-        @resource = @base.add_resource :products
       end
       it "add doc to array docs" do
-        expect{ @base.add_doc ProductsApiDoc, @version.object_id, @resource.object_id }.to change(@base.docs, :size).by 1
+        expect{ @base.add_doc @version.object_id }.to change(@base.docs, :size).by 1
       end
-      it "does not add doc to array docs if doc with the same name already exist" do
-        @base.add_doc ProductsApiDoc, @version.object_id, @resource.object_id
-        expect{ @base.add_doc ProductsApiDoc, @version.object_id, @resource.object_id }.not_to change(@base.docs, :size)
+      it "does not add doc to array docs if doc with the same version already exist" do
+        @base.add_doc @version.object_id
+        expect{ @base.add_doc @version.object_id }.not_to change(@base.docs, :size)
       end
       it "return correct doc" do
-        doc = @base.add_doc ProductsApiDoc, @version.object_id, @resource.object_id
-        expect(doc).to be_an OneboxApiDoc::ApiDoc
-        expect(doc).to be_an ProductsApiDoc
+        doc = @base.add_doc @version.object_id
+        expect(doc).to be_an OneboxApiDoc::Doc
         expect(doc.version).to eq @version
-        expect(doc.resource).to eq @resource
       end
     end
 
