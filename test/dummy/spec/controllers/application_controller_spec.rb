@@ -9,8 +9,16 @@ module OneboxApiDoc
 
       before do
         @base = OneboxApiDoc.base
-        @base.reload_documentation
+        @base.reload_document
       end
+
+      it "set @all_tags"
+      it "set @main_versions"
+      it "set @default_version"
+      it "set @main_app"
+      it "set @current_version"
+      it "set @apis_by_resources"
+      it "set @api"
 
       # context "request with only version" do
       #   it "do not assigns @apis or @api" do
