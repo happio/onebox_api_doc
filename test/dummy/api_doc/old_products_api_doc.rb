@@ -1,4 +1,4 @@
-class ProductsApiDoc < OneboxApiDoc::ApiDoc
+class OldProductsApiDoc < OneboxApiDoc::ApiDoc
   controller_name :products
   version "0.0.1"
 
