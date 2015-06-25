@@ -68,9 +68,9 @@ module OneboxApiDoc
 
     def extension_versions extension_name = nil
       if extension_name.present?
-        self.versions.select { |version| version.is_extension? }
+        self.versions.select { |version| version.is_extension? and version.app.name == extension_name.to_s }
       else
-        self.versions.select { |version| version.is_extension? and version.name == extension_name.to_s }
+        self.versions.select { |version| version.is_extension? }
       end
     end
 

@@ -184,9 +184,9 @@ module OneboxApiDoc
       it "return array of version which belongs to specified app" do
         versions = @base.extension_versions :extension_name2
         expect(versions).to be_an Array
-        expect(versions.size).to be > 0 and eq @extension_versions.select { |ex| ex.name == 'extension2' }.size
+        expect(versions.size).to be > 0 and eq @extension_versions.select { |ex| ex.app.name == 'extension_name2' }.size
         versions.each do |version|
-          expect(version.app.name).to eq "extension2"
+          expect(version.app.name).to eq "extension_name2"
           expect(version.is_extension?).to eq true
           expect(@core_versions).not_to include version
         end
@@ -215,7 +215,7 @@ module OneboxApiDoc
       it "return latest specified extension version" do
         lastest_extension_version = @base.lastest_extension_version :extension2
         expect(lastest_extension_version.name).to eq '2.3'
-        expect(lastest_extension_version.app.name).not_to eq 'extension2'
+        expect(lastest_extension_version.app.name).to eq 'extension2'
       end
     end
 
