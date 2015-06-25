@@ -14,7 +14,7 @@ module OneboxApiDoc
     end
 
     def resource
-      @resource ||= doc.resource
+      @resource ||= OneboxApiDoc.base.resources.detect { |resource| resource.object_id == self.resource_id }
     end
 
     def version
@@ -41,7 +41,6 @@ module OneboxApiDoc
 
     def set_default_value
       self.version_id = doc.version_id
-      self.resource_id = doc.resource_id
       self.method = self.method.upcase if self.method.present?
       self.permission_ids ||= []
       self.tag_ids ||= []
