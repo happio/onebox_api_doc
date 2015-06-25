@@ -68,14 +68,38 @@ module OneboxApiDoc
       end
     end
 
+    def main_versions
+      self.versions.select { |version| not version.is_extension? }
+    end
+
+    def extension_versions
+      self.versions.select { |version| version.is_extension? }
+    end
+
+    # group apis by resource name
+    # return hash with resource name as key and array of api object as value
+    def apis_group_by_resource(version = nil)
+      version = default_version unless version.present?
+      result = {}
+      self.docs.select { |doc| doc.version_id == version.object_id }.each do |doc|
+        result[doc.resource.name] = doc.apis
+      end
+      result
+    end
+
+    def get_tags(version = nil)
+      version = default_version unless version.present?
+      self.docs.detect { |doc| doc.version_id == version.object_id }.tags
+    end
+
     # get api by version, resource and action (optional)
     def get_api options={}
       version_name = options[:version]
       resource_name = options[:resource_name]
       action_name = options[:action_name]
-      doc = get_doc(version_name, resource_name)
+      doc = get_doc(version_name)
       return action_name.present? ? nil : [] unless doc.present?
-      doc.get_apis(action_name)
+      doc.get_apis(resource_name, action_name)
     end
 
     def get_version version_name
@@ -86,22 +110,13 @@ module OneboxApiDoc
       self.resources.detect { |resource| resource.name == resource_name.to_s }
     end
 
-    def get_doc version_name, resource_name
+    def get_doc version_name
       version_id = self.get_version(version_name).object_id
-      resource_id = self.get_resource(resource_name).object_id
-      self.docs.detect { |doc| doc.version_id == version_id and doc.resource_id == resource_id }
+      self.docs.detect { |doc| doc.version_id == version_id }
     end
 
     def get_app app_name
       self.apps.detect { |app| app.name == app_name.to_s }
-    end
-
-    def main_versions
-      self.versions.select { |version| not version.is_extension? }
-    end
-
-    def extension_versions
-      self.versions.select { |version| version.is_extension? }
     end
 
     # def api_docs
@@ -168,10 +183,21 @@ module OneboxApiDoc
       end
     end
 
-    def add_doc klass, version_id, resource_id
-      doc = self.docs.detect { |doc| doc.class == klass and doc.version_id == version_id and doc.resource_id == resource_id }
+    # def add_doc klass, version_id, resource_id
+    #   doc = self.docs.detect { |doc| doc.class == klass and doc.version_id == version_id and doc.resource_id == resource_id }
+    #   unless doc.present?
+    #     doc = klass.new(version_id: version_id, resource_id: resource_id)
+    #     self.docs << doc
+    #     doc
+    #   else
+    #     doc
+    #   end
+    # end
+
+    def add_doc version_id
+      doc = self.docs.detect { |doc| doc.version_id == version_id}
       unless doc.present?
-        doc = klass.new(version_id: version_id, resource_id: resource_id)
+        doc = OneboxApiDoc::Doc.new(version_id: version_id)
         self.docs << doc
         doc
       else
