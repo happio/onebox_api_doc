@@ -12,6 +12,7 @@ module OneboxApiDoc
         self.resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
         version = OneboxApiDoc.base.default_version
         self.version_id = version.object_id
+        self._extension_name = nil
         self.doc = nil
         subclass
       end
