@@ -1,15 +1,7 @@
 module OneboxApiDoc
   class Base
 
-    # attr_reader :all_tags, :all_apis, :all_permissions, #:default_version,
-    #   :core_versions, :extension_versions, :param_groups
-
-
     attr_accessor :apps, :versions, :resources, :docs, :params
-    # attr_writer :main_app #, :default_version
-
-    # attributes for indexing
-    attr_reader :index
 
     def initialize
       set_default_value
@@ -40,7 +32,6 @@ module OneboxApiDoc
       Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
     end
 
-    # main_app
     def main_app
       main_app = self.apps.detect { |app| app.name == "main" }
       unless main_app.present?
@@ -56,7 +47,6 @@ module OneboxApiDoc
       self.apps.select { |app| app.name != "main" }
     end
 
-    # default version
     def default_version
       default_version = self.versions.detect { |version| version.name == OneboxApiDoc::Engine.default_version and version.app_id == main_app.object_id }
       unless default_version.present?
@@ -118,23 +108,6 @@ module OneboxApiDoc
       self.apps.detect { |app| app.name == app_name.to_s }
     end
 
-    # def api_docs
-    #   OneboxApiDoc::ApiDoc.subclasses
-    # end
-
-    # def get_version version_name
-    #   @core_versions.select { |v| v.version == version_name.to_s }.first
-    # end
-
-    # def get_api version_name, resource_name, action=nil
-    #   version = get_version(version_name)
-    #   version.get_api(resource_name, action) if version.present?
-    # end
-
-    # def get_tag tag_name
-    #   @all_tags.select { |tag| tag.name == tag_name.to_s }.first
-    # end
-
     def add_resource resource_name
       resource_name = resource_name.to_s
       unless self.resources.map(&:name).include? resource_name
@@ -182,17 +155,6 @@ module OneboxApiDoc
       end
     end
 
-    # def add_doc klass, version_id, resource_id
-    #   doc = self.docs.detect { |doc| doc.class == klass and doc.version_id == version_id and doc.resource_id == resource_id }
-    #   unless doc.present?
-    #     doc = klass.new(version_id: version_id, resource_id: resource_id)
-    #     self.docs << doc
-    #     doc
-    #   else
-    #     doc
-    #   end
-    # end
-
     def add_doc version_id
       doc = self.docs.detect { |doc| doc.version_id == version_id}
       unless doc.present?
@@ -203,83 +165,10 @@ module OneboxApiDoc
         doc
       end
     end
-
-    # def add_param name, type, options={}, &block
-    #   param = OneboxApiDoc::Param.new(name, type, options, &block)
-    #   self.params << param
-    #   param
-    # end
-
-    # def add_param action, short_desc=""
-    #   OneboxApiDoc::Api.new(action, short_desc, &block)
-    # end
-
-    # def add_tag tag_name
-    #   tag = get_tag tag_name
-    #   unless tag.present?
-    #     tag = OneboxApiDoc::Tag.new(tag_name.to_s)
-    #     @all_tags << tag
-    #   end
-    #   tag
-    # end
-
-    # def add_api api
-    #   @all_apis << api unless @all_apis.include? api
-    # end
-
-    # def add_version version_name
-    #   version = get_version version_name
-    #   unless version.present?
-    #     version = OneboxApiDoc::Version.new(version_name.to_s)
-    #     @core_versions << version
-    #   end
-    #   version
-    # end
-
-    # def add_extension_version extension_name, version_name
-    #   all_versions = @extension_versions[extension_name.to_s] ||= []
-    #   version = all_versions.select { |version| version.version == version_name.to_s  }.first
-    #   unless version.present?
-    #     version = OneboxApiDoc::Version.new(version_name.to_s)
-    #     all_versions << version
-    #   end
-    #   version
-    # end
-
-    # def add_permission role
-    #   role = role.to_s
-    #   @all_permissions << role unless @all_permissions.include? role
-    #   role
-    # end
-
-
-
-    # # Params Group
-    # def add_param_group(name, &block)
-    #   key = name.to_s
-    #   @param_groups[key] = block
-    # end
-
-    # def get_param_group(name)
-    #   key = name.to_s
-    #   if @param_groups.has_key?(key)
-    #     return @param_groups[key]
-    #   else
-    #     raise "param group #{key} not defined"
-    #   end
-    # end
-
     
     private
 
     def set_default_value
-      # @all_tags = []
-      # @all_permissions = []
-      # @all_apis = []
-      # @core_versions = []
-      # @extension_versions = {}
-      # @param_groups = {}
-      
       self.apps = []
       self.versions = []
       self.docs = []

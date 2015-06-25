@@ -17,10 +17,6 @@ module OneboxApiDoc
         subclass
       end
 
-      ##############################
-      ####### Setter Methods #######
-      ##############################
-
       def controller_name name
         self.resource_name = name
       end

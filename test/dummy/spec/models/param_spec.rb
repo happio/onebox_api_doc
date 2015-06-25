@@ -62,36 +62,6 @@ module OneboxApiDoc
         end
       end
 
-      # describe "nested params" do
-      #   it "set correct nested param" do
-      #     @param = OneboxApiDoc::Param.new doc_id: 1, :address, :object, 
-      #     desc: 'address object',
-      #     permissions: [ :guest, :admin, :member ],
-      #     required: true do
-      #       param :address_no, :string,
-      #         desc: 'address number',
-      #         permissions: [ :guest, :admin, :member ],
-      #         required: true
-      #       param :road, :string,
-      #         desc: 'road',
-      #         permissions: [ :guest, :admin, :member ],
-      #         required: false
-      #     end
-      #     expect(@param._params).to be_an Array
-      #     first_param = @param._params.first
-      #     expect(first_param._name).to eq "address_no"
-      #     expect(first_param._type).to eq "String"
-      #     expect(first_param._desc).to eq "address number"
-      #     expect(first_param._permissions).to eq [ "guest", "admin", "member" ]
-      #     expect(first_param._required).to eq true
-      #     second_param = @param._params.last
-      #     expect(second_param._name).to eq "road"
-      #     expect(second_param._type).to eq "String"
-      #     expect(second_param._desc).to eq "road"
-      #     expect(second_param._permissions).to eq [ "guest", "admin", "member" ]
-      #     expect(second_param._required).to eq false
-      #   end
-
       describe "nested params" do
         it "set correct parent_id" do
           param = OneboxApiDoc::Param.new doc_id: @doc.object_id, name: :address, type: :object, 
