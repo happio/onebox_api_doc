@@ -317,35 +317,26 @@ module OneboxApiDoc
 
     describe "class methods" do
       describe "inherited class" do
-        it "add api doc object to base class" do
-          expect(@base).to receive(:add_doc)
-          class InheritedApiDoc < ApiDoc
-          end
+        it "set resource name" do
+          ApiDoc.inherited(InheritedApiDoc)
+          expect(InheritedApiDoc.resource_id).to eq 'inheriteds'
         end
-        it "return doc with correct version and preset ApiDoc resource id" do
-          doc = ApiDoc.inherited(InheritedApiDoc)
-          expect(InheritedApiDoc.resource_id).not_to eq nil
-          resource = @base.resources.detect { |resource| resource.object_id == InheritedApiDoc.resource_id }
-          expect(resource.name).to eq 'inheriteds'
-          expect(doc).to be_an OneboxApiDoc::Doc
-          expect(doc.version.name).to eq OneboxApiDoc.base.default_version.name
+        it "set version_id" do
+          ApiDoc.inherited(Inherited2ApiDoc)
+          expect(Inherited2ApiDoc.version_id).to eq @base.default_version.object_id
+        end
+        it "clear doc" do
+          ApiDoc.inherited(Inherited3ApiDoc)
+          expect(Inherited3ApiDoc.doc).to eq nil
         end
       end
 
       describe "controller_name" do
-        it "add resource to base class" do
-          class ControllerNameApiDoc < ApiDoc
-          end
-          expect(@base).to receive(:add_resource)
-          ControllerNameApiDoc.controller_name :users
-        end
-        it "set resource_id of api doc" do
+        it "set resource_name of ApiDoc" do
           class ControllerNameApiDoc < ApiDoc
             controller_name :users
           end
-          expect(ControllerNameApiDoc.resource_id).not_to eq nil
-          resource = @base.resources.detect { |resource| resource.object_id == ControllerNameApiDoc.resource_id }
-          expect(resource.name).to eq 'users'
+          expect(ControllerNameApiDoc.resource_name).not_to eq 'users'
         end
       end
 
@@ -354,8 +345,7 @@ module OneboxApiDoc
           class ExtensionNameApiDoc < ApiDoc
             extension_name :extension_name
           end
-          doc = @base.docs.last
-          expect(doc.extension_name).to eq 'extension_name'
+          expect(ExtensionNameApiDoc._extension_name).to eq 'extension_name'
         end
       end
 
@@ -371,8 +361,7 @@ module OneboxApiDoc
             version "0.0.1"
           end
           expected_version = @base.versions.detect { |version| version.name == "0.0.1" }
-          doc = @base.docs.last
-          expect(doc.version_id).to eq expected_version.object_id
+          expect(VersionApiDoc.version_id).to eq expected_version.object_id
         end
       end
 
@@ -380,13 +369,11 @@ module OneboxApiDoc
         before do
           @base.send(:set_default_value)
         end
-        it "add api to api doc" do
+        it "add api to api doc and init Doc" do
           class ApiApiDoc < ApiDoc
             controller_name :users
           end
-          @doc = @base.docs.last
-          @doc.apis = []
-          expect(@doc).to receive(:add_api)
+          expect_any_instance_of(OneboxApiDoc::Doc).to receive(:add_api)
           ApiApiDoc.api :show, "get user profile"
         end
         it "set correct api detail" do
@@ -534,9 +521,8 @@ module OneboxApiDoc
           end
         end
         it "return correct version" do
-          expected_version = @base.versions.detect { |version| version.name == "test_version" }
-          doc = @base.docs.last
-          expect(doc.version).to eq expected_version
+          version = Version2ApiDoc.version :test_version
+          expect(version.name).to eq 'test_version'
         end
       end
 
@@ -602,8 +588,7 @@ module OneboxApiDoc
           it "return blank array if there is no api" do
             class GetApis3ApiDoc < ApiDoc
             end
-            doc = @base.docs.last
-
+            doc = @base.add_doc(@base.default_version)
             apis = doc.get_apis(:users)
             expect(apis).to eq []
           end
