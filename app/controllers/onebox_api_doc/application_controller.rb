@@ -5,7 +5,7 @@ module OneboxApiDoc
       base = OneboxApiDoc.base
       base.reload_document
 
-      # set all versions
+      # set all core versions
       @main_versions = base.main_versions
 
       # set all extension version
@@ -28,10 +28,10 @@ module OneboxApiDoc
       end
 
       # set tags of version
-      @tags = base.tags
+      @tags = base.get_tags(@current_version)
 
       # set apis group by resource
-      @apis_by_resources = base.apis_group_by_resources(@current_version)
+      @apis_group_by_resource = base.apis_group_by_resource(@current_version)
 
       # set display api(s)
       @api = base.get_api(api_params)
