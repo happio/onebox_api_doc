@@ -4,22 +4,22 @@ module OneboxApiDoc
   describe Error do
     before do
       @base = OneboxApiDoc.base
-      @base.load_documentation
+      @base.send(:set_default_value)
       version = @base.default_version
-      resource = @base.add_resource :products
-      @doc = @base.add_doc(ProductsApiDoc, version.object_id, resource.object_id)
+      @resource = @base.add_resource :products
+      @doc = @base.add_doc(version.object_id)
     end
 
     describe "initialize" do
       it "set correct doc_id, code and message" do
-        error = OneboxApiDoc::Error.new doc_id: 1, code: 404, message: "Not Found"
+        error = OneboxApiDoc::Error.new doc_id: @doc.object_id, code: 404, message: "Not Found"
         expect(error).not_to eq nil
-        expect(error.doc_id).to eq 1
+        expect(error.doc_id).to eq @doc.object_id
         expect(error.code).to eq 404
         expect(error.message).to eq "Not Found"
       end
       it "set correct code, message, permission_ids and param_ids" do
-        error = OneboxApiDoc::Error.new doc_id: 1, code: 404, message: "Not Found", permission_ids: [1,3,5], param_ids: [2,4,6]
+        error = OneboxApiDoc::Error.new doc_id: @doc.object_id, code: 404, message: "Not Found", permission_ids: [1,3,5], param_ids: [2,4,6]
         expect(error).not_to eq nil
         expect(error.code).to eq 404
         expect(error.message).to eq "Not Found"
@@ -38,7 +38,7 @@ module OneboxApiDoc
 
     describe "params" do
       it "return correct params array" do
-        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @doc.resource_id)
+        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @resource.object_id)
         error = @doc.add_error api, 404, "Not Found" do
           param :error_status, :integer
           param :error_message, :string
@@ -56,7 +56,7 @@ module OneboxApiDoc
         expect(param2.type).to eq 'String'
       end
       it "return blank array if the error does not have any param" do
-        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @doc.resource_id)
+        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @resource.object_id)
         error = @doc.add_error api, 404, "Not Found"
         params = error.params
         expect(params).to eq []
@@ -66,7 +66,7 @@ module OneboxApiDoc
     describe "permissions" do
       it "return correct permissions array" do
         expected_permissions = [ @doc.add_permission(:permission1), @doc.add_permission(:permission2) ]
-        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @doc.resource_id)
+        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @resource.object_id)
         error = @doc.add_error api, 404, "Not Found" do
           permissions :permission1, :permission2
         end
@@ -81,7 +81,7 @@ module OneboxApiDoc
         expect(permission2.name).to eq 'permission2'
       end
       it "return blank array if the error does not have and permissions" do
-        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @doc.resource_id)
+        api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @resource.object_id)
         error = @doc.add_error api, 404, "Not Found"
         permissions = error.permissions
         expect(permissions).to eq []
