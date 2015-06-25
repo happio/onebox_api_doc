@@ -137,6 +137,27 @@ module OneboxApiDoc
       end
     end
 
+    describe "lastest_main_version" do
+      before do
+        @base.send(:set_default_value)
+        @base.add_version '0.0.2'
+        @base.add_version '3.3.2'
+        @base.add_version '1.2'
+        @base.add_version '1.4.2'
+        @base.add_version '0.2.6.1'
+        @base.add_extension_version '0.0.3', :extension1
+        @base.add_extension_version '4.0.3', :extension1
+        @base.add_extension_version '2.3', :extension2
+        @base.add_extension_version '1.5.3', :extension4
+        @base.add_extension_version '1.5.3.3', :extension2
+      end
+      it "return latest main version" do
+        lastest_main_version = @base.lastest_main_version
+        expect(lastest_main_version.name).to eq '3.3.2'
+        expect(lastest_main_version.app.name).to eq 'main'
+      end
+    end
+
     describe "extension_versions" do
       before do
         main_app = @base.add_app "main"
@@ -159,6 +180,27 @@ module OneboxApiDoc
           expect(version.is_extension?).to eq true
           expect(@core_versions).not_to include version
         end
+      end
+    end
+
+    describe "lastest_extension_version" do
+      before do
+        @base.send(:set_default_value)
+        @base.add_version '0.0.2'
+        @base.add_version '3.3.2'
+        @base.add_version '1.2'
+        @base.add_version '1.4.2'
+        @base.add_version '0.2.6.1'
+        @base.add_extension_version '0.0.3', :extension1
+        @base.add_extension_version '4.0.3', :extension1
+        @base.add_extension_version '2.3', :extension2
+        @base.add_extension_version '1.5.3', :extension4
+        @base.add_extension_version '1.5.3.3', :extension2
+      end
+      it "return latest main version" do
+        lastest_extension_version = @base.lastest_extension_version
+        expect(lastest_extension_version.name).to eq '4.0.3'
+        expect(lastest_extension_version.app.name).not_to eq 'main'
       end
     end
 
