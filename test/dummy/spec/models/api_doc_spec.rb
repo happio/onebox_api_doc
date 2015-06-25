@@ -479,6 +479,39 @@ module OneboxApiDoc
         end
       end
 
+      describe "apis_group_by_resource" do
+        before do
+          @base.send(:set_default_value)
+        end
+        it "return hash with resource names as key and array of apis as value" do
+          class ApiGroupByResourceApiDoc < ApiDoc
+            controller_name :users
+            api :show, ""
+            api :update, ""
+          end
+          class ApiGroupByResource2ApiDoc < ApiDoc
+            controller_name :products
+            api :index, ""
+            api :show, ""
+            api :update, ""
+          end
+          doc = @base.docs.last
+
+          api_hash = doc.apis_group_by_resource
+          expect(api_hash).to be_an Hash
+          expect(api_hash.keys.sort).to eq ['users', 'products'].sort
+          api_hash.each do |key, value|
+            expect(value).to be_an Array
+            expect(value.size).to eq (key == 'users' ? 2 : 3)
+            value.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.resource.name).to eq key
+              expect(api.version_id).to eq doc.version_id
+            end
+          end
+        end
+      end
+
       describe "get_apis" do
         before do
           @base.send(:set_default_value)

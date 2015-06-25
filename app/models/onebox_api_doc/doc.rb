@@ -20,12 +20,21 @@ module OneboxApiDoc
       version.app
     end
 
+    def apis_group_by_resource
+      result = {}
+      self.apis.each do |api|
+        result[api.resource.name] ||= []
+        result[api.resource.name] << api
+      end
+      result
+    end
+
     def get_apis resource_name, action=nil
       resource = OneboxApiDoc.base.get_resource resource_name
       if resource.present? and action.present?
-        self.apis.detect { |api| api.resource == resource and api.action == action.to_s }
+        self.apis.detect { |api| api.resource_id == resource.object_id and api.action == action.to_s }
       elsif resource.present?
-        self.apis.select { |api| api.resource == resource }
+        self.apis.select { |api| api.resource_id == resource.object_id }
       elsif action.present?
         nil
       else
