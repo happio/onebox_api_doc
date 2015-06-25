@@ -166,10 +166,10 @@ module OneboxApiDoc
         @core_versions << @base.add_version("0.0.2.1")
         @core_versions << @base.add_version("0.0.2.2")
         @extension_versions = []
-        @extension_versions << @base.add_extension_version("0.0.2", "extension_name")
-        @extension_versions << @base.add_extension_version("0.1.2", "extension_name")
-        @extension_versions << @base.add_extension_version("0.1.2.1", "extension_name")
-        @extension_versions << @base.add_extension_version("1.0.2.2", "extension_name")
+        @extension_versions << @base.add_extension_version("0.0.2", "extension_name1")
+        @extension_versions << @base.add_extension_version("0.1.2", "extension_name2")
+        @extension_versions << @base.add_extension_version("0.1.2.1", "extension_name3")
+        @extension_versions << @base.add_extension_version("1.0.2.2", "extension_name2")
       end
       it "return array of version which belongs to non-main app" do
         versions = @base.extension_versions
@@ -177,6 +177,16 @@ module OneboxApiDoc
         expect(versions.size).to be > 0 and eq @extension_versions.size
         versions.each do |version|
           expect(version.app.name).not_to eq "main"
+          expect(version.is_extension?).to eq true
+          expect(@core_versions).not_to include version
+        end
+      end
+      it "return array of version which belongs to specified app" do
+        versions = @base.extension_versions :extension_name2
+        expect(versions).to be_an Array
+        expect(versions.size).to be > 0 and eq @extension_versions.select { |ex| ex.name == 'extension2' }.size
+        versions.each do |version|
+          expect(version.app.name).to eq "extension2"
           expect(version.is_extension?).to eq true
           expect(@core_versions).not_to include version
         end
@@ -197,10 +207,15 @@ module OneboxApiDoc
         @base.add_extension_version '1.5.3', :extension4
         @base.add_extension_version '1.5.3.3', :extension2
       end
-      it "return latest main version" do
+      it "return latest extension version" do
         lastest_extension_version = @base.lastest_extension_version
         expect(lastest_extension_version.name).to eq '4.0.3'
         expect(lastest_extension_version.app.name).not_to eq 'main'
+      end
+      it "return latest specified extension version" do
+        lastest_extension_version = @base.lastest_extension_version :extension2
+        expect(lastest_extension_version.name).to eq '2.3'
+        expect(lastest_extension_version.app.name).not_to eq 'extension2'
       end
     end
 
