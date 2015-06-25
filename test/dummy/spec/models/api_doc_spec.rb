@@ -318,15 +318,18 @@ module OneboxApiDoc
     describe "class methods" do
       describe "inherited class" do
         it "set resource name" do
-          ApiDoc.inherited(InheritedApiDoc)
-          expect(InheritedApiDoc.resource_id).to eq 'inheriteds'
+          class InheritedApiDoc < ApiDoc
+          end
+          expect(InheritedApiDoc.resource_name).to eq 'inheriteds'
         end
         it "set version_id" do
-          ApiDoc.inherited(Inherited2ApiDoc)
+          class Inherited2ApiDoc < ApiDoc
+          end
           expect(Inherited2ApiDoc.version_id).to eq @base.default_version.object_id
         end
         it "clear doc" do
-          ApiDoc.inherited(Inherited3ApiDoc)
+          class Inherited3ApiDoc < ApiDoc
+          end
           expect(Inherited3ApiDoc.doc).to eq nil
         end
       end
