@@ -112,6 +112,144 @@ module OneboxApiDoc
       end
     end
 
+    describe "main_versions" do
+      before do
+        main_app = @base.add_app "main"
+        @core_versions = []
+        @core_versions << @base.add_version("0.0.2")
+        @core_versions << @base.add_version("0.0.2.1")
+        @core_versions << @base.add_version("0.0.2.2")
+        @extension_versions = []
+        @extension_versions << @base.add_extension_version("0.0.2", "extension_name")
+        @extension_versions << @base.add_extension_version("0.1.2", "extension_name")
+        @extension_versions << @base.add_extension_version("0.1.2.1", "extension_name")
+        @extension_versions << @base.add_extension_version("1.0.2.2", "extension_name")
+      end
+      it "return array of version which belongs to main app" do
+        versions = @base.main_versions
+        expect(versions).to be_an Array
+        expect(versions.size).to be > 0 and eq @core_versions.size
+        versions.each do |version|
+          expect(version.app.name).to eq "main"
+          expect(version.is_extension?).to eq false
+          expect(@extension_versions).not_to include version
+        end
+      end
+    end
+
+    describe "extension_versions" do
+      before do
+        main_app = @base.add_app "main"
+        @core_versions = []
+        @core_versions << @base.add_version("0.0.2")
+        @core_versions << @base.add_version("0.0.2.1")
+        @core_versions << @base.add_version("0.0.2.2")
+        @extension_versions = []
+        @extension_versions << @base.add_extension_version("0.0.2", "extension_name")
+        @extension_versions << @base.add_extension_version("0.1.2", "extension_name")
+        @extension_versions << @base.add_extension_version("0.1.2.1", "extension_name")
+        @extension_versions << @base.add_extension_version("1.0.2.2", "extension_name")
+      end
+      it "return array of version which belongs to non-main app" do
+        versions = @base.extension_versions
+        expect(versions).to be_an Array
+        expect(versions.size).to be > 0 and eq @extension_versions.size
+        versions.each do |version|
+          expect(version.app.name).not_to eq "main"
+          expect(version.is_extension?).to eq true
+          expect(@core_versions).not_to include version
+        end
+      end
+    end
+
+    describe "apis_group_by_resource" do
+      context "call without version" do
+        it "return correct hash of resource_name as key and apis as values" do
+          @base.send(:set_default_value)
+          class ApiGroupByResource_ApiDoc < ApiDoc
+            controller_name :users
+            api :show, ""
+            api :update, ""
+          end
+          class ApiGroupByResource_2ApiDoc < ApiDoc
+            controller_name :products
+            api :show, ""
+            api :update, ""
+            api :destroy, ''
+          end
+          class ApiGroupByResource_3ApiDoc < ApiDoc
+            controller_name :users
+            version '0.0.1'
+            api :index, ""
+            api :show, ""
+            api :update, ""
+          end
+          class ApiGroupByResource_4ApiDoc < ApiDoc
+            controller_name :products
+            version '0.0.1'
+            api :index, ""
+            api :show, ""
+            api :update, ""
+            api :destroy, ''
+          end
+          api_hash = @base.apis_group_by_resource
+          expect(api_hash).to be_an Hash
+          expect(api_hash.keys.sort).to eq ['users', 'products'].sort
+          api_hash.each do |key, value|
+            expect(value).to be_an Array
+            expect(value.size).to eq (key == 'users' ? 2 : 3)
+            value.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.resource.name).to eq key
+              expect(api.version_id).to eq @base.default_version.object_id
+            end
+          end
+        end
+      end
+      context "call with version" do
+        it "return correct hash of resource_name as key and apis as values" do
+          @base.send(:set_default_value)
+          class ApiGroupByResource_5ApiDoc < ApiDoc
+            controller_name :users
+            api :show, ""
+            api :update, ""
+          end
+          class ApiGroupByResource_6ApiDoc < ApiDoc
+            controller_name :products
+            api :show, ""
+            api :update, ""
+            api :destroy, ''
+          end
+          class ApiGroupByResource_7ApiDoc < ApiDoc
+            controller_name :users
+            version '0.0.1'
+            api :show, ""
+          end
+          class ApiGroupByResource_8ApiDoc < ApiDoc
+            controller_name :products
+            version '0.0.1'
+            api :index, ""
+            api :show, ""
+            api :update, ""
+            api :destroy, ''
+          end
+          version = @base.get_version '0.0.1'
+          api_hash = @base.apis_group_by_resource version
+          expect(api_hash).to be_an Hash
+          expect(api_hash.keys.sort).to eq ['users', 'products'].sort
+          api_hash.each do |key, value|
+            expect(value).to be_an Array
+            expect(value.size).to eq (key == 'users' ? 1 : 4)
+            value.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.resource.name).to eq key
+              expect(api.version_id).to eq version.object_id
+            end
+          end
+        end
+      end
+    end
+
     describe "get api" do
       before do
         @base.reload_document
@@ -224,141 +362,6 @@ module OneboxApiDoc
       end
     end
 
-    describe "main_versions" do
-      before do
-        main_app = @base.add_app "main"
-        @core_versions = []
-        @core_versions << @base.add_version("0.0.2")
-        @core_versions << @base.add_version("0.0.2.1")
-        @core_versions << @base.add_version("0.0.2.2")
-        @extension_versions = []
-        @extension_versions << @base.add_extension_version("0.0.2", "extension_name")
-        @extension_versions << @base.add_extension_version("0.1.2", "extension_name")
-        @extension_versions << @base.add_extension_version("0.1.2.1", "extension_name")
-        @extension_versions << @base.add_extension_version("1.0.2.2", "extension_name")
-      end
-      it "return array of version which belongs to main app" do
-        versions = @base.main_versions
-        expect(versions).to be_an Array
-        expect(versions.size).to be > 0 and eq @core_versions.size
-        versions.each do |version|
-          expect(version.app.name).to eq "main"
-          expect(version.is_extension?).to eq false
-          expect(@extension_versions).not_to include version
-        end
-      end
-    end
-
-    describe "extension_versions" do
-      before do
-        main_app = @base.add_app "main"
-        @core_versions = []
-        @core_versions << @base.add_version("0.0.2")
-        @core_versions << @base.add_version("0.0.2.1")
-        @core_versions << @base.add_version("0.0.2.2")
-        @extension_versions = []
-        @extension_versions << @base.add_extension_version("0.0.2", "extension_name")
-        @extension_versions << @base.add_extension_version("0.1.2", "extension_name")
-        @extension_versions << @base.add_extension_version("0.1.2.1", "extension_name")
-        @extension_versions << @base.add_extension_version("1.0.2.2", "extension_name")
-      end
-      it "return array of version which belongs to non-main app" do
-        versions = @base.extension_versions
-        expect(versions).to be_an Array
-        expect(versions.size).to be > 0 and eq @extension_versions.size
-        versions.each do |version|
-          expect(version.app.name).not_to eq "main"
-          expect(version.is_extension?).to eq true
-          expect(@core_versions).not_to include version
-        end
-      end
-    end
-
-    # describe "get_api" do
-      # before do
-      #   @base = OneboxApiDoc.base
-      #   @base.reload_document
-      # end
-      # it "return correct api when request with resource name and action name" do
-      #   get_all_product_api = @base.get_api("1.2.3", :products, :index)
-      #   expect(get_all_product_api).not_to eq nil
-      #   expect(get_all_product_api._controller_name).to eq "products"
-      #   expect(get_all_product_api._action).to eq "index"
-      # end
-      # it "return correct array of api when request with only resource name" do
-      #   product_apis = @base.get_api("1.2.3", :products)
-      #   expect(product_apis).not_to eq nil
-      #   expect(product_apis).to be_an Array
-      #   api_doc = @base.api_docs.select { |doc| doc._controller_name == "products" and doc._version.version == "1.2.3" }.first
-      #   expected_apis = api_doc._apis
-      #   product_apis.each do |api|
-      #     expect(api._controller_name).to eq "products"
-      #   end
-      #   expect(product_apis.map { |api| api._controller_name }.sort).to eq expected_apis.map { |api| api._controller_name }.sort
-      #   expect(product_apis.map { |api| api._action }.sort).to eq expected_apis.map { |api| api._action }.sort
-      #   expect(product_apis.map { |api| api._url }.sort).to eq expected_apis.map { |api| api._url }.sort
-      #   expect(product_apis.map { |api| api._method }.sort).to eq expected_apis.map { |api| api._method }.sort
-      #   expect(product_apis.map { |api| api._short_desc }.sort).to eq expected_apis.map { |api| api._short_desc }.sort
-      # end
-      # it "return nil if version not found" do
-      #   fake_api = @base.get_api("9.9.9", :products, :index)
-      #   expect(fake_api).to eq nil
-      # end
-      # it "return nil if resource name not found" do
-      #   fake_api = @base.get_api("1.2.3", :fake_resources, :index)
-      #   expect(fake_api).to eq nil
-      # end
-      # it "return nil if action name not found" do
-      #   fake_api = @base.get_api("1.2.3", :products, :fake_action)
-      #   expect(fake_api).to eq nil
-      # end
-    # end
-
-    # describe "get_tag" do
-    #   before do
-    #     base.add_tag :new_tag
-    #   end
-    #   it "return correct tag" do
-    #     tag = base.get_tag :new_tag
-    #     expect(tag).not_to eq nil
-    #     expect(tag.name).to eq "new_tag"
-    #   end
-    #   it "return nil if tag not found" do
-    #     tag = base.get_tag :fake_tag
-    #     expect(tag).to eq nil
-    #   end
-    # end
-
-    # describe "add_tag" do
-    #   it "add tag to @all_tags" do
-    #     base.add_tag :new_tag
-    #     expect(base.all_tags.size).to eq 1
-    #     expect(base.all_tags.map(&:name)).to include "new_tag"
-    #   end
-    #   it "does not add tag with duplicate name" do
-    #     base.add_tag :new_tag
-    #     base.add_tag :new_tag
-    #     expect(base.all_tags.size).to eq 1
-    #     expect(base.all_tags.map(&:name)).to include "new_tag"
-    #   end
-    # end
-
-    # describe "add_api" do
-    #   it "add api to @all_apis" do
-    #     api = OneboxApiDoc::Api.new(:products, :index)
-    #     base.add_api api
-    #     expect(base.all_apis.size).to eq 1
-    #     expect(base.all_apis).to include api
-    #   end
-    #   it "does not add duplicate api to @all_apis" do
-    #     api = OneboxApiDoc::Api.new(:products, :index)
-    #     base.add_api api
-    #     base.add_api api
-    #     expect(base.all_apis.size).to eq 1
-    #     expect(base.all_apis).to include api
-    #   end
-    # end
-
     describe "add_resource" do
       before do
         @base.resources = []
@@ -453,57 +456,6 @@ module OneboxApiDoc
         expect(doc.version).to eq @version
       end
     end
-
-    # describe "add_extension_version" do
-    #   it "add extension version to @extension_versions" do
-    #     base.add_extension_version :extension_name, "1.2"
-    #     expect(base.extension_versions["extension_name"].size).to eq 1
-    #     expect(base.extension_versions["extension_name"].map(&:version)).to include "1.2"
-    #   end
-    #   it "does not add extension version with duplicate name" do
-    #     base.add_extension_version :extension_name, "1.2"
-    #     base.add_extension_version :extension_name, "1.2"
-    #     expect(base.extension_versions["extension_name"].size).to eq 1
-    #     expect(base.extension_versions["extension_name"].map(&:version)).to include "1.2"
-    #   end
-    # end
-
-    # describe "add_permission" do
-    #   # it "add permission to @all_permissions" do
-    #   #   base.add_permission :admin
-    #   #   expect(base.all_permissions.size).to eq 1
-    #   #   expect(base.all_permissions).to include "admin"
-    #   # end
-    #   # it "do not add duplicate permission to @all_permissions" do
-    #   #   base.add_permission "admin"
-    #   #   base.add_permission :admin
-    #   #   expect(base.all_permissions.size).to eq 1
-    #   #   expect(base.all_permissions).to include "admin"
-    #   # end
-    # end
-
-    # describe "add_param_group" do
-    #   it "add param group" do
-    #     base.add_param_group :sample do
-    #       puts "do something"
-    #     end
-    #     expect(base.param_groups.keys).to include "sample"
-    #     expect(base.param_groups["sample"]).to be_a Proc
-    #   end
-    # end
-
-    # describe "get_param_group" do
-    #   before do
-    #     @block = Proc.new { puts "do something" }
-    #     base.param_groups["sample"] = @block
-    #   end
-    #   it "return correct proc" do
-    #     param_group = base.get_param_group :sample
-    #     expect(param_group).to be_a Proc
-    #     expect(param_group).to eq @block
-    #   end
-      
-    # end
 
   end
 end
