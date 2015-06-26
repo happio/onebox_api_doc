@@ -418,8 +418,77 @@ module OneboxApiDoc
           expect(api_error_param2.desc).to eq "error message"
           expect(api_error_param2.permission_ids).to eq expected_permission_ids
         end
-        it "set api short desc to blank if not send" do
+        it "set correct api request and response" do
           class Api3ApiDoc < ApiDoc
+            controller_name :users
+            api :show, "get user profile" do
+              request do
+                header do
+                  param :header_obj, :object,
+                    desc: 'header id',
+                    permissions: [ :member ],
+                    required: true do
+                      param :header_child, :object,
+                        desc: 'header child',
+                        permissions: [ :member ],
+                        required: true do
+                          param :header_subchild, :string,
+                            desc: 'header subchild',
+                            permissions: [ :member ],
+                            required: true
+                        end
+                    end
+                end
+              end
+              response do
+                body do
+                  param :body_obj, :object,
+                    desc: 'body object',
+                    permissions: [ :member ] do
+                      param :body_child, :object,
+                        desc: 'body child',
+                        permissions: [ :member ] do
+                          param :body_subchild, :string,
+                            desc: 'body subchild',
+                            permissions: [ :member ]
+                        end
+                    end
+                end
+              end
+            end
+          end
+          @doc = @base.docs.last
+          api = @doc.apis.first
+          request = api.request
+          request_header = request.header
+          expect(request_header).to be_an OneboxApiDoc::ParamContainer
+          expect(request_header.params.size).to eq 1
+          expect(request_header.params.first.name).to eq 'header_obj'
+          expect(request_header.params.first.params.size).to eq 1
+          expect(request_header.params.first.params.first.name).to eq 'header_child'
+          expect(request_header.params.first.params.first.params.size).to eq 1
+          expect(request_header.params.first.params.first.params.first.name).to eq 'header_subchild'
+
+          request_body = request.body
+          expect(request_body).to be_an OneboxApiDoc::ParamContainer
+          expect(request_body.params.size).to eq 0
+
+          response = api.response
+          response_header = response.header
+          expect(response_header).to be_an OneboxApiDoc::ParamContainer
+          expect(response_header.params.size).to eq 0
+
+          response_body = response.body
+          expect(response_body).to be_an OneboxApiDoc::ParamContainer
+          expect(response_body.params.size).to eq 1
+          expect(response_body.params.first.name).to eq 'body_obj'
+          expect(response_body.params.first.params.size).to eq 1
+          expect(response_body.params.first.params.first.name).to eq 'body_child'
+          expect(response_body.params.first.params.first.params.size).to eq 1
+          expect(response_body.params.first.params.first.params.first.name).to eq 'body_subchild'
+        end
+        it "set api short desc to blank if not send" do
+          class Api4ApiDoc < ApiDoc
             controller_name :users
             api :show
           end

@@ -13,7 +13,7 @@ module OneboxApiDoc
     
     private
 
-    def set_default_version
+    def set_default_value
       @params = nil
       @doc = nil
       self.param_ids ||= []
