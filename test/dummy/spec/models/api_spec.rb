@@ -84,9 +84,9 @@ module OneboxApiDoc
     describe "tags" do
       before do
         @tags = []
-        @tags << @doc.add_tag(:tag1)
-        @tags << @doc.add_tag(:tag2)
-        @tags << @doc.add_tag(:tag3)
+        @tags << @doc.add_tag(:tag1, 'Tag 1')
+        @tags << @doc.add_tag(:tag2, 'Tag 2')
+        @tags << @doc.add_tag(:tag3, 'Tag 3')
         @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
           url: "/users/:id", short_desc: "get user profile", desc: "description",
           tag_ids: @tags.map(&:object_id), error_ids: [5,6,7,8], resource_id: @resource.object_id

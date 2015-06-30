@@ -13,6 +13,11 @@ module OneboxApiDoc
           controller_name :products
           version "1.2.3"
 
+          def_tags do
+            tag :mobile, 'Mobile'
+            tag :web, 'Web', default: true
+          end
+
           api :show, 'product detail' do
             desc 'get product detail'
             tags :mobile, :web
@@ -106,22 +111,17 @@ module OneboxApiDoc
             end
           end
         end
-        # @doc = @base.docs.detect { |doc| doc.class == TestApiDoc }
         @doc = @base.docs.last
       end
 
-      it "set resources to doc" do
+      it "set correct api doc detail" do
         expect(@doc.resources).to be_an Array
         expect(@doc.resources.size).to eq 1
         expect(@doc.resources.first.name).to eq 'products'
-      end
 
-      it "set version to doc" do
         expect(@doc.version).to be_an OneboxApiDoc::Version
         expect(@doc.version.name).to eq "1.2.3"
-      end
 
-      it "set correct api detail" do
         expect(@doc.apis).not_to be_blank
         api = @doc.apis.first
         expect(api.action).to eq "show"
@@ -129,7 +129,7 @@ module OneboxApiDoc
         expect(api.url).to eq "/products/:id"
         expect(api.method).to eq "GET"
         expect(api.desc).to eq "get product detail"
-        expect(api.tags.map(&:name)).to eq ["mobile", "web"]
+        expect(api.tags.map(&:slug)).to eq ["mobile", "web"]
         expect(api.permissions.map(&:name)).to eq ["guest", "admin", "member"]
 
         # request
@@ -319,6 +319,11 @@ module OneboxApiDoc
         it "set correct api detail" do
           class Api2ApiDoc < ApiDoc
             controller_name :users
+            def_tags do
+              tag :mobile, 'Mobile'
+              tag :web, 'Web', default: true
+            end
+
             api :show, "get user profile" do
               desc 'get full user profile'
               tags :mobile, :web
@@ -360,7 +365,7 @@ module OneboxApiDoc
           end
           @doc = @base.docs.last
 
-          expected_tag_ids = @doc.tags.select { |tag| ["mobile", "web"].include? tag.name }.map(&:object_id)
+          expected_tag_ids = @doc.tags.select { |tag| ["mobile", "web"].include? tag.slug.to_s }.map(&:object_id)
           expected_permission_ids = @doc.permissions.select { |permission| permission.name == "member" }.map(&:object_id)
 
           api = @doc.apis.first
@@ -750,6 +755,27 @@ module OneboxApiDoc
         end
       end
 
+      describe "def_tags" do
+        before do
+          class DefTags < ApiDoc
+            controller_name :products
+
+            def_tags do
+              tag :tag1, 'Tag 1', default: true
+              tag :tag2, 'Tag 2'
+              tag :tag3, 'Tag 3'
+            end
+          end
+          @doc = @base.docs.last
+        end
+        it "add tags to doc" do
+          expect(@doc.tags.size).to eq 3
+          expect(@doc.tags.map(&:name)).to eq ['Tag 1', 'Tag 2', 'Tag 3']
+          expect(@doc.tags.map(&:slug)).to eq ['tag1', 'tag2', 'tag3']
+          expect(@doc.tags.detect { |tag| tag.default }.slug).to eq 'tag1'
+        end
+      end
+
       describe "add_tag" do
         before do
           class AddTagApiDoc < ApiDoc
@@ -759,20 +785,18 @@ module OneboxApiDoc
           @doc.tags = []
         end
         it "add new tag to doc.tags" do
-          expect{ @doc.add_tag(:tag_name) }.to change(@doc.tags, :count).by 1
-        end
-        it "dose not add new tag to doc.tags if tag with this name already exist" do
-          @doc.add_tag(:tag_name)
-          expect{ @doc.add_tag(:tag_name) }.not_to change(@doc.tags, :count)
+          expect{ @doc.add_tag(:tag_slug, 'Tag Slug') }.to change(@doc.tags, :count).by 1
         end
         it "add correct tag" do
-          @doc.add_tag(:tag_name)
-          tag = @doc.tags.detect { |tag| tag.name == 'tag_name' }
-          expect(tag.name).to eq 'tag_name'
+          @doc.add_tag(:tag_slug, 'Tag Slug', default: true)
+          tag = @doc.tags.detect { |tag| tag.slug == 'tag_slug' }
+          expect(tag.name).to eq 'Tag Slug'
+          expect(tag.default).to eq true
         end
         it "return correct tag" do
-          tag = @doc.add_tag(:tag_name)
-          expect(tag.name).to eq 'tag_name'
+          tag = @doc.add_tag(:tag_slug, 'Tag Slug', default: true)
+          expect(tag.name).to eq 'Tag Slug'
+          expect(tag.default).to eq true
         end
       end
 
@@ -908,6 +932,11 @@ module OneboxApiDoc
         class ParamGroupApiDoc < ApiDoc
           controller_name :orders
 
+          def_tags do
+            tag :mobile, 'Mobile'
+            tag :web, 'Web', default: true
+          end
+
           def_param_group :user_header do
             param :user_id, :string, 
               desc: 'user id',
@@ -957,7 +986,7 @@ module OneboxApiDoc
         expect(api1.url).to eq "/orders/:id"
         expect(api1.method).to eq "GET"
         expect(api1.desc).to eq "description"
-        expect(api1.tags.map(&:name)).to eq ["mobile", "web"]
+        expect(api1.tags.map(&:slug)).to eq ["mobile", "web"]
         expect(api1.permissions.map(&:name)).to eq ["guest", "admin", "member"]
         api1_header_params = api1.request.header.params
         expect(api1_header_params).to be_an Array
@@ -987,7 +1016,7 @@ module OneboxApiDoc
         expect(api2.url).to eq "/orders/:id"
         expect(api2.method).to eq "PATCH"
         expect(api2.desc).to eq "description"
-        expect(api2.tags.map(&:name)).to eq ["mobile", "web"]
+        expect(api2.tags.map(&:slug)).to eq ["mobile", "web"]
         expect(api2.permissions.map(&:name)).to eq ["guest", "admin", "member"]
         api2_header_params = api2.request.header.params
         expect(api2_header_params).to be_an Array
