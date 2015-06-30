@@ -1,16 +1,16 @@
 require "rails_helper"
 
 module OneboxApiDoc
-  describe Tag do
+  describe Permission do
     before do
       @base = OneboxApiDoc.base
     end
 
     describe "initialize" do
       it "set correct id and name" do
-        tag = OneboxApiDoc::Tag.new name: :new_tag
-        expect(tag).not_to eq nil
-        expect(tag.name).to eq "new_tag"
+        permission = OneboxApiDoc::Permission.new name: :new_permission
+        expect(permission).not_to eq nil
+        expect(permission.name).to eq "new_permission"
       end
     end
   end

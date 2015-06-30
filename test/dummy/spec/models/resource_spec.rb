@@ -1,16 +1,16 @@
 require "rails_helper"
 
 module OneboxApiDoc
-  describe Tag do
+  describe Resource do
     before do
       @base = OneboxApiDoc.base
     end
 
     describe "initialize" do
       it "set correct id and name" do
-        tag = OneboxApiDoc::Tag.new name: :new_tag
-        expect(tag).not_to eq nil
-        expect(tag.name).to eq "new_tag"
+        resource = OneboxApiDoc::Resource.new name: :new_resource
+        expect(resource).not_to eq nil
+        expect(resource.name).to eq "new_resource"
       end
     end
   end
