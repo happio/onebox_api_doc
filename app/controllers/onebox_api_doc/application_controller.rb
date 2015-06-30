@@ -1,6 +1,9 @@
 module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
+    caches_action :index
+    caches_action :show, :cache_path => Proc.new { |controller| controller.params.except(:_).merge(format: request.format) }
+
     def index
       @base = OneboxApiDoc.base
       @base.reload_document
@@ -32,7 +35,8 @@ module OneboxApiDoc
       }
       unless request.xhr?
         @doc = @base.get_doc(api_options[:version])
-        @tags = @base.get_tags(@doc.version)
+        @current_version = @doc.version
+        @tags = @base.get_tags(@current_version)
         @current_tag = @tags.detect { |tag| tag.name == api_params[:tag].downcase }
         @resources = @current_tag.apis_group_by_resource
       end

@@ -1,6 +1,8 @@
 .ui.divider
 
 .ui.horizontal.divided.link.list
-  .item api_docs:v0.0.1
-  .item onebox_core:v1.6.0
-  .item onebox_bank_transfer:v0.0.4
+  .item 
+    = "api_docs:v#{Gem.loaded_specs["onebox_api_doc"].version.to_s}"
+  .item 
+    = "onebox_core:v#{@current_version.name}"
+  -# .item onebox_bank_transfer:v0.0.4
