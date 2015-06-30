@@ -12,7 +12,7 @@ module OneboxApiDoc
     end
 
     def tags *tags
-      api.tag_ids = tags.map{ |tag| api.doc.add_tag(tag.to_s).object_id }
+      api.tag_ids = tags.map{ |tag| api.doc.get_tag(tag.to_sym).object_id }
     end
 
     def permissions *permissions
