@@ -2,12 +2,16 @@ module OneboxApiDoc
   class Param < BaseObject
 
     attr_accessor :doc_id, :name, :type, :desc, :required, :default, :warning, 
-      :validates, :permission_ids, :from_version_id, :parent_id
+      :validates, :permission_ids, :from_version_id, :parent_id, :api_id
       # from_version_id is for when extension add param to specific api
 
     def initialize *attrs, &block
       super
-      OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(self.doc, self.object_id, &block) if block_given?
+      OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(self.api, self.object_id, &block) if block_given?
+    end
+
+    def api
+      @api ||= doc.apis.detect { |api| api.object_id == self.api_id }
     end
 
     def params

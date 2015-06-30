@@ -841,6 +841,53 @@ module OneboxApiDoc
           expect(nested_params).to eq []
         end
       end
+
+      describe "annoucements", focus: true do
+        before do
+          class GetAnnoucementsApiDoc < ApiDoc
+            controller_name :users
+            api :update, "update user profile" do
+              response do
+                body do
+                  param :test, :string, warning: 'test warning'
+                end
+              end
+            end
+            api :show, "get user profile" do
+              response do
+                body do
+                  param :test_res_header, :string, warning: 'test_res_header'
+                end
+                body do
+                  param :test_res_body, :string, warning: 'test_res_body'
+                end
+              end
+              response do
+                body do
+                  param :test_res_header, :string, warning: 'test_res_header'
+                end
+                body do
+                  param :test_res_body, :string, warning: 'test_res_body'
+                end
+              end
+            end
+          end
+          @doc = @base.docs.last
+        end
+        it "add annoucements" do
+          expect(@doc.annoucements.size).to eq 5
+        end
+        it "is annoucement object" do
+          @doc.annoucements.each do |annoucement|
+            expect(annoucement).to be_an OneboxApiDoc::Annoucements::Param
+          end
+        end
+        it "has param's warning" do
+          @doc.annoucements.each do |annoucement|
+            expect(annoucement.message).to eq annoucement.param.warning
+          end
+        end
+      end
     end
 
     describe "add_param_group" do

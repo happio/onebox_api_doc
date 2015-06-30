@@ -53,30 +53,32 @@ module OneboxApiDoc
 
       def header &block
         if block_given?
-          params = ParamContainerDefinition.new(self.api.doc, &block)
+          params = ParamContainerDefinition.new(self.api, &block)
           @header_param_ids = params.param_ids
         end
       end
 
       def body &block
         if block_given?
-          params = ParamContainerDefinition.new(self.api.doc, &block)
+          params = ParamContainerDefinition.new(self.api, &block)
           @body_param_ids = params.param_ids
         end
       end
     end
 
     class ParamContainerDefinition
-      attr_reader :doc, :parent_id, :param_ids
+      attr_reader :api, :doc, :parent_id, :param_ids
 
-      def initialize doc, _parent_id=nil, &block
-        @doc = doc
+      def initialize _api, _parent_id=nil, &block
+        @api = _api
+        @doc = api.doc
         @parent_id = _parent_id
         @param_ids = []
         self.instance_eval(&block) if block_given?
       end
 
       def param name, type, options={}, &block
+        options[:api_id] = self.api.object_id
         options[:parent_id] = self.parent_id if self.parent_id.present?
         if options[:permissions].present? and self.doc.present?
           options[:permissions] = [options[:permissions]] unless options[:permissions].is_a? Array
