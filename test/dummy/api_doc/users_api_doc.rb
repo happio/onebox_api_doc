@@ -6,6 +6,12 @@ class UsersApiDoc < OneboxApiDoc::ApiDoc
     tag :web, 'Web', default: true
   end
 
+  def_permissions do
+    permission :admin, 'Admin'
+    permission :member, 'Member'
+    permission :guest, 'Guest'
+  end
+
   api :show, 'get user profile' do
     desc 'get user profile'
     tags :mobile, :web

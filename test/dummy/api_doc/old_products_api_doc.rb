@@ -7,6 +7,12 @@ class OldProductsApiDoc < OneboxApiDoc::ApiDoc
     tag :web, 'Web', default: true
   end
 
+  def_permissions do
+    permission :admin, 'Admin'
+    permission :member, 'Member'
+    permission :guest, 'Guest'
+  end
+
   api :index, 'get all products' do
     desc 'get all products'
     tags :mobile, :web
