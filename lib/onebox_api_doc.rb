@@ -10,4 +10,5 @@ module OneboxApiDoc
 
   require "onebox_api_doc/onebox_api_doc_module"
   require "onebox_api_doc/route"
+  require "onebox_api_doc/api_definition"
 end

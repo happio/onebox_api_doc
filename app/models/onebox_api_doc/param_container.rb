@@ -1,50 +1,23 @@
 module OneboxApiDoc
-  class ParamContainer
+  class ParamContainer < BaseObject
 
-    attr_reader :_params
+    attr_accessor :doc_id, :param_ids
 
-    def initialize &block
-      @_params = []
-      self.instance_eval(&block) if block_given?
+    def params
+      @params ||= doc.params.select { |param| self.param_ids.include? param.object_id }
     end
 
-    ##############################
-    ####### Setter Methods #######
-    ##############################
-
-    def param name="", type, options, &block
-      @_params << OneboxApiDoc::Param.new(name, type, options, &block)
+    def doc
+      @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }
     end
+    
+    private
 
-    def param_group name
-      block = OneboxApiDoc.base.get_param_group(name)
-      self.instance_exec(&block)
+    def set_default_value
+      @params = nil
+      @doc = nil
+      self.param_ids ||= []
     end
-
-    ##############################
-    ####### Helper Methods #######
-    ##############################
-
-    def validation_messages validates={}
-      validates.map do |key, value|
-        case key
-        when :min
-          "cannot be less than #{value}"
-        when :max
-          "cannot be more than #{value}"
-        when :within
-          "must be within #{value.to_s}"
-        when :pattern
-          "must match format #{value}"
-        when :email
-          value ? "must be in email format" : next
-        when :min_length
-          "cannot have length less than #{value}"
-        when :max_length
-          "cannot have length more than #{value}"
-        end
-      end.compact
-    end
-
+    
   end
 end

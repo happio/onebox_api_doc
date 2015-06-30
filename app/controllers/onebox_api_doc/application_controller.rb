@@ -3,27 +3,40 @@ module OneboxApiDoc
 
     def index
       base = OneboxApiDoc.base
-      base.reload_documentation
+      base.reload_document
 
-      # set all tags
-      @tags = base.all_tags
+      # set all core versions
+      @main_versions = base.main_versions
 
-      # set all versions
-      @versions = base.core_versions
+      # set all extension version
+      # @extension_versions = base.extension_versions
 
+      # set default version
+      @default_version = base.default_version
+
+      # set main app
+      @main_app = base.main_app
+
+      # set extension apps
+      # @extensions = base.extension_apps
+
+      # set current version
       if api_params[:version].present?
-
-        # set apis group by resource
-        @apis_group_by_resources = base.get_version(api_params[:version]).apis_group_by_resources
-
-        # set display api(s)
-        if api_params[:resource_name].present? and api_params[:action_name].present?
-          @api = base.get_api(api_params[:version], api_params[:resource_name], api_params[:action_name])
-        elsif api_params[:resource_name].present?
-          @apis = base.get_api(api_params[:version], api_params[:resource_name])
-        end
+        @current_version = base.get_version(api_params[:version])
+      else
+        @current_version = @default_version
       end
-      # render nothing: true
+
+      # set tags of version
+      @tags = base.get_tags(@current_version)
+
+      # set apis group by resource
+      @apis_group_by_resource = base.apis_group_by_resource(@current_version)
+
+      # set display api(s)
+      @api = base.get_api(api_params)
+
+      render nothing: true
     end
 
     private
