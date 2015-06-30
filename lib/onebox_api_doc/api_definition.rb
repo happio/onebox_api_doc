@@ -16,7 +16,7 @@ module OneboxApiDoc
     end
 
     def permissions *permissions
-      api.permission_ids = permissions.map{ |permission| api.doc.add_permission(permission).object_id }
+      api.permission_ids = permissions.map{ |permission| api.doc.get_permission(permission).object_id }
     end
 
     def request &block
@@ -80,7 +80,7 @@ module OneboxApiDoc
         options[:parent_id] = self.parent_id if self.parent_id.present?
         if options[:permissions].present? and self.doc.present?
           options[:permissions] = [options[:permissions]] unless options[:permissions].is_a? Array
-          options[:permission_ids] = options[:permissions].map { |permission_name| self.doc.add_permission(permission_name).object_id }
+          options[:permission_ids] = options[:permissions].map { |permission_slug| self.doc.get_permission(permission_slug).object_id }
         end
         param = self.doc.add_param(name, type, options, &block)
         @param_ids << param.object_id unless self.parent_id.present?
@@ -114,7 +114,7 @@ module OneboxApiDoc
       end
 
       def permissions *permissions
-        @permission_ids = permissions.map{ |permission| doc.add_permission(permission).object_id }
+        @permission_ids = permissions.map{ |permission| doc.get_permission(permission).object_id }
       end
 
 
