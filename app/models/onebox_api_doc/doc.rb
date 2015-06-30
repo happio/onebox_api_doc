@@ -22,13 +22,11 @@ module OneboxApiDoc
 
     def apis_group_by_resource
       result = {}
-      unless @apis_group_by_resource.present?
-        self.apis.each do |api|
-          result[api.resource.name] ||= []
-          result[api.resource.name] << api
-        end
+      self.apis.each do |api|
+        result[api.resource.name] ||= []
+        result[api.resource.name] << api
       end
-      @apis_group_by_resource ||= result
+      result
     end
 
     def get_apis resource_name, action=nil
@@ -84,7 +82,7 @@ module OneboxApiDoc
       tag_name = tag_name.to_s
       tag = tags.detect { |tag| tag.name == tag_name }
       unless tag.present?
-        tag = OneboxApiDoc::Tag.new(name: tag_name)
+        tag = OneboxApiDoc::Tag.new(name: tag_name, doc_id: self.object_id)
         tags << tag
         tag
       else
