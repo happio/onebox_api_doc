@@ -31,6 +31,16 @@ module OneboxApiDoc
         self.doc.add_tag slug, name, default: default
       end
 
+      def def_permissions &block
+        set_up_doc
+        block.call if block_given?
+      end
+
+      def permission slug, name
+        set_up_doc
+        self.doc.add_permission slug, name
+      end
+
       # for extension
       def extension_name extension_name
         self._extension_name = extension_name.to_s

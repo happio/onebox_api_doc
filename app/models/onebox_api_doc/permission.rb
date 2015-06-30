@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class Permission < BaseObject
     
-    attr_accessor :name
+    attr_accessor :slug, :name
 
   end
 end
