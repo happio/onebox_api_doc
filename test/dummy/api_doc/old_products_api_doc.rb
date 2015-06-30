@@ -1,6 +1,6 @@
-class ProductsApiDoc < OneboxApiDoc::ApiDoc
+class OldProductsApiDoc < OneboxApiDoc::ApiDoc
   controller_name :products
-  version "1.6.0"
+  version "0.0.1"
 
   api :index, 'get all products' do
     desc 'get all products'

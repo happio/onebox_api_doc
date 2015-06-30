@@ -8,8 +8,8 @@
     - codes.each do |code|
       %tr
         %td.error__code
-          = code._code
+          = code.code
         %td.error__msg
-          = code._message
+          = code.message
         %td.error__params
-          = render partial: 'onebox_api_doc/application/params', locals: { params: code._params } unless code._params.blank?
+          = render partial: 'onebox_api_doc/application/params', locals: { params: code.params } unless code.params.blank?

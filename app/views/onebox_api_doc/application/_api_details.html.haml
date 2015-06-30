@@ -1,29 +1,29 @@
 #api-details
   %h2.ui.header.resourec__name 
-    = api._controller_name
+    = api.resource.name
 
   .ui.divider
 
   %h1.ui.header.api__url
-    %span.action.get{ "class" => "#{api._method.downcase}"}
-      = api._method
+    %span.action.get{ "class" => "#{api.method.downcase}"}
+      = api.method
     %span.url#url-path
-      = api._url
+      = api.url
     %a.ui.copy--btn.label{"data-clipboard-target" => "url-path"} Copy
     .sub.header
-      = api._short_desc
+      = api.short_desc
 
   -# permission section
   .api__permission
     Permission : 
-    - api._permissions.each do |permission_name|
+    - api.permissions.each do |permission|
       %a.ui.label.name
-        = permission_name
+        = permission.name
 
   -# long description section
   %br
   %p.description
-    = api._desc
+    = api.desc
 
   -# note section
   -# .ui.api__note.list
@@ -38,22 +38,15 @@
   -#               note of extension #{i} Lorem ipsum dolor sit amet, consectetur
 
   .ui.top.attached.tabular.menu
-    %a.item{"data-tab" => "header"} Header
-    %a.item{"data-tab" => "body"} Body
+    %a.item{"data-tab" => "request"} Request
     %a.item.active{"data-tab" => "response"} Response
     %a.item{"data-tab" => "error"} Error
 
-  .ui.bottom.attached.tab.segment{"data-tab" => "header"}
-    = render partial: 'onebox_api_doc/application/params', locals: { params: Array(api._header.try(:_params)) }
-
-  .ui.bottom.attached.tab.segment{"data-tab" => "body"}
-    = render partial: 'onebox_api_doc/application/params', locals: { params: Array(api._body.try(:_params)) }
-
-  .ui.bottom.attached.tab.active.segment{"data-tab" => "response"}
-    = render partial: 'onebox_api_doc/application/params', locals: { params: Array(api._response.try(:_params)) }
+  = render partial: 'onebox_api_doc/application/params_containner', locals: { params_containner: api.request, type: 'request', active: '' }
+  = render partial: 'onebox_api_doc/application/params_containner', locals: { params_containner: api.response, type: 'response', active: 'active' }
 
   .ui.bottom.attached.tab.segment{"data-tab" => "error"}
-    = render partial: 'onebox_api_doc/application/errors', locals: { codes: Array(api._error.try(:_codes)) }
+    = render partial: 'onebox_api_doc/application/errors', locals: { codes: api.errors }
 
   %script
     $('.params .param__from, .api__note .note--warning').popup();$('.menu .item').tab();

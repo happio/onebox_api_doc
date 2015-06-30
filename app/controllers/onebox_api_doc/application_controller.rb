@@ -2,47 +2,62 @@ module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
     def index
-      base = OneboxApiDoc.base
-      base.reload_documentation
+      @base = OneboxApiDoc.base
+      @base.reload_document
 
-      @core_version = base.default_version
-      p @core_version
-      p @core_version.version
-      # set all tags
-      @tags = base.all_tags
-      @resources = (@tags.detect { |tag| tag.name == params[:role] } || @tags.first).apis_by_resources
-      # set all versions
-      # @versions = base.core_versions
+      @core_version = @base.default_version
 
-      # if api_params[:version].present?
+      @doc = @base.get_doc(@core_version.name)
 
-      #   # set apis group by resource
-      #   @apis_group_by_resources = base.get_version(api_params[:version]).apis_group_by_resources
-
-      #   # set display api(s)
-      #   if api_params[:resource_name].present? and api_params[:action_name].present?
-      #     @api = base.get_api(api_params[:version], api_params[:resource_name], api_params[:action_name])
-      #   elsif api_params[:resource_name].present?
-      #     @apis = base.get_api(api_params[:version], api_params[:resource_name])
-      #   end
-      # end
-      # render nothing: true
+      @tags = @base.get_tags(@core_version)
+      @tag_target = @tags.detect { |tag| tag.name == tag: params[:role] }
+      @resources =  if @tag_target
+                      @tag_target.apis_group_by_resource
+                    else
+                       @doc.apis_group_by_resource
+                    end
     end
 
     def show
-      base = OneboxApiDoc.base
-      if api_params[:version].present?
+      @base = OneboxApiDoc.base
+      @core_version = @base.default_version
+      api_options = {
+        version: api_params[:version] || @core_version.name,
+        resource_name: api_params[:resource_name],
+        action_name: api_params[:action_name]
+      }
+      # if api_params[:version].present?
+      # # set all core versions
+      # @main_versions = base.main_versions
 
-        # set apis group by resource
-        @apis_group_by_resources = base.get_version(api_params[:version]).apis_group_by_resources
+      # # set all extension version
+      # # @extension_versions = base.extension_versions
 
-        # set display api(s)
-        if api_params[:resource_name].present? and api_params[:action_name].present?
-          @api = base.get_api(api_params[:version], api_params[:resource_name], api_params[:action_name])
-        elsif api_params[:resource_name].present?
-          @apis = base.get_api(api_params[:version], api_params[:resource_name])
-        end
-      end
+      # # set default version
+      # @default_version = base.default_version
+
+      # # set main app
+      # @main_app = base.main_app
+
+      # # set extension apps
+      # # @extensions = base.extension_apps
+
+      # # set current version
+      # if api_params[:version].present?
+      #   @current_version = base.get_version(api_params[:version])
+      # else
+      #   @current_version = @default_version
+      # end
+
+      # # set tags of version
+      # @tags = base.get_tags(@current_version)
+
+      # # set apis group by resource
+      # @apis_group_by_resource = base.apis_group_by_resource(@current_version)
+
+      # # set display api(s)
+      @api = @base.get_api(api_options)
+
     end
 
     def example

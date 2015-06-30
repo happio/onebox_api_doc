@@ -8,12 +8,12 @@
       .content 
         .ui.fluid.vertical.menu
           - apis.each do |api|
-            = link_to onebox_api_doc.action_path(version: @core_version.version, resource_name: resource_name, action_name: api._action), class: 'item', remote: true do
+            = link_to onebox_api_doc.action_path(version: @core_version.name, resource_name: resource_name, action_name: api.action), class: 'item', remote: true do
               .api__url
-                %span.action{ class: "#{api._method.downcase}" }
-                  = api._method
+                %span.action{ class: "#{api.method.downcase}" }
+                  = api.method
                 %span.url 
-                  = api._url
+                  = api.url
               .api__desc 
-                = api._short_desc
+                = api.short_desc
 

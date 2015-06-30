@@ -5,10 +5,10 @@
         %td.param__key
           .ui.header
             .name
-              = param._name
+              = param.name
             .sub.header.type
-              = param._type
+              = param.type
         %td
           %p.param__desc
-            = param._desc
-            = render partial: 'onebox_api_doc/application/params', locals: { params: param._params } unless param._params.blank?
+            = param.desc
+            = render partial: 'onebox_api_doc/application/params', locals: { params: param.params } unless param.params.blank?

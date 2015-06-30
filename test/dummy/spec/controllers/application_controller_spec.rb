@@ -9,153 +9,204 @@ module OneboxApiDoc
 
       before do
         @base = OneboxApiDoc.base
-        @base.reload_documentation
+        @base.reload_document
+      end
+      
+      it "set @main_versions" do
+        get :index
+        main_versions = assigns(:main_versions)
+        expect(main_versions).to be_an Array
+        expect(main_versions).to eq @base.main_versions
+        expect(main_versions.size).to be > 0 and eq @base.main_versions.size
+        main_versions.each do |version|
+          expect(version).to be_an OneboxApiDoc::Version
+          expect(version.is_extension?).to eq false
+        end
       end
 
-      context "request with only version" do
-        it "do not assigns @apis or @api" do
-          get :index, { version: "1.2.3" }
-          expect(assigns(:apis)).to eq nil
-          expect(assigns(:api)).to eq nil
+      it "set @default_version" do
+        get :index
+        default_version = assigns(:default_version)
+        expect(default_version).to be_an OneboxApiDoc::Version
+        expect(default_version).to eq @base.default_version
+      end
+
+      it "set @main_app" do
+        get :index
+        main_app = assigns(:main_app)
+        expect(main_app).to be_an OneboxApiDoc::App
+        expect(main_app).to eq @base.main_app
+      end
+
+      it "set @current_version to default version if params[:version] is nil" do
+        get :index
+        current_version = assigns(:current_version)
+        expect(current_version).to be_an OneboxApiDoc::Version
+        expect(current_version).to eq @base.default_version
+      end
+
+      it "set @tags according to doc with default version" do
+        get :index
+        tags = assigns(:tags)
+        expect(tags).to be_an Array
+        doc = @base.get_doc @base.default_version.name
+        expect(tags).to eq doc.tags
+      end
+
+      it "set @apis_group_by_resource according to doc with default version" do
+        get :index
+        apis_group_by_resource = assigns(:apis_group_by_resource)
+        expect(apis_group_by_resource).to be_a Hash
+        doc = @base.get_doc @base.default_version.name
+        expect(apis_group_by_resource.keys.size).to be > 0
+        expect(apis_group_by_resource.keys).to eq doc.resources.map(&:name)
+        apis_group_by_resource.each do |key, value|
+          expected_value = doc.apis.select { |api| api.resource.name == key }
+          expect(value).to be_an Array
+          expect(value).to eq expected_value
+          expect(value.size).to be > 0 and eq expected_value.size
+          value.each do |api|
+            expect(api).to be_an OneboxApiDoc::Api
+            expect(api.resource.name).to eq key
+            expect(api.version.name).to eq doc.version.name
+          end
         end
-        it "assigns @tags" do
-          get :index, { version: "1.2.3" }
+      end
+      it "set @api to empty array" do
+        get :index
+        expect(assigns(:api)).to eq []
+      end
+
+      context "request with version" do
+        it "set @current_version to specified version" do
+          get :index, { version: "0.0.1" }
+          current_version = assigns(:current_version)
+          expect(current_version).to be_an OneboxApiDoc::Version
+          expect(current_version.name).to eq '0.0.1'
+        end
+        it "set @tags according to doc with specified version" do
+          get :index, { version: "0.0.1" }
           tags = assigns(:tags)
           expect(tags).to be_an Array
-          expect(tags.size).to be > 0
-          tags.each do |tag|
-            expect(tag).to be_an OneboxApiDoc::Tag
+          doc = @base.get_doc "0.0.1"
+          expect(tags).to eq doc.tags
+        end
+        it "set @apis_group_by_resource according to doc with specified version" do
+          get :index, { version: "0.0.1" }
+          apis_group_by_resource = assigns(:apis_group_by_resource)
+          expect(apis_group_by_resource).to be_a Hash
+          doc = @base.get_doc "0.0.1"
+          expect(apis_group_by_resource.keys.size).to be > 0
+          expect(apis_group_by_resource.keys).to eq doc.resources.map(&:name)
+          apis_group_by_resource.each do |key, value|
+            expected_value = doc.apis.select { |api| api.resource.name == key }
+            expect(value).to be_an Array
+            expect(value).to eq expected_value
+            expect(value.size).to be > 0 and eq expected_value.size
+            value.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.resource.name).to eq key
+              expect(api.version.name).to eq '0.0.1'
+            end
           end
         end
-        it "assigns @versions" do
-          get :index, { version: "1.2.3" }
-          versions = assigns(:versions)
-          expect(versions).to be_an Array
-          expect(versions.size).to be > 0
-          versions.each do |version|
-            expect(version).to be_an OneboxApiDoc::Version
-          end
-        end
-        it "assigns @apis_group_by_resources" do
-          get :index, { version: "1.2.3" }
-          apis_group_by_resources = assigns(:apis_group_by_resources)
-
-          product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
-          user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
-
-          expect(apis_group_by_resources).to be_an Hash
-          expect(apis_group_by_resources.keys.sort).to eq ["products", "users"].sort
-          expect(apis_group_by_resources["products"]).to be_an Array
-          expect(apis_group_by_resources["products"].size).to eq product_apis.size
-          expect(apis_group_by_resources["products"].map { |api| api._url }.sort).to eq product_apis.map { |api| api._url }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._method }.sort).to eq product_apis.map { |api| api._method }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._action }.sort).to eq product_apis.map { |api| api._action }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._short_desc }.sort).to eq product_apis.map { |api| api._short_desc }.sort
-          expect(apis_group_by_resources["users"]).to be_an Array
-          expect(apis_group_by_resources["users"].size).to eq user_apis.size
-          expect(apis_group_by_resources["users"].map { |api| api._url }.sort).to eq user_apis.map { |api| api._url }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._method }.sort).to eq user_apis.map { |api| api._method }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._action }.sort).to eq user_apis.map { |api| api._action }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._short_desc }.sort).to eq user_apis.map { |api| api._short_desc }.sort
+        it "set @api to empty array" do
+          get :index, { version: "0.0.1" }
+          expect(assigns(:api)).to eq []
         end
       end
 
       context "request with version and resource name" do
-        it "assigns @apis" do
-          get :index, { version: "1.2.3", resource_name: "products" }
-          expect(assigns(:api)).to eq nil
-          expect(assigns(:apis)).to be_an Array
-          expect(assigns(:apis).size).to be > 0
+        it "set @current_version to specified version" do
+          get :index, { version: "0.0.1", resource_name: :products }
+          current_version = assigns(:current_version)
+          expect(current_version).to be_an OneboxApiDoc::Version
+          expect(current_version.name).to eq '0.0.1'
         end
-        it "assigns @tags" do
-          get :index, { version: "1.2.3", resource_name: "products" }
+        it "set @tags according to doc with specified version" do
+          get :index, { version: "0.0.1", resource_name: :products }
           tags = assigns(:tags)
           expect(tags).to be_an Array
-          expect(tags.size).to be > 0
-          tags.each do |tag|
-            expect(tag).to be_an OneboxApiDoc::Tag
+          doc = @base.get_doc "0.0.1"
+          expect(tags).to eq doc.tags
+        end
+        it "set @apis_group_by_resource according to doc with specified version" do
+          get :index, { version: "0.0.1", resource_name: :products }
+          apis_group_by_resource = assigns(:apis_group_by_resource)
+          expect(apis_group_by_resource).to be_a Hash
+          doc = @base.get_doc "0.0.1"
+          expect(apis_group_by_resource.keys.size).to be > 0
+          expect(apis_group_by_resource.keys).to eq doc.resources.map(&:name)
+          apis_group_by_resource.each do |key, value|
+            expected_value = doc.apis.select { |api| api.resource.name == key }
+            expect(value).to be_an Array
+            expect(value).to eq expected_value
+            expect(value.size).to be > 0 and eq expected_value.size
+            value.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.resource.name).to eq key
+              expect(api.version.name).to eq '0.0.1'
+            end
           end
         end
-        it "assigns @versions" do
-          get :index, { version: "1.2.3", resource_name: "products" }
-          versions = assigns(:versions)
-          expect(versions).to be_an Array
-          expect(versions.size).to be > 0
-          versions.each do |version|
-            expect(version).to be_an OneboxApiDoc::Version
+        it "set @api to apis of specified resource" do
+          get :index, { version: "0.0.1", resource_name: :products }
+          expect_apis = doc = @base.get_doc("0.0.1").apis.select { |api| api.resource.name == 'products' }
+          apis = assigns(:api)
+          expect(apis).to eq expect_apis
+          expect(apis.size).to be > 0 and eq expect_apis.size
+          apis.each do |api|
+            expect(api).to be_an OneboxApiDoc::Api
+            expect(api.resource.name).to eq 'products'
+            expect(api.version.name).to eq '0.0.1'
           end
-        end
-        it "assigns @apis_group_by_resources" do
-          get :index, { version: "1.2.3", resource_name: "products" }
-          apis_group_by_resources = assigns(:apis_group_by_resources)
-
-          product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
-          user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
-
-          expect(apis_group_by_resources).to be_an Hash
-          expect(apis_group_by_resources.keys.sort).to eq ["products", "users"].sort
-          expect(apis_group_by_resources["products"]).to be_an Array
-          expect(apis_group_by_resources["products"].size).to eq product_apis.size
-          expect(apis_group_by_resources["products"].map { |api| api._url }.sort).to eq product_apis.map { |api| api._url }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._method }.sort).to eq product_apis.map { |api| api._method }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._action }.sort).to eq product_apis.map { |api| api._action }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._short_desc }.sort).to eq product_apis.map { |api| api._short_desc }.sort
-          expect(apis_group_by_resources["users"]).to be_an Array
-          expect(apis_group_by_resources["users"].size).to eq user_apis.size
-          expect(apis_group_by_resources["users"].map { |api| api._url }.sort).to eq user_apis.map { |api| api._url }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._method }.sort).to eq user_apis.map { |api| api._method }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._action }.sort).to eq user_apis.map { |api| api._action }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._short_desc }.sort).to eq user_apis.map { |api| api._short_desc }.sort
         end
       end
 
-      context "request with version, resource name and action" do
-        it "assigns @api" do
-          get :index, { version: "1.2.3", resource_name: "products", action_name: "index" }
-          expect(assigns(:apis)).to eq nil
-          expect(assigns(:api)).to be_an OneboxApiDoc::Api
+      context "request with version, resource name and action name" do
+        it "set @current_version to specified version" do
+          get :index, { version: "0.0.1", resource_name: :products, action_name: :show }
+          current_version = assigns(:current_version)
+          expect(current_version).to be_an OneboxApiDoc::Version
+          expect(current_version.name).to eq '0.0.1'
         end
-        it "assigns @tags" do
-          get :index, { version: "1.2.3", resource_name: "products", action_name: "index" }
+        it "set @tags according to doc with specified version" do
+          get :index, { version: "0.0.1", resource_name: :products }
           tags = assigns(:tags)
           expect(tags).to be_an Array
-          expect(tags.size).to be > 0
-          tags.each do |tag|
-            expect(tag).to be_an OneboxApiDoc::Tag
+          doc = @base.get_doc "0.0.1"
+          expect(tags).to eq doc.tags
+        end
+        it "set @apis_group_by_resource according to doc with specified version" do
+          get :index, { version: "0.0.1", resource_name: :products, action_name: :show }
+          apis_group_by_resource = assigns(:apis_group_by_resource)
+          expect(apis_group_by_resource).to be_a Hash
+          doc = @base.get_doc "0.0.1"
+          expect(apis_group_by_resource.keys.size).to be > 0
+          expect(apis_group_by_resource.keys).to eq doc.resources.map(&:name)
+          apis_group_by_resource.each do |key, value|
+            expected_value = doc.apis.select { |api| api.resource.name == key }
+            expect(value).to be_an Array
+            expect(value).to eq expected_value
+            expect(value.size).to be > 0 and eq expected_value.size
+            value.each do |api|
+              expect(api).to be_an OneboxApiDoc::Api
+              expect(api.resource.name).to eq key
+              expect(api.version.name).to eq '0.0.1'
+            end
           end
         end
-        it "assigns @versions" do
-          get :index, { version: "1.2.3", resource_name: "products", action_name: "index" }
-          versions = assigns(:versions)
-          expect(versions).to be_an Array
-          expect(versions.size).to be > 0
-          versions.each do |version|
-            expect(version).to be_an OneboxApiDoc::Version
-          end
-        end
-        it "assigns @apis_group_by_resources" do
-          get :index, { version: "1.2.3", resource_name: "products", action_name: "index" }
-          apis_group_by_resources = assigns(:apis_group_by_resources)
-
-          product_apis = @base.api_docs.select { |doc| doc._controller_name == "products" }.first._apis
-          user_apis = @base.api_docs.select { |doc| doc._controller_name == "users" }.first._apis
-
-          expect(apis_group_by_resources).to be_an Hash
-          expect(apis_group_by_resources.keys.sort).to eq ["products", "users"].sort
-          expect(apis_group_by_resources["products"]).to be_an Array
-          expect(apis_group_by_resources["products"].size).to eq product_apis.size
-          expect(apis_group_by_resources["products"].map { |api| api._url }.sort).to eq product_apis.map { |api| api._url }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._method }.sort).to eq product_apis.map { |api| api._method }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._action }.sort).to eq product_apis.map { |api| api._action }.sort
-          expect(apis_group_by_resources["products"].map { |api| api._short_desc }.sort).to eq product_apis.map { |api| api._short_desc }.sort
-          expect(apis_group_by_resources["users"]).to be_an Array
-          expect(apis_group_by_resources["users"].size).to eq user_apis.size
-          expect(apis_group_by_resources["users"].map { |api| api._url }.sort).to eq user_apis.map { |api| api._url }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._method }.sort).to eq user_apis.map { |api| api._method }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._action }.sort).to eq user_apis.map { |api| api._action }.sort
-          expect(apis_group_by_resources["users"].map { |api| api._short_desc }.sort).to eq user_apis.map { |api| api._short_desc }.sort
+        it "set @api to api of specified resource and action" do
+          get :index, { version: "0.0.1", resource_name: :products, action_name: :show }
+          expect_apis = doc = @base.get_doc("0.0.1").apis.select { |api| api.resource.name == 'products' }
+          api = assigns(:api)
+          expect(api).to be_an OneboxApiDoc::Api
+          expect(api.resource.name).to eq 'products'
+          expect(api.version.name).to eq '0.0.1'
+          expect(api.action).to eq 'show'
         end
       end
+
     end
 
   end
