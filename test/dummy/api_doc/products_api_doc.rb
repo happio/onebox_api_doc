@@ -4,7 +4,7 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
 
   api :index, 'get all products' do
     desc 'get all products'
-    tags :mobile, :web
+    tags :mobile
     permissions :admin, :member, :guest
     request do
       header do

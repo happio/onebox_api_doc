@@ -1,6 +1,0 @@
-.ui.segment
-  %h3.ui.horizontal.header.divider
-    Roles
-  .ui.form
-    .filed
-      = select_tag :role, options_for_select(@tags.map { |tag| tag.name.capitalize }), class: 'ui fluid dropdown'

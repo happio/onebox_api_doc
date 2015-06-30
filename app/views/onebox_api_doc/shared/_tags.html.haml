@@ -1,0 +1,7 @@
+.ui.segment
+  %h3.ui.horizontal.header.divider
+    Roles
+  .ui.form
+    .filed
+      = select_tag(:tag, options_for_select( @tags.map { |tag| [ tag.name.capitalize, tag.name, { data: { url: apis_by_tag_path(tag: tag.name) } } ] }, selected: @current_tag.name),
+        class: 'ui fluid dropdown', id: 'filter-apis-by-tag' )
