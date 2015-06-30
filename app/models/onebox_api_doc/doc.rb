@@ -78,16 +78,24 @@ module OneboxApiDoc
       error
     end
 
-    def add_tag tag_name
-      tag_name = tag_name.to_s
-      tag = tags.detect { |tag| tag.name == tag_name }
+    def default_tag
+      self.tags.detect { |tag| tag.default }
+    end
+
+    def add_tag slug, name, default: false
+      # raise "tag #{slug} was already defined" if self.tags.map(&:slug).include? slug.to_s
+      tag = self.tags.detect { |tag| tag.slug == slug.to_s }
       unless tag.present?
-        tag = OneboxApiDoc::Tag.new(name: tag_name, doc_id: self.object_id)
-        tags << tag
-        tag
-      else
-        tag
+        tag ||= OneboxApiDoc::Tag.new(slug: slug.to_s, name: name.to_s, default: default, doc_id: self.object_id)
+        self.tags << tag
       end
+      tag
+    end
+
+    def get_tag tag_slug
+      tag_slug = tag_slug.to_s
+      raise "tag #{tag_slug} not defined" unless self.tags.map(&:slug).include? tag_slug
+      self.tags.detect { |tag| tag.slug == tag_slug }
     end
 
     def add_permission permission_name

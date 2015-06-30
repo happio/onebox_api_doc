@@ -21,6 +21,16 @@ module OneboxApiDoc
         self.resource_name = name
       end
 
+      def def_tags &block
+        set_up_doc
+        block.call if block_given?
+      end
+
+      def tag slug, name, default: false
+        set_up_doc
+        self.doc.add_tag slug, name, default: default
+      end
+
       # for extension
       def extension_name extension_name
         self._extension_name = extension_name.to_s
