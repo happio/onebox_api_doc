@@ -1,6 +1,11 @@
 class UsersApiDoc < OneboxApiDoc::ApiDoc
   controller_name :users
 
+  def_tags do
+    tag :mobile, 'Mobile'
+    tag :web, 'Web', default: true
+  end
+
   api :show, 'get user profile' do
     desc 'get user profile'
     tags :mobile, :web

@@ -1,6 +1,11 @@
 class ProductsApiDoc < OneboxApiDoc::ApiDoc
   controller_name :products
 
+  def_tags do
+    tag :mobile, 'Mobile'
+    tag :web, 'Web', default: true
+  end
+
   api :index, 'get all products' do
     desc 'get all products'
     tags :mobile, :web
