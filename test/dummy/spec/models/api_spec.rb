@@ -105,9 +105,9 @@ module OneboxApiDoc
     describe "permissions" do
       before do
         @permissions = []
-        @permissions << @doc.add_permission(:permission1)
-        @permissions << @doc.add_permission(:permission2)
-        @permissions << @doc.add_permission(:permission3)
+        @permissions << @doc.add_permission(:permission1, 'Permission 1')
+        @permissions << @doc.add_permission(:permission2, 'Permission 2')
+        @permissions << @doc.add_permission(:permission3, 'Permission 3')
         @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
           url: "/users/:id", short_desc: "get user profile", desc: "description", resource_id: @resource.object_id,
           tag_ids: [3,5,7,9], error_ids: [5,6,7,8], permission_ids: @permissions.map(&:object_id)
