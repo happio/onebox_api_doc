@@ -83,7 +83,6 @@ module OneboxApiDoc
     end
 
     def add_tag slug, name, default: false
-      # raise "tag #{slug} was already defined" if self.tags.map(&:slug).include? slug.to_s
       tag = self.tags.detect { |tag| tag.slug == slug.to_s }
       unless tag.present?
         tag ||= OneboxApiDoc::Tag.new(slug: slug.to_s, name: name.to_s, default: default, doc_id: self.object_id)
@@ -98,16 +97,22 @@ module OneboxApiDoc
       self.tags.detect { |tag| tag.slug == tag_slug }
     end
 
-    def add_permission permission_name
-      permission_name = permission_name.to_s
-      permission = self.permissions.detect { |permission| permission.name == permission_name }
+    def add_permission slug, name
+      name = name.to_s
+      permission = self.permissions.detect { |permission| permission.name == name }
       unless permission.present?
-        permission = OneboxApiDoc::Permission.new(name: permission_name)
+        permission = OneboxApiDoc::Permission.new(slug: slug, name: name)
         self.permissions << permission
         permission
       else
         permission
       end
+    end
+
+    def get_permission permission_slug
+      permission_slug = permission_slug.to_s
+      raise "permission #{permission_slug} not defined" unless self.permissions.map(&:slug).include? permission_slug
+      self.permissions.detect { |permission| permission.slug == permission_slug }
     end
 
     # Params Group methods
