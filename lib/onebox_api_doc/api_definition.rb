@@ -103,6 +103,11 @@ module OneboxApiDoc
       def code error_status, error_message="", &block
         error = self.api.doc.add_error(api, error_status, error_message, &block)
       end
+
+      def error_group name
+        block = self.api.doc.get_error_group(name)
+        self.instance_exec(&block)
+      end
     end
 
     class ErrorDefinition < ParamContainerDefinition

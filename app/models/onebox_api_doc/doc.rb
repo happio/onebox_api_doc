@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class Doc < BaseObject
 
-    attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups
+    attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups, :error_groups
     attr_accessor :version_id, :extension_name, :resource_ids
     attr_accessor :annoucements
 
@@ -137,6 +137,21 @@ module OneboxApiDoc
       end
     end
 
+    # Error Code Group methods
+    def add_error_group(name, &block)
+      key = name.to_s
+      self.error_groups[key] = block
+    end
+
+    def get_error_group(name)
+      key = name.to_s
+      if self.error_groups.has_key?(key)
+        return self.error_groups[key]
+      else
+        raise "error group #{key} not defined"
+      end
+    end
+
     def nested_params_of param_id
       self.params.select { |param| param.parent_id == param_id }
     end
@@ -154,6 +169,7 @@ module OneboxApiDoc
       self.params = []
       self.errors = []
       self.param_groups = {}
+      self.error_groups = {}
       self.annoucements = []
     end
 

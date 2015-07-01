@@ -68,6 +68,11 @@ module OneboxApiDoc
         self.doc.add_param_group name, &block
       end
 
+      def def_error_group name, &block
+        set_up_doc
+        self.doc.add_error_group name, &block
+      end
+
       def set_up_doc
         self.doc ||= OneboxApiDoc.base.add_doc(self.version_id)
       end
