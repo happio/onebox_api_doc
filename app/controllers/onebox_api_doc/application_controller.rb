@@ -21,7 +21,7 @@ module OneboxApiDoc
                     end
       respond_to do |format|
         format.html
-        format.js
+        format.js 
       end
     end
 
@@ -45,7 +45,13 @@ module OneboxApiDoc
 
       respond_to do |format|
         format.html
-        format.js
+        format.js do 
+          response = { 
+            url: request.original_url, 
+            html: render_to_string(partial: 'onebox_api_doc/application/api_details', locals: { api: @api }, layout: false)
+          }
+          render json: response
+        end
       end
 
     end
