@@ -21,17 +21,13 @@ module OneboxApiDoc
 
     def request &block
       if block_given?
-        request = RequestResponseDefinition.new(api, &block)
-        api.request.header.param_ids = request.header_param_ids
-        api.request.body.param_ids = request.body_param_ids
+        request = RequestResponseDefinition.new(:request, api, &block)
       end
     end
 
     def response &block
       if block_given?
-        response = RequestResponseDefinition.new(api, &block)
-        api.response.header.param_ids = response.header_param_ids
-        api.response.body.param_ids = response.body_param_ids
+        response = RequestResponseDefinition.new(:response, api, &block)
       end
     end
 
@@ -42,47 +38,51 @@ module OneboxApiDoc
     end
 
     class RequestResponseDefinition
-      attr_reader :api, :header_param_ids, :body_param_ids
+      attr_reader :mapper
+      attr_reader :api
 
-      def initialize api=nil, &block
+      def initialize _mapper, api=nil, &block
+        @mapper = _mapper
         @api = api
-        @header_param_ids = []
-        @body_param_ids = []
         self.instance_eval(&block) if block_given?
       end
 
       def header &block
         if block_given?
-          params = ParamContainerDefinition.new(self.api.doc, &block)
-          @header_param_ids = params.param_ids
+          params = ParamContainerDefinition.new("#{mapper}/header", api.doc, api.object_id, &block)
         end
       end
 
       def body &block
         if block_given?
-          params = ParamContainerDefinition.new(self.api.doc, &block)
-          @body_param_ids = params.param_ids
+          params = ParamContainerDefinition.new("#{mapper}/body", api.doc, api.object_id, &block)
         end
       end
     end
 
     class ParamContainerDefinition
-      attr_reader :doc, :parent_id, :param_ids
+      attr_reader :mapper
+      attr_reader :api_id, :doc, :parent_id
 
-      def initialize doc, _parent_id=nil, &block
-        @doc = doc
+      def initialize _mapper, _doc, _api_id, _parent_id=nil, &block
+        @mapper = _mapper.to_s
+        @doc = _doc
+        @api_id = _api_id
         @parent_id = _parent_id
         @param_ids = []
         self.instance_eval(&block) if block_given?
       end
 
       def param name, type, options={}, &block
-        options[:parent_id] = self.parent_id if self.parent_id.present?
-        if options[:permissions].present? and self.doc.present?
+        options[:mapper] = mapper
+        options[:api_id] = api_id
+        options[:parent_id] = parent_id if parent_id.present?
+        if options[:permissions].present? and doc.present?
           options[:permissions] = [options[:permissions]] unless options[:permissions].is_a? Array
-          options[:permission_ids] = options[:permissions].map { |permission_slug| self.doc.get_permission(permission_slug).object_id }
+          options[:permission_ids] = options[:permissions].map { |permission_slug| doc.get_permission(permission_slug).object_id }
         end
         param = self.doc.add_param(name, type, options, &block)
+        self.doc.add_annoucement(:param, doc_id: doc.object_id, param_id: param.object_id) if param.warning
         @param_ids << param.object_id unless self.parent_id.present?
       end
 
@@ -108,7 +108,7 @@ module OneboxApiDoc
     class ErrorDefinition < ParamContainerDefinition
       attr_reader :permission_ids
 
-      def initialize doc, &block
+      def initialize _mapper, _doc, _api_id, _parent_id=nil, &block
         @permission_ids = []
         super
       end
