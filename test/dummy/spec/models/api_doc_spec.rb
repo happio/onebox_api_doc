@@ -825,7 +825,26 @@ module OneboxApiDoc
         end
       end
 
-      describe "default_tag"
+      describe "default_tag" do
+        before do
+          class DefaultTagApiDoc < ApiDoc
+            controller_name :products
+            version '0.0.0.4'
+            def_tags do
+              tag :tag1, 'Tag 1'
+              tag :tag2, 'Tag 2', default: true
+              tag :tag3, 'Tag 3'
+            end
+          end
+          @doc = @base.get_doc('0.0.0.4')
+        end
+        it "return correct default tag" do
+          tag = @doc.default_tag
+          expect(tag).not_to eq nil
+          expect(tag.name).to eq 'Tag 2'
+          expect(tag.slug).to eq 'tag2'
+        end
+      end
 
       describe "get_tag" do
         before do
@@ -855,14 +874,14 @@ module OneboxApiDoc
         before do
           class DefPermissionsApiDoc < ApiDoc
             controller_name :products
-
+            version '0.0.21'
             def_permissions do
               permission :permission1, 'Permission 1'
               permission :permission2, 'Permission 2'
               permission :permission3, 'Permission 3'
             end
           end
-          @doc = @base.docs.last
+          @doc = @base.get_doc('0.0.21')
         end
         it "add permissions to doc" do
           expect(@doc.permissions.size).to eq 3
@@ -977,6 +996,7 @@ module OneboxApiDoc
       before do
         @base = OneboxApiDoc.base
         class DefParamGroupApiDoc < ApiDoc
+          version '0.0.0.90'
           def_param_group :user_header do
             param :user_id, :string, 
               desc: 'user id',
@@ -992,7 +1012,7 @@ module OneboxApiDoc
               required: true
           end
         end
-        @doc = @base.docs.last
+        @doc = @base.get_doc('0.0.0.90')
       end
 
       it "add param group to base" do
