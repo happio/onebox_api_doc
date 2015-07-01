@@ -3,11 +3,12 @@ module OneboxApiDoc
 
     attr_accessor :doc_id, :name, :type, :desc, :required, :default, :warning, 
       :validates, :permission_ids, :from_version_id, :parent_id, :api_id
+    attr_accessor :mapper
       # from_version_id is for when extension add param to specific api
 
     def initialize *attrs, &block
       super
-      OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(self.api, self.object_id, &block) if block_given?
+      OneboxApiDoc::ApiDefinition::ParamContainerDefinition.new(mapper, doc, api_id, self.object_id, &block) if block_given?
     end
 
     def api
@@ -33,6 +34,10 @@ module OneboxApiDoc
     def permissions=(permission_names)
       self.permission_ids = permission_names.map { |permission_name| doc.add_permission(permission_name.to_s).object_id }
       permissions
+    end
+
+    def root?
+      parent_id == nil
     end
 
     private

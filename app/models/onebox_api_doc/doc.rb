@@ -64,7 +64,6 @@ module OneboxApiDoc
       options = {doc_id: self.object_id, name: name, type: type}.merge(options)
       param = OneboxApiDoc::Param.new(options, &block)
       self.params << param
-      add_annoucement(:param, doc_id: self.object_id, param_id: param.object_id) if param.warning
       param
     end
 
@@ -76,11 +75,10 @@ module OneboxApiDoc
     end
 
     def add_error api, error_status, error_message, &block
-      error = OneboxApiDoc::Error.new(doc_id: self.object_id, code: error_status, message: error_message, &block)
+      error = OneboxApiDoc::Error.new(doc_id: self.object_id, api_id: api.object_id, code: error_status, message: error_message, &block)
       api.error_ids << error.object_id
       if block_given?
-        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new(api, &block)
-        error.param_ids = error_detail.param_ids
+        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new("error", api.doc, api.object_id, &block)
         error.permission_ids = error_detail.permission_ids
       end
       self.errors << error
