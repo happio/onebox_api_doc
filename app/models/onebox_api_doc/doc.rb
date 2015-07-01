@@ -3,6 +3,7 @@ module OneboxApiDoc
 
     attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups
     attr_accessor :version_id, :extension_name, :resource_ids
+    attr_accessor :annoucements
 
     ########################
     ### Instance Methods ###
@@ -66,12 +67,18 @@ module OneboxApiDoc
       param
     end
 
+    def add_annoucement type, *attrs
+      annoucement_class = "OneboxApiDoc::Annoucements::#{type.to_s.capitalize}".classify.constantize
+      annoucement = annoucement_class.new(*attrs)
+      self.annoucements << annoucement
+      annoucement
+    end
+
     def add_error api, error_status, error_message, &block
-      error = OneboxApiDoc::Error.new(doc_id: self.object_id, code: error_status, message: error_message, &block)
+      error = OneboxApiDoc::Error.new(doc_id: self.object_id, api_id: api.object_id, code: error_status, message: error_message, &block)
       api.error_ids << error.object_id
       if block_given?
-        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new(api.doc, &block)
-        error.param_ids = error_detail.param_ids
+        error_detail = OneboxApiDoc::ApiDefinition::ErrorDefinition.new("error", api.doc, api.object_id, &block)
         error.permission_ids = error_detail.permission_ids
       end
       self.errors << error
@@ -134,6 +141,7 @@ module OneboxApiDoc
       self.params = []
       self.errors = []
       self.param_groups = {}
+      self.annoucements = []
     end
 
   end

@@ -121,7 +121,7 @@ module OneboxApiDoc
         expect(@doc.version.name).to eq "1.2.3"
       end
 
-      it "set correct api detail" do
+      it "set correct api detail", test: true do
         expect(@doc.apis).not_to be_blank
         api = @doc.apis.first
         expect(api.action).to eq "show"
@@ -372,8 +372,8 @@ module OneboxApiDoc
 
           api_request = api.request
           expect(api_request.header.params.size).to eq 2
-          api_request_header_param1 = api.doc.params.select { |param| param.object_id == api_request.header.param_ids.first }.first
-          api_request_header_param2 = api.doc.params.select { |param| param.object_id == api_request.header.param_ids.second }.first
+          api_request_header_param1 = api_request.header.params.first
+          api_request_header_param2 = api_request.header.params.second
           expect(api_request_header_param1.name).to eq "user_id"
           expect(api_request_header_param1.type).to eq "String"
           expect(api_request_header_param1.desc).to eq "user id"
@@ -389,8 +389,8 @@ module OneboxApiDoc
           api_response = api.response
           expect(api_response.header.params.size).to eq 0
           expect(api_response.body.params.size).to eq 2
-          api_response_body_param1 = api.doc.params.select { |param| param.object_id == api_response.body.param_ids.first }.first
-          api_response_body_param2 = api.doc.params.select { |param| param.object_id == api_response.body.param_ids.second }.first
+          api_response_body_param1 = api_response.body.params.first
+          api_response_body_param2 = api_response.body.params.second
           expect(api_response_body_param1.name).to eq "name"
           expect(api_response_body_param1.type).to eq "String"
           expect(api_response_body_param1.desc).to eq "user name"
@@ -406,9 +406,9 @@ module OneboxApiDoc
           expect(api_error.code).to eq 401
           expect(api_error.message).to eq "Unauthorize"
           expect(api_error.permission_ids).to eq expected_permission_ids
-          expect(api_error.param_ids.size).to eq 2
-          api_error_param1 = api.doc.params.select { |param| param.object_id == api_error.param_ids.first }.first
-          api_error_param2 = api.doc.params.select { |param| param.object_id == api_error.param_ids.second }.first
+          expect(api_error.params.size).to eq 2
+          api_error_param1 = api_error.params.first
+          api_error_param2 = api_error.params.second
           expect(api_error_param1.name).to eq "error_status"
           expect(api_error_param1.type).to eq "Integer"
           expect(api_error_param1.desc).to eq "error status"
@@ -745,7 +745,6 @@ module OneboxApiDoc
           expect(error.doc_id).to eq doc.object_id
           expect(error.code).to eq 401
           expect(error.message).to eq 'Unauthorize'
-          expect(error.param_ids.size).to eq 1
           expect(error.permission_ids.size).to eq 3
         end
       end
@@ -839,6 +838,53 @@ module OneboxApiDoc
         it "return blank array if param with the given id does not exist" do
           nested_params = @doc.nested_params_of :fake_id
           expect(nested_params).to eq []
+        end
+      end
+
+      describe "annoucements", focus: true do
+        before do
+          class GetAnnoucementsApiDoc < ApiDoc
+            controller_name :users
+            api :update, "update user profile" do
+              response do
+                body do
+                  param :test, :string, warning: 'test warning'
+                end
+              end
+            end
+            api :show, "get user profile" do
+              response do
+                body do
+                  param :test_res_header, :string, warning: 'test_res_header'
+                end
+                body do
+                  param :test_res_body, :string, warning: 'test_res_body'
+                end
+              end
+              response do
+                body do
+                  param :test_res_header, :string, warning: 'test_res_header'
+                end
+                body do
+                  param :test_res_body, :string, warning: 'test_res_body'
+                end
+              end
+            end
+          end
+          @doc = @base.docs.last
+        end
+        it "add annoucements" do
+          expect(@doc.annoucements.size).to eq 5
+        end
+        it "is annoucement object" do
+          @doc.annoucements.each do |annoucement|
+            expect(annoucement).to be_an OneboxApiDoc::Annoucements::Param
+          end
+        end
+        it "has param's warning" do
+          @doc.annoucements.each do |annoucement|
+            expect(annoucement.message).to eq annoucement.param.warning
+          end
         end
       end
     end

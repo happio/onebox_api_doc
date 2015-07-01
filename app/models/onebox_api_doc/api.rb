@@ -43,11 +43,11 @@ module OneboxApiDoc
       self.tag_ids ||= []
       self.error_ids ||= []
       self.request ||= OpenStruct.new(
-        header: ParamContainer.new(doc_id: doc_id), 
-        body: ParamContainer.new(doc_id: doc_id))
+        header: ParamContainer.new(doc_id: doc_id, api_id: self.object_id, mapper: 'request/header'), 
+        body: ParamContainer.new(doc_id: doc_id, api_id: self.object_id, mapper: 'request/body'))
       self.response ||= OpenStruct.new(
-        header: ParamContainer.new(doc_id: doc_id), 
-        body: ParamContainer.new(doc_id: doc_id))
+        header: ParamContainer.new(doc_id: doc_id, api_id: self.object_id, mapper: 'response/header'), 
+        body: ParamContainer.new(doc_id: doc_id, api_id: self.object_id, mapper: 'response/body'))
     end
 
   end
