@@ -31,8 +31,8 @@ module OneboxApiDoc
       @permissions ||= self.doc.permissions.select { |permission| self.permission_ids.include? permission.object_id }
     end
 
-    def permissions=(permission_names)
-      self.permission_ids = permission_names.map { |permission_name| doc.add_permission(permission_name.to_s).object_id }
+    def permissions=(permission_slugs)
+      self.permission_ids = self.doc.permissions.select { |permission| permission_slugs.map(&:to_s).include? permission.slug }.map(&:object_id)
       permissions
     end
 

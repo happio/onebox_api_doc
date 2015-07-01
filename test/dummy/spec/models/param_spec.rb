@@ -125,17 +125,19 @@ module OneboxApiDoc
         @doc.permissions = []
       end
       it "return correct permissions array" do
-        expected_permissions = [ @doc.add_permission(:permission1), @doc.add_permission(:permission2) ]
+        expected_permissions = [ @doc.add_permission(:permission1, 'Permission 1'), @doc.add_permission(:permission2, 'Permission 2') ]
         param = @doc.add_param :param_name, :string, permission_ids: expected_permissions.map(&:object_id)
         permissions = param.permissions
         expect(permissions).to be_an Array
         expect(permissions.size).to be > 0 and eq expected_permissions.size
         permission1 = permissions.first
         expect(permission1).to be_an OneboxApiDoc::Permission
-        expect(permission1.name).to eq 'permission1'
+        expect(permission1.name).to eq 'Permission 1'
+        expect(permission1.slug).to eq 'permission1'
         permission2 = permissions.second
         expect(permission2).to be_an OneboxApiDoc::Permission
-        expect(permission2.name).to eq 'permission2'
+        expect(permission2.name).to eq 'Permission 2'
+        expect(permission2.slug).to eq 'permission2'
       end
       it "return blank array if param does not have and permissions" do
         param = @doc.add_param :param_name, :string
@@ -149,7 +151,7 @@ module OneboxApiDoc
         @doc.permissions = []
       end
       it "set correct permission_ids" do
-        expected_permissions = [ @doc.add_permission(:permission1), @doc.add_permission(:permission2) ]
+        expected_permissions = [ @doc.add_permission(:permission1, 'Permission 1'), @doc.add_permission(:permission2, 'Permission 2') ]
         param = @doc.add_param :param_name, :string, permissions: [:permission1, :permission2]
         expect(param.permission_ids.sort).to eq expected_permissions.map(&:object_id).sort
       end

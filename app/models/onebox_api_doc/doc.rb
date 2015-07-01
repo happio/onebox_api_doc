@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class Doc < BaseObject
 
-    attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups
+    attr_accessor :tags, :permissions, :apis, :params, :errors, :param_groups, :error_groups
     attr_accessor :version_id, :extension_name, :resource_ids
     attr_accessor :annoucements
 
@@ -85,28 +85,41 @@ module OneboxApiDoc
       error
     end
 
-    def add_tag tag_name
-      tag_name = tag_name.to_s
-      tag = tags.detect { |tag| tag.name == tag_name }
-      unless tag.present?
-        tag = OneboxApiDoc::Tag.new(name: tag_name, doc_id: self.object_id)
-        tags << tag
-        tag
-      else
-        tag
-      end
+    def default_tag
+      self.tags.detect { |tag| tag.default }
     end
 
-    def add_permission permission_name
-      permission_name = permission_name.to_s
-      permission = self.permissions.detect { |permission| permission.name == permission_name }
+    def add_tag slug, name, default: false
+      tag = self.tags.detect { |tag| tag.slug == slug.to_s }
+      unless tag.present?
+        tag ||= OneboxApiDoc::Tag.new(slug: slug.to_s, name: name.to_s, default: default, doc_id: self.object_id)
+        self.tags << tag
+      end
+      tag
+    end
+
+    def get_tag tag_slug
+      tag_slug = tag_slug.to_s
+      raise "tag #{tag_slug} not defined" unless self.tags.map(&:slug).include? tag_slug
+      self.tags.detect { |tag| tag.slug == tag_slug }
+    end
+
+    def add_permission slug, name
+      name = name.to_s
+      permission = self.permissions.detect { |permission| permission.name == name }
       unless permission.present?
-        permission = OneboxApiDoc::Permission.new(name: permission_name)
+        permission = OneboxApiDoc::Permission.new(slug: slug, name: name)
         self.permissions << permission
         permission
       else
         permission
       end
+    end
+
+    def get_permission permission_slug
+      permission_slug = permission_slug.to_s
+      raise "permission #{permission_slug} not defined" unless self.permissions.map(&:slug).include? permission_slug
+      self.permissions.detect { |permission| permission.slug == permission_slug }
     end
 
     # Params Group methods
@@ -121,6 +134,21 @@ module OneboxApiDoc
         return self.param_groups[key]
       else
         raise "param group #{key} not defined"
+      end
+    end
+
+    # Error Code Group methods
+    def add_error_group(name, &block)
+      key = name.to_s
+      self.error_groups[key] = block
+    end
+
+    def get_error_group(name)
+      key = name.to_s
+      if self.error_groups.has_key?(key)
+        return self.error_groups[key]
+      else
+        raise "error group #{key} not defined"
       end
     end
 
@@ -141,6 +169,7 @@ module OneboxApiDoc
       self.params = []
       self.errors = []
       self.param_groups = {}
+      self.error_groups = {}
       self.annoucements = []
     end
 

@@ -84,9 +84,9 @@ module OneboxApiDoc
     describe "tags" do
       before do
         @tags = []
-        @tags << @doc.add_tag(:tag1)
-        @tags << @doc.add_tag(:tag2)
-        @tags << @doc.add_tag(:tag3)
+        @tags << @doc.add_tag(:tag1, 'Tag 1')
+        @tags << @doc.add_tag(:tag2, 'Tag 2')
+        @tags << @doc.add_tag(:tag3, 'Tag 3')
         @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
           url: "/users/:id", short_desc: "get user profile", desc: "description",
           tag_ids: @tags.map(&:object_id), error_ids: [5,6,7,8], resource_id: @resource.object_id
@@ -105,9 +105,9 @@ module OneboxApiDoc
     describe "permissions" do
       before do
         @permissions = []
-        @permissions << @doc.add_permission(:permission1)
-        @permissions << @doc.add_permission(:permission2)
-        @permissions << @doc.add_permission(:permission3)
+        @permissions << @doc.add_permission(:permission1, 'Permission 1')
+        @permissions << @doc.add_permission(:permission2, 'Permission 2')
+        @permissions << @doc.add_permission(:permission3, 'Permission 3')
         @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, 
           url: "/users/:id", short_desc: "get user profile", desc: "description", resource_id: @resource.object_id,
           tag_ids: [3,5,7,9], error_ids: [5,6,7,8], permission_ids: @permissions.map(&:object_id)

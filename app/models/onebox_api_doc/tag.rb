@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class Tag < BaseObject
 
-    attr_accessor :name, :doc_id
+    attr_accessor :slug, :name, :doc_id, :default
 
     def doc
       @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }
@@ -18,6 +18,12 @@ module OneboxApiDoc
         result[api.resource.name] << api
       end
       result
+    end
+
+    private
+
+    def set_default_value
+      self.default ||= false
     end
     
   end
