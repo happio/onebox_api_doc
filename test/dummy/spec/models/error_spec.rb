@@ -65,7 +65,7 @@ module OneboxApiDoc
 
     describe "permissions" do
       it "return correct permissions array" do
-        expected_permissions = [ @doc.add_permission(:permission1), @doc.add_permission(:permission2) ]
+        expected_permissions = [ @doc.add_permission(:permission1, 'Permission 1'), @doc.add_permission(:permission2, 'Permission 2') ]
         api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @resource.object_id)
         error = @doc.add_error api, 404, "Not Found" do
           permissions :permission1, :permission2
@@ -75,10 +75,12 @@ module OneboxApiDoc
         expect(permissions.size).to be > 0 and eq expected_permissions.size
         permission1 = permissions.first
         expect(permission1).to be_an OneboxApiDoc::Permission
-        expect(permission1.name).to eq 'permission1'
+        expect(permission1.slug).to eq 'permission1'
+        expect(permission1.name).to eq 'Permission 1'
         permission2 = permissions.second
         expect(permission2).to be_an OneboxApiDoc::Permission
-        expect(permission2.name).to eq 'permission2'
+        expect(permission2.slug).to eq 'permission2'
+        expect(permission2.name).to eq 'Permission 2'
       end
       it "return blank array if the error does not have and permissions" do
         api = OneboxApiDoc::Api.new(doc_id: @doc.object_id, resource_id: @resource.object_id)

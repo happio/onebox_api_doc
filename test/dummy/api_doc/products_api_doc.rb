@@ -2,6 +2,17 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
   controller_name :products
   version "1.6.0"
 
+  def_tags do
+    tag :mobile, 'Mobile'
+    tag :web, 'Web', default: true
+  end
+
+  def_permissions do
+    permission :admin, 'Admin'
+    permission :member, 'Member'
+    permission :guest, 'Guest'
+  end
+
   api :index, 'get all products' do
     desc 'get all products'
     tags :mobile

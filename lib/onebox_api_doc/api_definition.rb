@@ -12,11 +12,11 @@ module OneboxApiDoc
     end
 
     def tags *tags
-      api.tag_ids = tags.map{ |tag| api.doc.add_tag(tag.to_s).object_id }
+      api.tag_ids = tags.map{ |tag| api.doc.get_tag(tag.to_sym).object_id }
     end
 
     def permissions *permissions
-      api.permission_ids = permissions.map{ |permission| api.doc.add_permission(permission).object_id }
+      api.permission_ids = permissions.map{ |permission| api.doc.get_permission(permission).object_id }
     end
 
     def request &block
@@ -79,7 +79,7 @@ module OneboxApiDoc
         options[:parent_id] = parent_id if parent_id.present?
         if options[:permissions].present? and doc.present?
           options[:permissions] = [options[:permissions]] unless options[:permissions].is_a? Array
-          options[:permission_ids] = options[:permissions].map { |permission_name| doc.add_permission(permission_name).object_id }
+          options[:permission_ids] = options[:permissions].map { |permission_slug| doc.get_permission(permission_slug).object_id }
         end
         param = self.doc.add_param(name, type, options, &block)
         self.doc.add_annoucement(:param, doc_id: doc.object_id, param_id: param.object_id) if param.warning
@@ -103,6 +103,11 @@ module OneboxApiDoc
       def code error_status, error_message="", &block
         error = self.api.doc.add_error(api, error_status, error_message, &block)
       end
+
+      def error_group name
+        block = self.api.doc.get_error_group(name)
+        self.instance_exec(&block)
+      end
     end
 
     class ErrorDefinition < ParamContainerDefinition
@@ -114,7 +119,7 @@ module OneboxApiDoc
       end
 
       def permissions *permissions
-        @permission_ids = permissions.map{ |permission| doc.add_permission(permission).object_id }
+        @permission_ids = permissions.map{ |permission| doc.get_permission(permission).object_id }
       end
 
 

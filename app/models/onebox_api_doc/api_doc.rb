@@ -21,6 +21,26 @@ module OneboxApiDoc
         self.resource_name = name
       end
 
+      def def_tags &block
+        set_up_doc
+        block.call if block_given?
+      end
+
+      def tag slug, name, default: false
+        set_up_doc
+        self.doc.add_tag slug, name, default: default
+      end
+
+      def def_permissions &block
+        set_up_doc
+        block.call if block_given?
+      end
+
+      def permission slug, name
+        set_up_doc
+        self.doc.add_permission slug, name
+      end
+
       # for extension
       def extension_name extension_name
         self._extension_name = extension_name.to_s
@@ -46,6 +66,11 @@ module OneboxApiDoc
       def def_param_group name, &block
         set_up_doc
         self.doc.add_param_group name, &block
+      end
+
+      def def_error_group name, &block
+        set_up_doc
+        self.doc.add_error_group name, &block
       end
 
       def set_up_doc

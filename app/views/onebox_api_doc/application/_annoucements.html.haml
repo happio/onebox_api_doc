@@ -9,7 +9,7 @@
           .content
             .summary
               .user
-                = link_to api.url, onebox_api_doc.action_path(version: @doc.version.name, tag: @current_tag.name, resource_name: api.resource.name, action_name: api.action), class: 'link-api-list', remote: false
+                = link_to api.url, onebox_api_doc.action_path(version: @doc.version.name, tag: @current_tag.slug, resource_name: api.resource.name, action_name: api.action), class: 'link-api-list', remote: false
               .date
                 = api.short_desc
             .extra.text

@@ -12,7 +12,7 @@ module OneboxApiDoc
 
       @doc = @base.get_doc(@current_version.name)
       @tags = @base.get_tags(@current_version)
-      @current_tag = @tags.detect { |tag| tag.name == api_params[:tag].try(:downcase) } || @tags.first
+      @current_tag = @tags.detect { |tag| tag.slug == api_params[:tag].try(:downcase) } || @tags.first
       @resources =  if @current_tag
                       @current_tag.apis_group_by_resource
                     else
@@ -36,7 +36,7 @@ module OneboxApiDoc
         @doc = @base.get_doc(api_options[:version])
         @current_version = @doc.version
         @tags = @base.get_tags(@current_version)
-        @current_tag = @tags.detect { |tag| tag.name == api_params[:tag].downcase }
+        @current_tag = @tags.detect { |tag| tag.slug == api_params[:tag].downcase }
         @resources = @current_tag.apis_group_by_resource
       end
 
