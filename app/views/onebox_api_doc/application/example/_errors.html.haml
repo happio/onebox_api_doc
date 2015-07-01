@@ -1,0 +1,20 @@
+%table.ui.celled.structured.errors.table
+  %thead
+    %tr
+      %th Code
+      %th Message
+      %th Params
+  %tbody
+    %tr
+      %td.error__code 200
+      %td.error__msg Success
+      %td.error__params
+    %tr
+      %td.error__code 404
+      %td.error__msg Not Found
+      %td.error__params
+    %tr
+      %td.error__code 401
+      %td.error__msg invalid params
+      %td.error__params
+        = render partial: 'onebox_api_doc/application/example/params', locals: { has_nested: true, nested_size: 3}

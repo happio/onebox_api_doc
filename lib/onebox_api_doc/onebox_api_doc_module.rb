@@ -6,4 +6,8 @@ module OneboxApiDoc
     @application ||= OneboxApiDoc::Base.new
   end
 
+  def self.reset
+    @application = OneboxApiDoc::Base.new
+  end
+
 end
