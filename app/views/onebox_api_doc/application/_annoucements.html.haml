@@ -1,0 +1,30 @@
+#api-details
+  #annoucements.ui.segment 
+    %h3.ui.dividing.header Annoucements
+    .ui.large.feed
+      - @doc.annoucements.group_by(&:api).each do |api, annoucements|
+        .event
+          .label
+            %i.big.announcement.icon
+          .content
+            .summary
+              .user
+                = link_to api.url, onebox_api_doc.action_path(version: @doc.version.name, tag: @current_tag.name, resource_name: api.resource.name, action_name: api.action), class: 'link-api-list', remote: false
+              .date
+                = api.short_desc
+            .extra.text
+              .ui.list
+                - annoucements.each do |annoucement|
+                  .item
+                    .content
+                      .description
+                        param: 
+                        %b 
+                          %code
+                            = annoucement.param.name
+                        = "(at: #{annoucement.param.mapper})"
+                      .description
+                        warning: 
+                        %b
+                          = annoucement.message
+

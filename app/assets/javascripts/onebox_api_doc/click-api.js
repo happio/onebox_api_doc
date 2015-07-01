@@ -1,5 +1,5 @@
 
-$(".link-api-list").on( 'click', function(e){
+$(document).on( 'click', ".link-api-list", function(e){
     e.preventDefault();
     var request_url = $(this).attr("href");
     $.ajax({

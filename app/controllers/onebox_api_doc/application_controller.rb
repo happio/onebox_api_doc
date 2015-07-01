@@ -11,7 +11,6 @@ module OneboxApiDoc
       @current_version = @base.default_version
 
       @doc = @base.get_doc(@current_version.name)
-
       @tags = @base.get_tags(@current_version)
       @current_tag = @tags.detect { |tag| tag.name == api_params[:tag].try(:downcase) } || @tags.first
       @resources =  if @current_tag
