@@ -8,6 +8,7 @@ module OneboxApiDoc
       mattr_accessor :app_name do 'API DOC' end
 
       # where is your API defined?
+      mattr_accessor :root_resource do Rails.root end
       mattr_accessor :api_docs_matcher do "api_doc/*.rb" end
 
       # default version
