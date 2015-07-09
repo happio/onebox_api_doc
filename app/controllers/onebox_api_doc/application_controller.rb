@@ -1,42 +1,58 @@
 module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
+    caches_action :index
+    caches_action :show, :cache_path => Proc.new { |controller| controller.params.except(:_).merge(format: request.format) }
+
     def index
-      base = OneboxApiDoc.base
-      base.reload_document
+      @base = OneboxApiDoc.base
+      @base.reload_document
 
-      # set all core versions
-      @main_versions = base.main_versions
+      @current_version = @base.default_version
 
-      # set all extension version
-      # @extension_versions = base.extension_versions
+      @doc = @base.get_doc(@current_version.name)
+      @tags = @base.get_tags(@current_version)
+      @current_tag = @tags.detect { |tag| tag.slug == api_params[:tag].try(:downcase) } || @tags.first
+      @resources =  if @current_tag
+                      @current_tag.apis_group_by_resource
+                    else
+                       @doc.apis_group_by_resource
+                    end
+      respond_to do |format|
+        format.html
+        format.js 
+      end
+    end
 
-      # set default version
-      @default_version = base.default_version
-
-      # set main app
-      @main_app = base.main_app
-
-      # set extension apps
-      # @extensions = base.extension_apps
-
-      # set current version
-      if api_params[:version].present?
-        @current_version = base.get_version(api_params[:version])
-      else
-        @current_version = @default_version
+    def show
+      @base = OneboxApiDoc.base
+      api_options = {
+        version: api_params[:version] || @base.default_version.name,
+        tag: api_params[:tag],
+        resource_name: api_params[:resource_name],
+        action_name: api_params[:action_name]
+      }
+      unless request.xhr?
+        @doc = @base.get_doc(api_options[:version])
+        @current_version = @doc.version
+        @tags = @base.get_tags(@current_version)
+        @current_tag = @tags.detect { |tag| tag.slug == api_params[:tag].downcase }
+        @resources = @current_tag.apis_group_by_resource
       end
 
-      # set tags of version
-      @tags = base.get_tags(@current_version)
+      @api = @base.get_api(api_options)
 
-      # set apis group by resource
-      @apis_group_by_resource = base.apis_group_by_resource(@current_version)
+      respond_to do |format|
+        format.html
+        format.js do 
+          response = { 
+            url: request.original_url, 
+            html: render_to_string(partial: 'onebox_api_doc/application/api_details', locals: { api: @api }, layout: false)
+          }
+          render json: response
+        end
+      end
 
-      # set display api(s)
-      @api = base.get_api(api_params)
-
-      render nothing: true
     end
 
     def example
@@ -46,7 +62,7 @@ module OneboxApiDoc
     private
 
     def api_params
-      params.permit(:version, :resource_name, :action_name)
+      params.permit(:version, :tag, :resource_name, :action_name)
     end
   end
 end

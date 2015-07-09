@@ -1,0 +1,10 @@
+= link_to nil, class: 'ui top attached button', tabindex: "0" do
+  %i.announcement.icon
+  Annoucement
+  
+.ui.attached.segment
+  %h3.ui.horizontal.header.divider
+  .ui.form
+    .filed
+      = select_tag(:tag, options_for_select( @tags.map { |tag| [ tag.name, tag.slug, { data: { url: apis_by_tag_path(tag: tag.slug) } } ] }, selected: @current_tag.slug),
+        class: 'ui fluid dropdown', id: 'filter-apis-by-tag' )

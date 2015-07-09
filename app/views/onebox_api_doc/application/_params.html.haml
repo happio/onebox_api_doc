@@ -1,44 +1,14 @@
-- if has_nested and nested_size <= 3
-  - nested_size += 1
-
-  %table.ui.celled.structured.params.table
-    %tbody
+%table.ui.celled.structured.params.table
+  %tbody
+    - params.each do |param|
       %tr
         %td.param__key
           .ui.header
-            .name name*
-            .sub.header.type String
+            .name
+              = param.name
+            .sub.header.type
+              = param.type
         %td
-          %p.param__desc desc 
-      %tr
-        %td.param__key
-          .ui.header 
-            .name name
-            .sub.header.type String
-          %i.param__from.circle.info.icon.link{ data: {content: "extension_name:version", variation: 'inverted', position: 'top center'} } 
-        %td
-          %p.param__desc desc
-          .ui.list
-            .item.param__permission
-              .header Permission:
-              .description
-                .ui.horizontal.divided.list
-                  .item Admin
-                  .item Member
-                  .item Guest
-            .item.param_validate
-              .header Validates
-              .description
-                \- string only
-                %br 
-                \- email pattern
-            .item.param__warning 
-              .header Warnning
-              .description it will be removed next version
-      %tr
-        %td.param__key
-          .ui.header
-            .sub.header.type Array
-        %td
-          .param__desc desc
-          = render partial: 'onebox_api_doc/application/params', locals: { has_nested: true, nested_size: nested_size }
+          %p.param__desc
+            = param.desc
+            = render partial: 'onebox_api_doc/application/params', locals: { params: param.params } unless param.params.blank?

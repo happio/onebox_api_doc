@@ -1,5 +1,6 @@
 class ProductsApiDoc < OneboxApiDoc::ApiDoc
   controller_name :products
+  version "1.6.0"
 
   def_tags do
     tag :mobile, 'Mobile'
@@ -14,7 +15,7 @@ class ProductsApiDoc < OneboxApiDoc::ApiDoc
 
   api :index, 'get all products' do
     desc 'get all products'
-    tags :mobile, :web
+    tags :mobile
     permissions :admin, :member, :guest
     request do
       header do

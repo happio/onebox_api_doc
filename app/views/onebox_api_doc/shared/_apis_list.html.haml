@@ -1,34 +1,19 @@
 .ui.fluid.vertical.accordion.menu
-  - (1..2).each do |i|
+  - @resources.each do |resource_name, apis|
     .item
       .title
         .item.api__resource
-          Resource #{i}
+          = resource_name.capitalize
           %i.dropdown.icon
       .content 
         .ui.fluid.vertical.menu
-          = link_to '/', class: 'item' do
-            .api__url
-              %span.action.get GET
-              %span.url /my/url/:id
-            .api__desc short desc
-          = link_to '/', class: 'item' do
-            .api__url
-              %span.action.post POST
-              %span.url /my/url/:id
-            .api__desc short desc
-          = link_to '/', class: 'item' do
-            .api__url
-              %span.action.put PUT
-              %span.url /my/url/:id
-            .api__desc short desc
-          = link_to '/', class: 'item' do
-            .api__url
-              %span.action.patch PATCH
-              %span.url /my/url/:id
-            .api__desc short desc
-          = link_to '/', class: 'item' do
-            .api__url
-              %span.action.delete DELETE
-              %span.url /my/url/:id
-            .api__desc short desc
+          - apis.each do |api|
+            = link_to onebox_api_doc.action_path(version: @doc.version.name, tag: @current_tag.slug, resource_name: resource_name, action_name: api.action), class: 'item link-api-list', remote: false do
+              .api__url
+                %span.action{ class: "#{api.method.downcase}" }
+                  = api.method
+                %span.url 
+                  = api.url
+              .api__desc 
+                = api.short_desc
+

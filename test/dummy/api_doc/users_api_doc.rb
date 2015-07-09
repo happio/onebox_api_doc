@@ -1,6 +1,7 @@
 class UsersApiDoc < OneboxApiDoc::ApiDoc
   controller_name :users
-
+  version "1.6.0"
+  
   def_tags do
     tag :mobile, 'Mobile'
     tag :web, 'Web', default: true
