@@ -54,15 +54,9 @@ module OneboxApiDoc
         end
 
         def get_routes_engine engine_routes, prefix_path
-          engine_routes.collect do |route|
-            { 
-              :name   => route[:name],
-              :method => route[:verb],
-              :path   => "#{prefix_path}#{route[:path]}",
-              :reqs   => route[:reqs]
-            }
+          engine_routes.each do |route|
+              route[:path] = "#{prefix_path}#{route[:path]}"
           end
-
         end
 
 
