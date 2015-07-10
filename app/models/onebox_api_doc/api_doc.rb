@@ -10,10 +10,13 @@ module OneboxApiDoc
       
       def inherited(subclass)
         self.resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
-        version = OneboxApiDoc.base.default_version
-        self.version_id = version.object_id
+        self.version_id = OneboxApiDoc.base.default_version.object_id #unless version_id.present?
         self._extension_name = nil
         self.doc = nil
+        # subclass.resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
+        # subclass.version_id = OneboxApiDoc.base.default_version.object_id unless subclass.version_id.present?
+        # subclass._extension_name = nil
+        # subclass.doc = nil
         subclass
       end
 

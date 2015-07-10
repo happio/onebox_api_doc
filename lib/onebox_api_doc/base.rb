@@ -202,9 +202,13 @@ module OneboxApiDoc
         api_doc_class_name = api_doc_class.name
         namespaces = api_doc_class_name.deconstantize
         class_name = api_doc_class_name.demodulize.to_sym
+        p "namespaces : #{namespaces}"
+        p "class_name : #{class_name}"
         if namespaces.present?
           object = namespaces.constantize
+          p "-------"
           object.send(:remove_const, class_name) if object.const_defined?(class_name)
+          p "-------"
         else
           Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
         end
