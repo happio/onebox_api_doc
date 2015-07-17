@@ -193,24 +193,38 @@ module OneboxApiDoc
     end
 
     def load_api_doc_from_file(api_doc_file)
+      p api_doc_file
       load api_doc_file
       api_doc_file.gsub(/\A.*\/api_doc\//,"").gsub(/\.\w*\Z/,"").camelize
     end
 
     def unload_api_doc_from_class
       OneboxApiDoc::ApiDoc.subclasses.each do |api_doc_class|
-        api_doc_class_name = api_doc_class.name
-        namespaces = api_doc_class_name.deconstantize
-        class_name = api_doc_class_name.demodulize.to_sym
-        p "namespaces : #{namespaces}"
-        p "class_name : #{class_name}"
-        if namespaces.present?
-          object = namespaces.constantize
-          p "-------"
-          object.send(:remove_const, class_name) if object.const_defined?(class_name)
-          p "-------"
-        else
-          Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
+        remove_const_subclass api_doc_class 
+      end
+    end
+
+    def remove_const_subclass klass
+      remove_const_class klass
+    end
+
+    def remove_const_class api_doc_class
+      api_doc_class_name = api_doc_class.name
+      namespaces = api_doc_class_name.deconstantize
+      class_name = api_doc_class_name.demodulize.to_sym
+      p "namespaces : #{namespaces}"
+      p "class_name : #{class_name}"
+      if namespaces.present?
+        object = namespaces.constantize
+        p "-------"
+        p object.send(:remove_const, class_name) if object.const_defined?(class_name)
+        p "-------"
+      else
+        Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
+      end
+      if api_doc_class.subclasses.present?
+        api_doc_class.subclasses.each do |subclass|
+          remove_const_subclass subclass 
         end
       end
     end
