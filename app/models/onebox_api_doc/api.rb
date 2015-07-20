@@ -1,10 +1,17 @@
 module OneboxApiDoc
   class Api < BaseObject
-
     attr_accessor :resource_id, :version_id, :doc_id
     attr_accessor :action, :method, :url, :permission_ids, :desc, :short_desc, :tag_ids, :error_ids
     attr_accessor :request
     attr_accessor :response
+
+    def friendly_id
+      @friendly_id ||= method_and_url.parameterize
+    end
+
+    def method_and_url
+      "#{method} #{url}"
+    end
 
     def doc
       @doc ||= OneboxApiDoc.base.docs.detect { |doc| doc.object_id == self.doc_id }

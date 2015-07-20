@@ -1,18 +1,7 @@
-class ProductsApiDoc < OneboxApiDoc::ApiDoc
+class ProductsApiDoc < BaseV1ApiDoc
+  version "1.0.0"
   resource_name :products
-  version "1.6.0"
-
-  def_tags do
-    tag :mobile, 'Mobile'
-    tag :web, 'Web', default: true
-  end
-
-  def_permissions do
-    permission :admin, 'Admin'
-    permission :member, 'Member'
-    permission :guest, 'Guest'
-  end
-
+  
   get '/products', 'get all products' do
     desc 'get all products'
     tags :mobile

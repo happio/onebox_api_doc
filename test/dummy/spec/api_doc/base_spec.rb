@@ -31,7 +31,7 @@ module OneboxApiDoc
       end
     end
 
-    describe "load_document", hhh: true do
+    describe "load_document" do
       it "load document class" do
         @base.load_document
         expect{ UsersApiDoc }.not_to raise_error
@@ -224,25 +224,25 @@ module OneboxApiDoc
         it "return correct hash of resource_name as key and apis as values" do
           @base.send(:set_default_value)
           class ApiGroupByResource_ApiDoc < ApiDoc
-            controller_name :users
+            resource_name :users
             api :show, ""
             api :update, ""
           end
           class ApiGroupByResource_2ApiDoc < ApiDoc
-            controller_name :products
+            resource_name :products
             api :show, ""
             api :update, ""
             api :destroy, ''
           end
           class ApiGroupByResource_3ApiDoc < ApiDoc
-            controller_name :users
+            resource_name :users
             version '0.0.1'
             api :index, ""
             api :show, ""
             api :update, ""
           end
           class ApiGroupByResource_4ApiDoc < ApiDoc
-            controller_name :products
+            resource_name :products
             version '0.0.1'
             api :index, ""
             api :show, ""
@@ -267,23 +267,23 @@ module OneboxApiDoc
         it "return correct hash of resource_name as key and apis as values" do
           @base.send(:set_default_value)
           class ApiGroupByResource_5ApiDoc < ApiDoc
-            controller_name :users
+            resource_name :users
             api :show, ""
             api :update, ""
           end
           class ApiGroupByResource_6ApiDoc < ApiDoc
-            controller_name :products
+            resource_name :products
             api :show, ""
             api :update, ""
             api :destroy, ''
           end
           class ApiGroupByResource_7ApiDoc < ApiDoc
-            controller_name :users
+            resource_name :users
             version '0.0.1'
             api :show, ""
           end
           class ApiGroupByResource_8ApiDoc < ApiDoc
-            controller_name :products
+            resource_name :products
             version '0.0.1'
             api :index, ""
             api :show, ""
@@ -313,43 +313,28 @@ module OneboxApiDoc
       end
       context 'call with action' do
         it 'return correct api object' do
-          api = @base.get_api(version: OneboxApiDoc::Engine.default_version, resource_name: :products, action_name: :index)
+          api = @base.get_api(version: OneboxApiDoc::Engine.default_version, resource_name: :products, method: :get, url: '/products')
           expect(api).to be_an OneboxApiDoc::Api
-          expect(api.action).to eq 'index'
+          expect(api.method).to eq 'GET'
+          expect(api.url).to eq '/products'
           expect(api.resource.name).to eq 'products'
           expect(api.version).to eq @base.default_version
         end
         it 'return nil if version does not exist' do
-          api = @base.get_api(version: 'fake version', resource_name: :products, action_name: :index)
+          api = @base.get_api(version: 'fake version', resource_name: :products, method: :get, url: '/products')
           expect(api).to eq nil
         end
         it 'return nil if resource does not exist' do
-          api = @base.get_api(version: @base.default_version.name, resource_name: :fake_resource, action_name: :index)
+          api = @base.get_api(version: @base.default_version.name, resource_name: :fake_resource, method: :get, url: '/products')
           expect(api).to eq nil
         end
-        it 'return nil if action does not exist' do
-          api = @base.get_api(version: @base.default_version.name, resource_name: :products, action_name: :fake_action)
+        it 'return nil if method does not exist' do
+          api = @base.get_api(version: @base.default_version.name, resource_name: :products, method: :fake_method, url: '/products')
           expect(api).to eq nil
         end
-      end
-      context 'call without action' do
-        it 'return correct array of apis' do
-          apis = @base.get_api(version: OneboxApiDoc::Engine.default_version, resource_name: :products)
-          expect(apis).to be_an Array
-          expect(apis.size).to be > 0
-          apis.each do |api|
-            expect(api).to be_an OneboxApiDoc::Api
-            expect(api.resource.name).to eq 'products'
-            expect(api.version).to eq @base.default_version
-          end
-        end
-        it 'return blank array if version does not exist' do
-          apis = @base.get_api(version: 'fake version', resource_name: :products)
-          expect(apis).to eq []
-        end
-        it 'return blank array if resource does not exist' do
-          apis = @base.get_api(version: @base.default_version.name, resource_name: :fake_resource)
-          expect(apis).to eq []
+        it 'return nil if url does not exist' do
+          api = @base.get_api(version: @base.default_version.name, resource_name: :products, method: :get, url: '/fake_url')
+          expect(api).to eq nil
         end
       end
     end

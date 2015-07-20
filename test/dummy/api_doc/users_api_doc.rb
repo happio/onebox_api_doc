@@ -1,5 +1,5 @@
 class UsersApiDoc < OneboxApiDoc::ApiDoc
-  controller_name :users
+  resource_name :users
   version "1.6.0"
   
   def_tags do

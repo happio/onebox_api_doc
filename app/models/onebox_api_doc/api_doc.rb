@@ -6,11 +6,11 @@ module OneboxApiDoc
     #####################
     class << self
 
-      cattr_accessor :doc, :resource_name, :version_id, :_extension_name
+      cattr_accessor :doc, :_resource_name, :version_id, :_extension_name
       
       def inherited(subclass)
-        self.resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
-        self.version_id = OneboxApiDoc.base.default_version.object_id #unless version_id.present?
+        self._resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
+        self.version_id = OneboxApiDoc.base.default_version.object_id unless version_id.present?
         self._extension_name = nil
         self.doc = nil
         # subclass.resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
@@ -20,8 +20,8 @@ module OneboxApiDoc
         subclass
       end
 
-      def controller_name name
-        self.resource_name = name
+      def resource_name name
+        self._resource_name = name
       end
 
       def def_tags &block
@@ -62,8 +62,32 @@ module OneboxApiDoc
 
       def api action, short_desc="", &block
         set_up_doc
-        resource = OneboxApiDoc.base.add_resource(self.resource_name)
-        self.doc.add_api(resource.object_id, action, short_desc, &block)
+        resource = OneboxApiDoc.base.add_resource(self._resource_name)
+        self.doc.add_api(resource.object_id, action, short_desc, auto_route: true, &block)
+      end
+
+      def get url, short_desc="", &block
+        set_up_doc
+        resource = OneboxApiDoc.base.add_resource(self._resource_name)
+        self.doc.add_api(resource.object_id, 'GET', url, short_desc, &block)
+      end
+
+      def put url, short_desc="", &block
+        set_up_doc
+        resource = OneboxApiDoc.base.add_resource(self._resource_name)
+        self.doc.add_api(resource.object_id, 'PUT', url, short_desc, &block)
+      end
+
+      def delete url, short_desc="", &block
+        set_up_doc
+        resource = OneboxApiDoc.base.add_resource(self._resource_name)
+        self.doc.add_api(resource.object_id, 'DELETE', url, short_desc, &block)
+      end
+
+      def post url, short_desc="", &block
+        set_up_doc
+        resource = OneboxApiDoc.base.add_resource(self._resource_name)
+        self.doc.add_api(resource.object_id, 'POST', url, short_desc, &block)
       end
 
       def def_param_group name, &block

@@ -9,6 +9,8 @@ require "zeroclipboard-rails"
 require 'actionpack/page_caching'
 require 'actionpack/action_caching'
 
+require 'friendly_id'
+
 module OneboxApiDoc
 
   require "onebox_api_doc/onebox_api_doc_module"

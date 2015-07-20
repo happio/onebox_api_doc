@@ -92,13 +92,10 @@ module OneboxApiDoc
     def get_api options={}
       version_name = options[:version]
       resource_name = options[:resource_name]
-      action_name = options[:action_name]
+      method = options[:method]
+      url = options[:url]
       doc = get_doc(version_name)
-      if doc.present?
-        doc.get_apis(resource_name, action_name)
-      else
-        action_name.present? ? nil : []
-      end
+      doc.present? ? doc.get_api(resource_name, method, url) : nil
     end
 
     def get_version version_name
@@ -142,7 +139,7 @@ module OneboxApiDoc
     end
 
     def add_extension_version version_name, extension_name
-      extension = self.add_app extension_name
+    extension = self.add_app extension_name
       extension_version = self.versions.detect { |version| version.name == version_name and version.app_id == extension.object_id }
       unless extension_version.present?
         extension_version = OneboxApiDoc::Version.new(name: version_name, app_id: extension.object_id)
@@ -212,13 +209,9 @@ module OneboxApiDoc
       api_doc_class_name = api_doc_class.name
       namespaces = api_doc_class_name.deconstantize
       class_name = api_doc_class_name.demodulize.to_sym
-      p "namespaces : #{namespaces}"
-      p "class_name : #{class_name}"
       if namespaces.present?
         object = namespaces.constantize
-        p "-------"
         p object.send(:remove_const, class_name) if object.const_defined?(class_name)
-        p "-------"
       else
         Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
       end

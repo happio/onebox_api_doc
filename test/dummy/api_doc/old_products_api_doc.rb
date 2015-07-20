@@ -1,5 +1,5 @@
 class OldProductsApiDoc < OneboxApiDoc::ApiDoc
-  controller_name :products
+  resource_name :products
   version "0.0.1"
 
   def_tags do

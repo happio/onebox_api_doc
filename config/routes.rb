@@ -5,7 +5,7 @@ OneboxApiDoc::Engine.routes.draw do
 
   get '/:tag' => 'application#index', as: :apis_by_tag
   
-  get '/:version/:tag/:resource_name/:action_name', to: 'application#show', :constraints => { version: /[^\/]+/ }, as: :action
+  get '/:version/:tag/:method/:url', to: 'application#show', :constraints => { version: /[^\/]+/ }, as: :url
   get '/:version/:tag/:resource_name', to: 'application#show', :constraints => { version: /[^\/]+/ }, as: :resource_name
 
 end

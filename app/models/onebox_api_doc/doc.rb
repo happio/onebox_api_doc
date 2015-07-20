@@ -30,32 +30,48 @@ module OneboxApiDoc
       result
     end
 
-    def get_apis resource_name, action=nil
+    def get_api resource_name, method, url
       resource = OneboxApiDoc.base.get_resource resource_name
-      if resource.present? and action.present?
-        self.apis.detect { |api| api.resource_id == resource.object_id and api.action == action.to_s }
-      elsif resource.present?
-        self.apis.select { |api| api.resource_id == resource.object_id }
-      elsif action.present?
-        nil
-      else
-        []
-      end
+      self.apis.detect { |api| api.resource_id == resource.object_id and api.method == method.to_s.upcase and api.url == url }
     end
 
-    def add_api resource_id, action, short_desc, &block
+    def get_apis_by_resource resource_name
+      resource = OneboxApiDoc.base.get_resource resource_name
+      resource.present? ? self.apis.select { |api| api.resource_id == resource.object_id } : []
+    end
+
+    # def add_api resource_id, action, short_desc, method: nil, auto_route: false, &block
+    #   self.resource_ids << resource_id unless self.resource_ids.include? resource_id
+    #   resource_name = OneboxApiDoc.base.resources.detect { |resource| resource.object_id == resource_id }.name
+    #   # if auto_route
+    #   route = Route.route_for(resource_name, action)
+    #   return false unless route.present?
+    #   url = route[:path]
+    #   method = route[:method]
+    #   # else
+    #     # url = action
+    #   # end
+    #   unless self.apis.map(&:url).include? url
+    #     api = OneboxApiDoc::Api.new(doc_id: self.object_id, resource_id: resource_id, action: action, method: method, url: url, short_desc: short_desc)
+    #     self.apis << api
+    #   else
+    #     api = self.apis.detect { |api| api.url == url }
+    #   end
+
+    #   OneboxApiDoc::ApiDefinition.new(api, &block) if block_given?
+    #   api
+    # end
+
+    def add_api resource_id, method, url, short_desc, auto_route: false, &block
       self.resource_ids << resource_id unless self.resource_ids.include? resource_id
       resource_name = OneboxApiDoc.base.resources.detect { |resource| resource.object_id == resource_id }.name
-      route = Route.route_for(resource_name, action)
-      return false unless route.present?
-      url = route[:path]
-      method = route[:method]
-      unless self.apis.map(&:action).include? action
-        api = OneboxApiDoc::Api.new(doc_id: self.object_id, resource_id: resource_id, action: action, method: method, url: url, short_desc: short_desc)
+      unless self.apis.map { |api| "#{api.method} #{api.url}" }.include? "#{method} #{url}"
+        api = OneboxApiDoc::Api.new(doc_id: self.object_id, resource_id: resource_id, method: method, url: url, short_desc: short_desc)
         self.apis << api
       else
-        api = self.apis.detect { |api| api.action == action }
+        api = self.apis.detect { |api| api.url == url }
       end
+
       OneboxApiDoc::ApiDefinition.new(api, &block) if block_given?
       api
     end

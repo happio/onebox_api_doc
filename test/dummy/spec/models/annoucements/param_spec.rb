@@ -7,7 +7,7 @@ module OneboxApiDoc
         @base = OneboxApiDoc.reset
         class AnnoucementsApiDoc < OneboxApiDoc::ApiDoc
           version "0.99"
-          controller_name :users
+          resource_name :users
           api :update, 'test'
         end
       end
