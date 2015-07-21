@@ -32,7 +32,7 @@ module OneboxApiDoc
 
     def get_api resource_name, method, url
       resource = OneboxApiDoc.base.get_resource resource_name
-      self.apis.detect { |api| api.resource_id == resource.object_id and api.method == method.to_s.upcase and api.url == url }
+      self.apis.detect { |api| api.resource_id == resource.object_id and api.method == method.to_s.upcase and api.url.parameterize == url.parameterize }
     end
 
     def get_apis_by_resource resource_name

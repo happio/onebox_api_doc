@@ -30,7 +30,8 @@ module OneboxApiDoc
         version: api_params[:version] || @base.default_version.name,
         tag: api_params[:tag],
         resource_name: api_params[:resource_name],
-        action_name: api_params[:action_name]
+        method: api_params[:method],
+        url: api_params[:url]
       }
       unless request.xhr?
         @doc = @base.get_doc(api_options[:version])
@@ -62,7 +63,7 @@ module OneboxApiDoc
     private
 
     def api_params
-      params.permit(:version, :tag, :resource_name, :action_name)
+      params.permit(:version, :tag, :resource_name, :method, :url)
     end
   end
 end

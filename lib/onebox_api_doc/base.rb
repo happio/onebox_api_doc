@@ -208,9 +208,9 @@ module OneboxApiDoc
       class_name = api_doc_class_name.demodulize.to_sym
       if namespaces.present?
         object = namespaces.constantize
-        object.send(:remove_const, class_name) rescue nil
+        object.send(:remove_const, class_name) rescue nil if object.const_defined?(class_name) 
       else
-        Object.send(:remove_const, class_name) rescue nil
+        Object.send(:remove_const, class_name) rescue nil if Object.const_defined?(class_name) 
       end
       if api_doc_class.subclasses.present?
         api_doc_class.subclasses.each do |subclass|

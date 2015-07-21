@@ -6,11 +6,7 @@ module OneboxApiDoc
     attr_accessor :response
 
     def friendly_id
-      @friendly_id ||= method_and_url.parameterize
-    end
-
-    def method_and_url
-      "#{method} #{url}"
+      @friendly_id ||= url.parameterize
     end
 
     def doc
