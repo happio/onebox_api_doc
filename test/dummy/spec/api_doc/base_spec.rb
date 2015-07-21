@@ -5,29 +5,27 @@ module OneboxApiDoc
 
     before do
       @base = OneboxApiDoc.base
-      @base.send(:set_default_value)
-      @base.unload_document
+      # @base.send(:set_default_value)
+      # @base.unload_document
     end
 
     describe "initialize" do
       it "set default value" do
-        expect_any_instance_of(OneboxApiDoc::Base).to receive :set_default_value
-        OneboxApiDoc::Base.new
-      end
-      it "set correct default value" do
-        expect(@base.apps).to eq []
-        expect(@base.versions).to eq []
-        expect(@base.docs).to eq []
-        expect(@base.resources).to eq []
-        expect(@base.params).to eq []
+        new_base = OneboxApiDoc::Base.new
+        expect(new_base.apps).to eq []
+        expect(new_base.versions).to eq []
+        expect(new_base.docs).to eq []
+        expect(new_base.resources).to eq []
+        expect(new_base.params).to eq []
       end
     end
 
     describe "reload_document" do
       it "unload document and load it again" do
-        expect(@base).to receive :load_document
-        expect(@base).to receive :unload_document
+        @base.apps = [1,2,3,4]
+        expect(@base.apps).to eq [1,2,3,4]
         @base.reload_document
+        expect(@base.apps).not_to eq [1,2,3,4]
       end
     end
 
@@ -35,10 +33,14 @@ module OneboxApiDoc
       it "load document class" do
         @base.load_document
         expect{ UsersApiDoc }.not_to raise_error
+        @base.unload_document
       end
     end
 
     describe "unload_document" do
+      after do
+        @base.load_document
+      end
       it "does not load document class if the class wasn't load yet" do
         @base.unload_document
         expect{ UsersApiDoc }.to raise_error
@@ -49,8 +51,12 @@ module OneboxApiDoc
         expect{ UsersApiDoc }.to raise_error
       end
       it "reset attributes to default value" do
-        expect(@base).to receive :set_default_value
         @base.unload_document
+        expect(@base.apps).to eq []
+        expect(@base.versions).to eq []
+        expect(@base.docs).to eq []
+        expect(@base.resources).to eq []
+        expect(@base.params).to eq []
       end
     end
 
@@ -67,8 +73,9 @@ module OneboxApiDoc
         expect(main_app.name).to eq "main"
         expect(main_app.is_extension?).to eq false
       end
-      it "add new app if main app not already exist" do
+      it "add new app if main app not already exist", focus: true do
         @base.apps = []
+        @base.instance_variable_set(:@main_app, nil)
         expect{ @base.main_app }.to change(@base.apps, :size).by 1
       end
       it "does not add new app if main app already exist" do
@@ -222,32 +229,33 @@ module OneboxApiDoc
     describe "apis_group_by_resource" do
       context "call without version" do
         it "return correct hash of resource_name as key and apis as values" do
+          OneboxApiDoc::ApiDoc.version_id = nil
           @base.send(:set_default_value)
           class ApiGroupByResource_ApiDoc < ApiDoc
             resource_name :users
-            api :show, ""
-            api :update, ""
+            get '/users/:id', ''
+            put '/users/:id', ''
           end
           class ApiGroupByResource_2ApiDoc < ApiDoc
             resource_name :products
-            api :show, ""
-            api :update, ""
-            api :destroy, ''
+            get '/products/:id', ''
+            put '/products/:id', ''
+            delete '/products/:id', ''
           end
           class ApiGroupByResource_3ApiDoc < ApiDoc
             resource_name :users
             version '0.0.1'
-            api :index, ""
-            api :show, ""
-            api :update, ""
+            get '/users', ''
+            get '/users/:id', ''
+            put '/users/:id', ''
           end
           class ApiGroupByResource_4ApiDoc < ApiDoc
             resource_name :products
             version '0.0.1'
-            api :index, ""
-            api :show, ""
-            api :update, ""
-            api :destroy, ''
+            get '/products', ''
+            get '/products/:id', ''
+            put '/products/:id', ''
+            delete '/products/:id', ''
           end
           api_hash = @base.apis_group_by_resource
           expect(api_hash).to be_an Hash
@@ -268,27 +276,27 @@ module OneboxApiDoc
           @base.send(:set_default_value)
           class ApiGroupByResource_5ApiDoc < ApiDoc
             resource_name :users
-            api :show, ""
-            api :update, ""
+            get '/users/:id', ''
+            put '/users/:id', ''
           end
           class ApiGroupByResource_6ApiDoc < ApiDoc
             resource_name :products
-            api :show, ""
-            api :update, ""
-            api :destroy, ''
+            get '/products/:id', ''
+            put '/products/:id', ''
+            delete '/products/:id', ''
           end
           class ApiGroupByResource_7ApiDoc < ApiDoc
             resource_name :users
             version '0.0.1'
-            api :show, ""
+            get '/users/:id', ''
           end
           class ApiGroupByResource_8ApiDoc < ApiDoc
             resource_name :products
             version '0.0.1'
-            api :index, ""
-            api :show, ""
-            api :update, ""
-            api :destroy, ''
+            get '/products', ''
+            get '/products/:id', ''
+            put '/products/:id', ''
+            delete '/products/:id', ''
           end
           version = @base.get_version '0.0.1'
           api_hash = @base.apis_group_by_resource version
@@ -308,9 +316,6 @@ module OneboxApiDoc
     end
 
     describe "get api" do
-      before do
-        @base.reload_document
-      end
       context 'call with action' do
         it 'return correct api object' do
           api = @base.get_api(version: OneboxApiDoc::Engine.default_version, resource_name: :products, method: :get, url: '/products')

@@ -4,10 +4,11 @@ module OneboxApiDoc
     #####################
     ### Class Methods ###
     #####################
+    class_attribute :doc, :_resource_name, :version_id, :_extension_name
+
     class << self
 
-      cattr_accessor :doc, :_resource_name, :version_id, :_extension_name
-      
+
       def inherited(subclass)
         self._resource_name = subclass.name.demodulize.gsub(/ApiDoc/,"").pluralize.underscore
         self.version_id = OneboxApiDoc.base.default_version.object_id unless version_id.present?
@@ -58,12 +59,6 @@ module OneboxApiDoc
         end
         self.version_id = version.object_id
         version
-      end
-
-      def api action, short_desc="", &block
-        set_up_doc
-        resource = OneboxApiDoc.base.add_resource(self._resource_name)
-        self.doc.add_api(resource.object_id, action, short_desc, auto_route: true, &block)
       end
 
       def get url, short_desc="", &block

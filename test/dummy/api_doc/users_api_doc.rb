@@ -13,7 +13,7 @@ class UsersApiDoc < OneboxApiDoc::ApiDoc
     permission :guest, 'Guest'
   end
 
-  api :show, 'get user profile' do
+  get '/users/:id', 'get user profile' do
     desc 'get user profile'
     tags :mobile, :web
     permissions :admin, :member
@@ -79,7 +79,7 @@ class UsersApiDoc < OneboxApiDoc::ApiDoc
     end
   end
 
-  api :update, 'update user profile' do
+  put '/users/:id', 'update user profile' do
     desc 'update user profile'
     tags :mobile, :web
     permissions :member

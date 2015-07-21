@@ -13,7 +13,7 @@ class OldProductsApiDoc < OneboxApiDoc::ApiDoc
     permission :guest, 'Guest'
   end
 
-  api :index, 'get all products' do
+  get '/products', 'get all products' do
     desc 'get all products'
     tags :mobile, :web
     permissions :admin, :member, :guest
@@ -47,7 +47,7 @@ class OldProductsApiDoc < OneboxApiDoc::ApiDoc
     end
   end
 
-  api :create, 'create a product' do
+  post '/products', 'create a product' do
     desc 'create a product'
     tags :mobile, :web
     permissions :admin
@@ -111,7 +111,7 @@ class OldProductsApiDoc < OneboxApiDoc::ApiDoc
     end
   end
 
-  api :show, 'get product' do
+  get '/products/:id', 'get product' do
     desc 'get a specify product'
     tags :mobile, :web
     permissions :guest, :admin, :member
@@ -151,7 +151,7 @@ class OldProductsApiDoc < OneboxApiDoc::ApiDoc
     end
   end
 
-  api :update, 'update product' do
+  put '/products/:id', 'update product' do
     desc 'update a specify product'
     tags :mobile, :web
     permissions :admin
@@ -215,7 +215,7 @@ class OldProductsApiDoc < OneboxApiDoc::ApiDoc
     end
   end
 
-  api :destroy, 'delete product' do
+  delete '/products/:id', 'delete product' do
     desc 'delete a specify product'
     tags :mobile, :web
     permissions :admin

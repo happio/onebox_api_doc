@@ -264,7 +264,8 @@ module OneboxApiDoc
           end
           expect(InheritedApiDoc._resource_name).to eq 'inheriteds'
         end
-        it "set version_id" do
+        it "set version_id if parent's version_id is nil" do
+          OneboxApiDoc::ApiDoc.version_id = nil
           class Inherited2ApiDoc < ApiDoc
           end
           expect(Inherited2ApiDoc.version_id).to eq @base.default_version.object_id
@@ -319,7 +320,7 @@ module OneboxApiDoc
             resource_name :users
           end
           expect_any_instance_of(OneboxApiDoc::Doc).to receive(:add_api)
-          ApiApiDoc.api :show, "get user profile"
+          ApiApiDoc.get '/users/:id', "get user profile"
         end
         it "set correct api detail" do
           class Api2ApiDoc < ApiDoc
@@ -993,14 +994,14 @@ module OneboxApiDoc
           class GetAnnoucementsApiDoc < ApiDoc
             version '1.2.2'
             resource_name :users
-            api :update, "update user profile" do
+            put '/users/:id', "update user profile" do
               response do
                 body do
                   param :test, :string, warning: 'test warning'
                 end
               end
             end
-            api :show, "get user profile" do
+            get '/users/:id', "get user profile" do
               response do
                 body do
                   param :test_res_header, :string, warning: 'test_res_header'
@@ -1273,13 +1274,13 @@ module OneboxApiDoc
               code 404, 'Not Found'
             end
 
-            api :show, 'short_desc' do
+            get '/orders/:id', 'short_desc' do
               desc 'description'
               error do
                 error_group :show_errors
               end
             end
-            api :update, 'short_desc' do
+            put '/orders/:id', 'short_desc' do
               desc 'description'
               error do
                 error_group :show_errors

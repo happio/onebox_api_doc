@@ -35,10 +35,8 @@ module OneboxApiDoc
       unless @main_app.present?
         @main_app = OneboxApiDoc::App.new(name: "main")
         self.apps << @main_app
-        @main_app
-      else
-        @main_app
       end
+      @main_app
     end
 
     def extension_apps
@@ -190,7 +188,6 @@ module OneboxApiDoc
     end
 
     def load_api_doc_from_file(api_doc_file)
-      p api_doc_file
       load api_doc_file
       api_doc_file.gsub(/\A.*\/api_doc\//,"").gsub(/\.\w*\Z/,"").camelize
     end
@@ -211,9 +208,9 @@ module OneboxApiDoc
       class_name = api_doc_class_name.demodulize.to_sym
       if namespaces.present?
         object = namespaces.constantize
-        p object.send(:remove_const, class_name) if object.const_defined?(class_name)
+        object.send(:remove_const, class_name) rescue nil
       else
-        Object.send(:remove_const, class_name) if Object.const_defined?(class_name)
+        Object.send(:remove_const, class_name) rescue nil
       end
       if api_doc_class.subclasses.present?
         api_doc_class.subclasses.each do |subclass|

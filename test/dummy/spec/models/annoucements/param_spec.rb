@@ -2,16 +2,16 @@ require "rails_helper"
 
 module OneboxApiDoc
   module Annoucements
-    describe Param, focus: true do
+    describe Param do
       before :all do
-        @base = OneboxApiDoc.reset
         class AnnoucementsApiDoc < OneboxApiDoc::ApiDoc
           version "0.99"
           resource_name :users
-          api :update, 'test'
+          get '/users/:id', 'test'
         end
       end
       before do
+        @base = OneboxApiDoc.base
         @doc = @base.docs.last
         @param = @doc.add_param(:test_res_body, :string, warning: 'test_res_body')
         @annoucement = OneboxApiDoc::Annoucements::Param.new(doc_id: @doc.object_id, param_id: @param.object_id)

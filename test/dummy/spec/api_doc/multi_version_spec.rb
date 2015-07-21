@@ -11,9 +11,10 @@ module OneboxApiDoc
     let(:doc_v2) { @doc_v2 = OneboxApiDoc.base.get_doc("2.0.0") }
 
     it "correct apis" do
-      p base.docs.map{ |d| [ d.version.name, d.apis.size ] }
       expect(doc_v1.apis.size).to eq 5
       expect(doc_v2.apis.size).to eq 2
     end
+    it "correct tags"
+    it "correct permissions"
   end
 end
