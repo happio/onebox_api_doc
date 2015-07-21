@@ -5,7 +5,7 @@ OneboxApiDoc::Engine.config do |config|
   config.app_name = 'Api Doc'
 
   # where is your API Doc defined?
-  # config.root_resource = Rails.root
+  config.root_resource = Rails.root
   config.api_docs_matcher = "api_doc/**/*.rb"
 
   # default version
