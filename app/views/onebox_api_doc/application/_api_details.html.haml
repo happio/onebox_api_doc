@@ -1,6 +1,9 @@
 #api-details
   %h2.ui.header.resourec__name 
     = api.resource.name
+    - if Rails.env.development?
+      = link_to "Reload This Api", onebox_api_doc.api_path(version: api.version.name, tag: params[:tag], resource_name: api.resource.name, method: api.method, url: api.friendly_id, reload_document: true), class: 'ui label link-api-list'
+        
 
   .ui.divider
 
