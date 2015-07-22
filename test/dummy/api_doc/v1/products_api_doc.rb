@@ -4,7 +4,7 @@ module V1
     resource_name :products
     
     get '/products', 'get all products' do
-      desc 'get all products'
+      desc 'get all products<br>new line'
       tags :mobile
       permissions :admin, :member, :guest
       request do
