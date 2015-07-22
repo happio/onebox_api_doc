@@ -37,28 +37,28 @@ module OneboxApiDoc
       end
     end
 
-    describe "unload_document" do
-      after do
-        @base.load_document
-      end
-      it "does not load document class if the class wasn't load yet" do
-        @base.unload_document
-        expect{ UsersApiDoc }.to raise_error
-      end
-      it "unload document class if the class was loaded" do
-        @base.load_document
-        @base.unload_document
-        expect{ UsersApiDoc }.to raise_error
-      end
-      it "reset attributes to default value" do
-        @base.unload_document
-        expect(@base.apps).to eq []
-        expect(@base.versions).to eq []
-        expect(@base.docs).to eq []
-        expect(@base.resources).to eq []
-        expect(@base.params).to eq []
-      end
-    end
+    # describe "unload_document" do
+    #   after do
+    #     @base.load_document
+    #   end
+    #   it "does not load document class if the class wasn't load yet" do
+    #     @base.unload_document
+    #     expect{ UsersApiDoc }.to raise_error
+    #   end
+    #   it "unload document class if the class was loaded" do
+    #     @base.load_document
+    #     @base.unload_document
+    #     expect{ UsersApiDoc }.to raise_error
+    #   end
+    #   it "reset attributes to default value" do
+    #     @base.unload_document
+    #     expect(@base.apps).to eq []
+    #     expect(@base.versions).to eq []
+    #     expect(@base.docs).to eq []
+    #     expect(@base.resources).to eq []
+    #     expect(@base.params).to eq []
+    #   end
+    # end
 
     describe "api_docs_paths" do
       it "return correct array of document paths" do
