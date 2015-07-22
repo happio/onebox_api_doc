@@ -19,6 +19,7 @@ module V1
             desc: "array of product" do
               param :id, :integer, 
                 desc: 'product id',
+                required: true,
                 permissions: [ :admin, :member, :guest ]
               param :name, :string, 
                 desc: 'product name',
@@ -30,8 +31,15 @@ module V1
                 desc: 'product status (online or offline)',
                 permissions: [ :admin ],
                 validates: {
-                  within: ["online", "offline"]
-                }
+                  within: ["online", "offline"],
+                  min: 5,
+                  max: 10,
+                  email: true,
+                  pattern: 'email pattern',
+                  min_length: 10,
+                  max_length: 10,
+                },
+                warning: 'new params since 1.0.0'
             end
         end
       end

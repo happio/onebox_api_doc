@@ -5,10 +5,31 @@
         %td.param__key
           .ui.header
             .name
-              = param.name
+              = "#{param.name}" + ("*" if param.required).to_s
             .sub.header.type
               = param.type
         %td
           %p.param__desc
             = param.desc
+            .ui.list
+              - if param.permissions.present?
+                .item.param__permission
+                  .header Permission:
+                  .description
+                    .ui.horizontal.divided.list
+                      - param.permissions.each do |permission|
+                        .item
+                          = permission.name
+              - if param.validates.present?
+                .item.param_validate
+                  .header Validates
+                  .description
+                    - param.validates.each do |validate|
+                      = "\- #{validate}"
+                      %br
+              - if param.warning.present?
+                .item.param__warning 
+                  .header Warnning
+                  .description 
+                    = param.warning
             = render partial: 'onebox_api_doc/application/params', locals: { params: param.params } unless param.params.blank?

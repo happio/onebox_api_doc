@@ -26,6 +26,8 @@ module OneboxApiDoc
 
     def show
       @base = OneboxApiDoc.base
+      @base.reload_document
+
       api_options = {
         version: api_params[:version] || @base.default_version.name,
         tag: api_params[:tag],
