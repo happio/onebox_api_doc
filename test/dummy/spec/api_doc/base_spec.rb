@@ -317,28 +317,29 @@ module OneboxApiDoc
 
     describe "get api" do
       context 'call with action' do
+        let(:verions_name) { @version_name = '2.0.0' }
         it 'return correct api object' do
-          api = @base.get_api(version: OneboxApiDoc::Engine.default_version, resource_name: :products, method: :get, url: '/products')
+          api = @base.get_api(version: verions_name, resource_name: :products, method: :get, url: '/products')
           expect(api).to be_an OneboxApiDoc::Api
           expect(api.method).to eq 'GET'
           expect(api.url).to eq '/products'
           expect(api.resource.name).to eq 'products'
-          expect(api.version).to eq @base.default_version
+          expect(api.version.name).to eq verions_name
         end
         it 'return nil if version does not exist' do
           api = @base.get_api(version: 'fake version', resource_name: :products, method: :get, url: '/products')
           expect(api).to eq nil
         end
         it 'return nil if resource does not exist' do
-          api = @base.get_api(version: @base.default_version.name, resource_name: :fake_resource, method: :get, url: '/products')
+          api = @base.get_api(version: verions_name, resource_name: :fake_resource, method: :get, url: '/products')
           expect(api).to eq nil
         end
         it 'return nil if method does not exist' do
-          api = @base.get_api(version: @base.default_version.name, resource_name: :products, method: :fake_method, url: '/products')
+          api = @base.get_api(version: verions_name, resource_name: :products, method: :fake_method, url: '/products')
           expect(api).to eq nil
         end
         it 'return nil if url does not exist' do
-          api = @base.get_api(version: @base.default_version.name, resource_name: :products, method: :get, url: '/fake_url')
+          api = @base.get_api(version: verions_name, resource_name: :products, method: :get, url: '/fake_url')
           expect(api).to eq nil
         end
       end
