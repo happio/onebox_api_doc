@@ -48,6 +48,7 @@ module V1
     end
 
     post '/products', 'create a product' do
+      warning 'new api'
       desc 'create a product'
       tags :mobile, :web
       permissions :admin

@@ -9,7 +9,7 @@
           .content
             .summary
               .user
-                = link_to api.url, onebox_api_doc.api_path(version: @doc.version.name, tag: @current_tag.slug, resource_name: api.resource.name, method: api.method, url: api.friendly_id), class: 'link-api-list', remote: false
+                = link_to "#{api.method} #{api.url}", onebox_api_doc.api_path(version: @doc.version.name, tag: @current_tag.slug, resource_name: api.resource.name, method: api.method, url: api.friendly_id), class: 'link-api-list', remote: false
               .date
                 = api.short_desc
             .extra.text
@@ -17,14 +17,17 @@
                 - annoucements.each do |annoucement|
                   .item
                     .content
-                      .description
-                        param: 
-                        %b 
-                          %code
-                            = annoucement.param.name
-                        = "(at: #{annoucement.param.mapper})"
-                      .description
-                        warning: 
-                        %b
-                          = annoucement.message
+                      - case annoucement.class.name.demodulize
+                        - when 'Param'
+                          .description
+                            annoucement.message 
+                            (
+                            %b 
+                              %code
+                                = annoucement.param.name
+                            = "at: #{annoucement.param.mapper}"
+                            )
+                        - when 'Api'
+                          %b
+                            = annoucement.message
 
