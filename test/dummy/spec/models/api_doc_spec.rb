@@ -995,50 +995,98 @@ module OneboxApiDoc
         end
       end
 
-      describe "annoucements" do
-        before do
-          class GetAnnoucementsApiDoc < ApiDoc
-            version '1.2.2'
-            resource_name :users
-            put '/users/:id', "update user profile" do
-              response do
-                body do
-                  param :test, :string, warning: 'test warning'
+      describe "annoucements", focus: true do
+        context "api" do
+          before do
+            class GetAnnoucementsApiDoc < ApiDoc
+              version '1.2.3'
+              resource_name :users
+              put '/users/:id', "update user profile" do
+                warning 'new api'
+                response do
+                  body do
+                    param :test, :string
+                  end
+                end
+              end
+              get '/users/:id', "get user profile" do
+                response do
+                  body do
+                  end
+                  body do
+                  end
+                end
+                response do
+                  body do
+                    param :test_res_header, :string
+                  end
+                  body do
+                    param :test_res_body, :string
+                  end
                 end
               end
             end
-            get '/users/:id', "get user profile" do
-              response do
-                body do
-                  param :test_res_header, :string, warning: 'test_res_header'
-                end
-                body do
-                  param :test_res_body, :string, warning: 'test_res_body'
+            @doc = @base.docs.last
+          end
+          it "add annoucements" do
+            expect(@doc.annoucements.size).to eq 1
+          end
+          it "is annoucement object" do
+            @doc.annoucements.each do |annoucement|
+              expect(annoucement).to be_an OneboxApiDoc::Annoucements::Api
+            end
+          end
+          it "has api's warning" do
+            @doc.annoucements.each do |annoucement|
+              expect(annoucement.message).to eq annoucement.api.warning
+            end
+          end
+        end
+        context "param" do
+          before do
+            class GetAnnoucementsParamDoc < ApiDoc
+              version '1.2.2'
+              resource_name :users
+              put '/users/:id', "update user profile" do
+                response do
+                  body do
+                    param :test, :string, warning: 'test warning'
+                  end
                 end
               end
-              response do
-                body do
-                  param :test_res_header, :string, warning: 'test_res_header'
+              get '/users/:id', "get user profile" do
+                response do
+                  body do
+                    param :test_res_header, :string, warning: 'test_res_header'
+                  end
+                  body do
+                    param :test_res_body, :string, warning: 'test_res_body'
+                  end
                 end
-                body do
-                  param :test_res_body, :string, warning: 'test_res_body'
+                response do
+                  body do
+                    param :test_res_header, :string, warning: 'test_res_header'
+                  end
+                  body do
+                    param :test_res_body, :string, warning: 'test_res_body'
+                  end
                 end
               end
             end
+            @doc = @base.docs.last
           end
-          @doc = @base.docs.last
-        end
-        it "add annoucements" do
-          expect(@doc.annoucements.size).to eq 5
-        end
-        it "is annoucement object" do
-          @doc.annoucements.each do |annoucement|
-            expect(annoucement).to be_an OneboxApiDoc::Annoucements::Param
+          it "add annoucements" do
+            expect(@doc.annoucements.size).to eq 5
           end
-        end
-        it "has param's warning" do
-          @doc.annoucements.each do |annoucement|
-            expect(annoucement.message).to eq annoucement.param.warning
+          it "is annoucement object" do
+            @doc.annoucements.each do |annoucement|
+              expect(annoucement).to be_an OneboxApiDoc::Annoucements::Param
+            end
+          end
+          it "has param's warning" do
+            @doc.annoucements.each do |annoucement|
+              expect(annoucement.message).to eq annoucement.param.warning
+            end
           end
         end
       end

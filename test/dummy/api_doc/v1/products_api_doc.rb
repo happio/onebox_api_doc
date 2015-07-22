@@ -27,7 +27,8 @@ module V1
                 permissions: [ :admin, :member, :guest ]
               param :description, :string, 
                 desc: 'product description',
-                permissions: [ :admin, :member, :guest ]
+                permissions: [ :admin, :member, :guest ],
+                warning: 'new params since 1.0.0'
               param :status, :string, 
                 desc: 'product status (online or offline)',
                 permissions: [ :admin ],

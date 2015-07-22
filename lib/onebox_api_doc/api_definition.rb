@@ -86,7 +86,6 @@ module OneboxApiDoc
           options[:permission_ids] = options[:permissions].map { |permission_slug| doc.get_permission(permission_slug).object_id }
         end
         param = self.doc.add_param(name, type, options, &block)
-        self.doc.add_annoucement(:param, doc_id: doc.object_id, param_id: param.object_id) if param.warning
         @param_ids << param.object_id unless self.parent_id.present?
       end
 
