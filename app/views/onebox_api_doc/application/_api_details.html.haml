@@ -22,8 +22,9 @@
 
   -# long description section
   %br
-  %p.description
-    = api.desc.html_safe
+  - api.desc.present?
+    %p.description
+      = api.desc.html_safe
 
   -# note section
   -# .ui.api__note.list
