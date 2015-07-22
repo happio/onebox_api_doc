@@ -159,6 +159,13 @@ module OneboxApiDoc
         expect(@api.is_extension?).to eq true
       end
     end
+
+    describe "warning" do
+      it "correct value" do
+        @api = OneboxApiDoc::Api.new doc_id: @doc.object_id, action: :show, method: :get, url: 'test', warning: 'new api'
+        expect(@api.warning).to eq 'new api'
+      end
+    end
     
   end
 end

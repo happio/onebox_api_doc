@@ -4,6 +4,7 @@ module V1
     resource_name :products
     
     get '/products', 'get all products' do
+      warning 'new api on 1.0.0'
       desc 'get all products<br>new line'
       tags :mobile
       permissions :admin, :member, :guest

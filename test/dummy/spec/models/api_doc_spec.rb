@@ -1,7 +1,7 @@
 require "rails_helper"
 
 module OneboxApiDoc
-  describe ApiDoc, focus: true do
+  describe ApiDoc do
 
     before do
       @base = OneboxApiDoc.base
@@ -28,6 +28,7 @@ module OneboxApiDoc
             desc 'get product detail'
             tags :mobile, :web
             permissions :guest, :admin, :member
+            warning 'new api since this verions'
             request do
               header do
                 param :header_param1, :string, 
@@ -254,6 +255,11 @@ module OneboxApiDoc
         expect(error_param1.type).to eq "String"
         expect(error_param1.desc).to eq "error message"
         expect(error_param1.permissions.map(&:slug)).to eq ["admin", "member", "guest"]
+      end
+      it "set correct wraning", focus: true do
+        api = @doc.apis.first
+        expect(api).to be_present
+        expect(api.warning).to eq 'new api since this verions'
       end
     end
 

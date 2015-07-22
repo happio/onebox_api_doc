@@ -37,6 +37,10 @@ module OneboxApiDoc
       end
     end
 
+    def warning warning
+      api.warning = warning
+    end
+
     class RequestResponseDefinition
       attr_reader :mapper
       attr_reader :api
