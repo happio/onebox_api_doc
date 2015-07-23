@@ -1,6 +1,6 @@
-//= require zeroclipboard
-
-bind_copy();
+$( document ).ready(function() {
+  bind_copy();
+});
 
 function bind_copy (btn){
   var btn_copied = btn

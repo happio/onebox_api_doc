@@ -15,6 +15,10 @@
 //= require jquery
 //= require jquery_ujs
 
-//= require semantic-ui
+//= require semantic-ui/dropdown
+//= require semantic-ui/accordion
+//= require semantic-ui/tab
+//= require semantic-ui/popup
+//= require semantic-ui/transition
 
-//= require onebox_api_doc/footer
+//= require onebox_api_doc/init-semantic-ui

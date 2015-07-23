@@ -1,24 +1,29 @@
-$('select.dropdown')
-  .dropdown()
-;
 
-$('.ui.accordion')
-  .accordion({
-    exclusive: false  
-  })
-;
+$( document ).ready(function() {
+  
+  $('select.dropdown')
+    .dropdown()
+  ;
 
-$('.menu .item')
-  .tab()
-;
+  $('.ui.accordion')
+    .accordion({
+      exclusive: false  
+    })
+  ;
 
-$('.dropdown.display_apis')
-  .dropdown({
-    // you can use any ui transition
-    transition: 'drop'
-  })
-;
+  $('.menu .item')
+    .tab()
+  ;
 
-$('.params .param__from, .api__note .note--warning')
-  .popup()
-;
+  $('.dropdown.display_apis')
+    .dropdown({
+      // you can use any ui transition
+      transition: 'drop'
+    })
+  ;
+
+  $('.params .param__from, .api__note .note--warning')
+    .popup()
+  ;
+  
+});

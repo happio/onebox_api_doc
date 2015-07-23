@@ -3,6 +3,7 @@
   %head
     %title OneboxApiDoc
     = stylesheet_link_tag    "onebox_api_doc/application", media: "all"
+    = javascript_include_tag "onebox_api_doc/application"
     = csrf_meta_tags
   %body
 
@@ -17,4 +18,4 @@
         .sixteen.wide.column
           = render 'onebox_api_doc/shared/versions'
 
-    = javascript_include_tag "onebox_api_doc/application"
+    = javascript_include_tag "onebox_api_doc/footer"
