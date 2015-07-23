@@ -4,10 +4,16 @@ module OneboxApiDoc
     caches_action :index
     caches_action :show, :cache_path => Proc.new { |controller| controller.params.except(:_).merge(format: request.format) }
 
-    def index
-      @base = OneboxApiDoc.base
-      @base.reload_document
+    before_action :reload_document
 
+    def reload_document
+      @base = OneboxApiDoc.base
+      unless @base.versions.present? and (not params[:reload_document])
+        @base.reload_document
+      end
+    end
+
+    def index
       @current_version = @base.default_version
 
       @doc = @base.get_doc(@current_version.name)
@@ -25,9 +31,6 @@ module OneboxApiDoc
     end
 
     def show
-      @base = OneboxApiDoc.base
-      @base.reload_document
-
       api_options = {
         version: api_params[:version] || @base.default_version.name,
         tag: api_params[:tag],

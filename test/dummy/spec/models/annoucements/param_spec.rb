@@ -4,7 +4,7 @@ module OneboxApiDoc
   module Annoucements
     describe Param do
       before :all do
-        class AnnoucementsApiDoc < OneboxApiDoc::ApiDoc
+        class AnnoucementsParamDoc < OneboxApiDoc::ApiDoc
           version "0.99"
           resource_name :users
           get '/users/:id', 'test'

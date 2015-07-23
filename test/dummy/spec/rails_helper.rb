@@ -34,8 +34,11 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before do
+    OneboxApiDoc.base.load_document
+  end
+  config.after do
+    OneboxApiDoc.base.unload_document
     OneboxApiDoc.reset
-    OneboxApiDoc.base.reload_document
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests

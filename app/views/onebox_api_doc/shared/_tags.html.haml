@@ -1,3 +1,7 @@
+- if Rails.env.development?
+  = link_to apis_by_tag_path(tag: @current_tag.slug, reload_document: true), class: 'ui top attached button', tabindex: "0" do
+    Reload Document
+
 = link_to apis_by_tag_path(tag: @current_tag.slug), class: 'ui top attached button', tabindex: "0" do
   %i.announcement.icon
   Annoucement

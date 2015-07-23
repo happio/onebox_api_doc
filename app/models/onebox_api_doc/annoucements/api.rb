@@ -4,7 +4,7 @@ module OneboxApiDoc
       attr_accessor :api_id
 
       def message
-        "Annoucements::Api"
+        api.warning
       end
 
       def api

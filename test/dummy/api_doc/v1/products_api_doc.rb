@@ -4,6 +4,7 @@ module V1
     resource_name :products
     
     get '/products', 'get all products' do
+      warning 'new api on 1.0.0'
       desc 'get all products<br>new line'
       tags :mobile
       permissions :admin, :member, :guest
@@ -26,7 +27,8 @@ module V1
                 permissions: [ :admin, :member, :guest ]
               param :description, :string, 
                 desc: 'product description',
-                permissions: [ :admin, :member, :guest ]
+                permissions: [ :admin, :member, :guest ],
+                warning: 'new params since 1.0.0'
               param :status, :string, 
                 desc: 'product status (online or offline)',
                 permissions: [ :admin ],
@@ -46,6 +48,7 @@ module V1
     end
 
     post '/products', 'create a product' do
+      warning 'new api'
       desc 'create a product'
       tags :mobile, :web
       permissions :admin

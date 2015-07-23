@@ -51,13 +51,16 @@ module OneboxApiDoc
       end
 
       OneboxApiDoc::ApiDefinition.new(api, &block) if block_given?
+      self.add_annoucement(:api, doc_id: object_id, api_id: api.object_id) if api.warning
       api
+
     end
 
     def add_param name, type, options={}, &block
       options = {doc_id: self.object_id, name: name, type: type}.merge(options)
       param = OneboxApiDoc::Param.new(options, &block)
       self.params << param
+      self.add_annoucement(:param, doc_id: object_id, param_id: param.object_id) if param.warning
       param
     end
 

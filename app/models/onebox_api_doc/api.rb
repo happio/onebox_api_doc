@@ -4,6 +4,7 @@ module OneboxApiDoc
     attr_accessor :action, :method, :url, :permission_ids, :desc, :short_desc, :tag_ids, :error_ids
     attr_accessor :request
     attr_accessor :response
+    attr_accessor :warning
 
     def friendly_id
       @friendly_id ||= url.parameterize
