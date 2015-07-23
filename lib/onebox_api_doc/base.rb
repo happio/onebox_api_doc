@@ -27,7 +27,12 @@ module OneboxApiDoc
     end
 
     def api_docs_paths
-      Dir.glob(OneboxApiDoc::Engine.root_resource.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
+      Dir.glob(
+        OneboxApiDoc::Engine.root_resource.join(
+          *OneboxApiDoc::Engine.api_docs_matcher.split("/")
+        )
+      ).sort { |a,b| a.count("/") <=> b.count("/") }
+      # .sort { |x,y| x.split(/\//).size <=> y.split(/\//).size}
     end
 
     def main_app
