@@ -1,0 +1,1 @@
+Rails.application.config.assets.precompile += %w( onebox_api_doc/footer.js )
