@@ -16,6 +16,11 @@ $(document).on( 'click', ".link-api-list", function(e){
 
         var btn_copied = details_container.find('.copy--btn');
         bind_copy(btn_copied);
+      },
+      error: function(jqXHR, error, errorThrown) {
+        if(jqXHR.status&&jqXHR.status==401){
+          location.reload();
+        }
       }
 
     });
