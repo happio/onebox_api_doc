@@ -14,6 +14,9 @@ module OneboxApiDoc
       # default version
       mattr_accessor :default_version do "0.0" end
 
+      # authentication
+      mattr_accessor :devise_auth do false end
+
       def config(&block)
         yield self
       end

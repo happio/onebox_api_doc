@@ -29,6 +29,4 @@ Gem::Specification.new do |s|
   s.add_dependency "actionpack-action_caching"
   
   s.add_dependency "devise"
-  # s.add_development_dependency "sqlite3"
-
 end

@@ -1,6 +1,8 @@
 module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
+    before_action :authenticate_developer!
+
     caches_action :index
     caches_action :show, :cache_path => Proc.new { |controller| controller.params.except(:_).merge(format: request.format) }
 

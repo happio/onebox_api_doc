@@ -180,6 +180,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  devise
   onebox_api_doc!
   pg
   quiet_assets
