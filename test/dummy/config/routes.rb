@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  devise_for :developers, class_name: "OneboxApiDoc::Developer"
   mount OneboxApiDoc::Engine => "/docs"
   # mount OneboxApiDoc::Engine => "/api_doc"
 
