@@ -11,4 +11,7 @@ OneboxApiDoc::Engine.config do |config|
   # default version
   config.default_version = "0.0.0"
 
+  # authentication
+  # config.auth_method = "authenticate_developer!"
+
 end
