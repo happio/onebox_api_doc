@@ -8,13 +8,13 @@ namespace :onebox_api_doc do
   desc 'Install onebox_api_doc'
   task :install => :environment do
     # generate config file in initializer
-    system 'rails g onebox_api_doc:install'
+    system 'bundle exec rails g onebox_api_doc:install'
   end
 
   namespace :auth do
     desc 'Migrate Authentication Model with Devise'
     task :devise => :environment do
-      system 'bundle exec rails generate devise onebox_core_api/developer'
+      system 'bundle exec rails generate onebox_api_doc:devise_auth'
     end
   end
 
