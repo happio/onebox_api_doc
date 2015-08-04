@@ -33,7 +33,7 @@ module OneboxApiDoc
             expect(response.status).to eq 200
             expect(response).to render_template :index
           end
-          it "redirect to developer sign in when unauthentication" do
+          it "access page when not sign in" do
           end
           it "access page when sign in already" do
             sign_in(:developer, developer)
@@ -74,7 +74,7 @@ module OneboxApiDoc
             expect(response.status).to eq 200
             expect(response).to render_template :index
           end
-          it "redirect to developer sign in when unauthentication" do
+          it "access page when not sign in" do
           end
           it "access page when sign in already" do
             sign_in(:developer, developer)
@@ -119,7 +119,7 @@ module OneboxApiDoc
             expect(response.status).to eq 200
             expect(response).to render_template :show
           end
-          it "redirect to developer sign in when unauthentication" do
+          it "access page when not sign in" do
           end
           it "access page when sign in already" do
             sign_in(:developer, developer)
