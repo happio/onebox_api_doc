@@ -15,6 +15,7 @@ module OneboxApiDoc
       mattr_accessor :default_version do "0.0" end
 
       # authentication
+      mattr_accessor :auth_service
       mattr_accessor :auth_method
 
       def auth?
@@ -26,5 +27,7 @@ module OneboxApiDoc
       end
 
     end
+
+    
   end
 end

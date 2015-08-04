@@ -14,7 +14,7 @@ namespace :onebox_api_doc do
   namespace :auth do
     desc 'Migrate Authentication Model with Devise'
     task :devise => :environment do
-      system 'bundle exec rails generate devise onebox_core_api/developer'
+      system 'bundle exec rails generate api_doc_devise_auth'
     end
   end
 

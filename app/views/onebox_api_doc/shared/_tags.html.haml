@@ -1,3 +1,6 @@
+= link_to destroy_developer_session_path(tag: @current_tag.slug, reload_document: true), method: :delete, class: 'ui top attached button', tabindex: "0" do
+  Logout
+
 - if Rails.env.development?
   = link_to apis_by_tag_path(tag: @current_tag.slug, reload_document: true), class: 'ui top attached button', tabindex: "0" do
     Reload Document
