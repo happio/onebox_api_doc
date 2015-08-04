@@ -2,9 +2,7 @@
 log/*.log
 pkg/
 test/dummy/config/database.yml
-test/dummy/db/migrate/
 test/dummy/log/*.log
 test/dummy/tmp/
 test/dummy/.sass-cache
-test/dummy/config/initializers/onebox_api_doc.rb
 

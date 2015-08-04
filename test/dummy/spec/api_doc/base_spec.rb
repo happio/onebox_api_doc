@@ -62,7 +62,8 @@ module OneboxApiDoc
 
     describe "api_docs_paths" do
       it "return correct array of document paths" do
-        expect(@base.api_docs_paths).to eq Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/")))
+        expect_paths = Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/"))).sort { |a,b| a.count("/") <=> b.count("/") }
+        expect(@base.api_docs_paths).to eq expect_paths
       end
     end
 

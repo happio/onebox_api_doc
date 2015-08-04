@@ -1,10 +1,135 @@
 require "rails_helper"
 
 module OneboxApiDoc
-  describe ApplicationController do
+  describe OneboxApiDoc::ApplicationController, :type => :controller do
+    routes { OneboxApiDoc::Engine.routes }
 
-    # routes { OneboxApiDoc::Engine.routes }
+    let(:developer) { @developer ||= OneboxApiDoc::Developer.create(email: 'test@gmail.com', password: '11111111', password_confirmation: '11111111')}
+    
+    describe "GET index" do
+      describe "authentication" do
+        context "enable auth" do
+          before do
+            OneboxApiDoc::Engine.auth_method = "authenticate_developer!"
+          end
+          it "redirect to developer sign in when unauthentication" do
+            get :index
+            expect(response.status).to eq 302
+            expect(response).to redirect_to '/developers/sign_in'
+          end
+          it "access page when sign in already" do
+            sign_in(:developer, developer)
+            get :index
+            expect(response.status).to eq 200
+            expect(response).to render_template :index
+          end
+        end
+        context "disable auth" do
+          before do
+            OneboxApiDoc::Engine.auth_method = nil
+          end
+          after do
+            get :index
+            expect(response.status).to eq 200
+            expect(response).to render_template :index
+          end
+          it "access page when not sign in" do
+          end
+          it "access page when sign in already" do
+            sign_in(:developer, developer)
+          end
+        end
+      end
+    end
 
+    describe "GET index /:tag" do
+      let(:valid_params) {
+        @valid_params = {
+          tag: 'web'
+        }
+      }
+      describe "authentication" do
+        context "enable auth" do
+          before do
+            OneboxApiDoc::Engine.auth_method = "authenticate_developer!"
+          end
+          it "redirect to developer sign in when unauthentication" do
+            get :index, valid_params
+            expect(response.status).to eq 302
+            expect(response).to redirect_to '/developers/sign_in'
+          end
+          it "access page when sign in already" do
+            sign_in(:developer, developer)
+            get :index, valid_params
+            expect(response.status).to eq 200
+            expect(response).to render_template :index
+          end
+        end
+        context "disable auth" do
+          before do
+            OneboxApiDoc::Engine.auth_method = nil
+          end
+          after do
+            get :index, valid_params
+            expect(response.status).to eq 200
+            expect(response).to render_template :index
+          end
+          it "access page when not sign in" do
+          end
+          it "access page when sign in already" do
+            sign_in(:developer, developer)
+          end
+        end
+      end
+    end
+
+    describe "GET show /:version/:tag/:resource_name/:method/:url" do
+      let(:valid_params) { 
+        @valid_params = {
+          :version       => '1.0.0',
+          :tag           => 'web',
+          :resource_name => 'products',
+          :method        => 'get',
+          :url           =>  ''
+        }
+      }
+      describe "authentication" do
+        context "enable auth" do
+          before do
+            OneboxApiDoc::Engine.auth_method = "authenticate_developer!"
+          end
+          it "redirect to developer sign in when unauthentication" do
+            get :show, valid_params
+            expect(response.status).to eq 302
+            expect(response).to redirect_to '/developers/sign_in'
+          end
+          it "access page when sign in already" do
+            sign_in(:developer, developer)
+            get :show, valid_params
+            expect(response.status).to eq 200
+            expect(response).to render_template :show
+          end
+        end
+        context "disable auth" do
+          before do
+            OneboxApiDoc::Engine.auth_method = nil
+          end
+          after do
+            get :show, valid_params
+            expect(response.status).to eq 200
+            expect(response).to render_template :show
+          end
+          it "access page when not sign in" do
+          end
+          it "access page when sign in already" do
+            sign_in(:developer, developer)
+          end
+        end
+      end
+    end
+
+  end
+end
     # describe "GET index" do
 
     #   before do
@@ -208,6 +333,5 @@ module OneboxApiDoc
     #   end
 
     # end
-
-  end
-end
+#   end
+# end

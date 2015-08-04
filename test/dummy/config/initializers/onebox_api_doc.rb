@@ -9,9 +9,10 @@ OneboxApiDoc::Engine.config do |config|
   config.api_docs_matcher = "api_doc/**/*.rb"
 
   # default version
-  config.default_version = "0.0.0"
+  config.default_version = "1.0.0"
 
   # authentication
-  # config.auth_method = "authenticate_developer!"
+  config.auth_method = "authenticate_developer!"
+
 
 end

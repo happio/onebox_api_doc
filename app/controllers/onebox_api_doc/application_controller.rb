@@ -1,17 +1,13 @@
 module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
+    before_action OneboxApiDoc::Engine.auth_method.to_sym, if: -> { OneboxApiDoc::Engine.auth? }
+
     caches_action :index
     caches_action :show, :cache_path => Proc.new { |controller| controller.params.except(:_).merge(format: request.format) }
 
     before_action :reload_document
 
-    def reload_document
-      @base = OneboxApiDoc.base
-      unless @base.versions.present? and (not params[:reload_document])
-        @base.reload_document
-      end
-    end
 
     def index
       @current_version = @base.default_version
@@ -61,14 +57,22 @@ module OneboxApiDoc
 
     end
 
-    def example
-      
-    end
+    # def example
+    # end
 
     private
 
     def api_params
       params.permit(:version, :tag, :resource_name, :method, :url)
     end
+
+
+    def reload_document
+      @base = OneboxApiDoc.base
+      unless @base.versions.present? and (not params[:reload_document])
+        @base.reload_document
+      end
+    end
+    
   end
 end

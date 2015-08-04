@@ -14,7 +14,7 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 gem 'pg'
-
+gem 'devise'
 gem 'quiet_assets', group: :development
 
 group :development, :test do

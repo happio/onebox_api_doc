@@ -14,6 +14,13 @@ module OneboxApiDoc
       # default version
       mattr_accessor :default_version do "0.0" end
 
+      # authentication
+      mattr_accessor :auth_method
+
+      def auth?
+        auth_method.present?
+      end
+
       def config(&block)
         yield self
       end
