@@ -75,7 +75,7 @@ module OneboxApiDoc
     end
 
     def authenticate!
-      OneboxApiDoc::Engine.auth_method.to_s.to_sym if OneboxApiDoc::Engine.auth?
+      send OneboxApiDoc::Engine.auth_method.to_s.to_sym if OneboxApiDoc::Engine.auth?
     end
     
   end
