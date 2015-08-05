@@ -1,7 +1,7 @@
 module OneboxApiDoc
   class ApplicationController < ActionController::Base
 
-    before_action OneboxApiDoc::Engine.auth_method.to_sym, if: -> { OneboxApiDoc::Engine.auth? }
+    before_action :authenticate!
 
     caches_action :index
     caches_action :show, :cache_path => Proc.new { |controller| controller.params.except(:_).merge(format: request.format) }
@@ -72,6 +72,10 @@ module OneboxApiDoc
       unless @base.versions.present? and (not params[:reload_document])
         @base.reload_document
       end
+    end
+
+    def authenticate!
+      OneboxApiDoc::Engine.auth_method.to_s.to_sym if OneboxApiDoc::Engine.auth?
     end
     
   end
