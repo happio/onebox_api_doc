@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", ">= 4.2.1"
   s.add_dependency "responders", ">= 2.0"
-  s.add_dependency "semantic-ui-sass", "~> 1.12.3.0"
+  s.add_dependency "semantic-ui-sass", "~> 2.0.4.0"
   s.add_dependency "sass-rails"
   s.add_dependency "haml-rails"
   s.add_dependency "jquery-rails"
