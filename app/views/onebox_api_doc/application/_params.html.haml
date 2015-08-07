@@ -12,6 +12,9 @@
           %p.param__desc
             = param.desc
             .ui.list
+              - if param.default.present?
+                .item.param__default
+                = "default: #{param.default}"
               - if param.permissions.present?
                 .item.param__permission
                   .header Permission:
