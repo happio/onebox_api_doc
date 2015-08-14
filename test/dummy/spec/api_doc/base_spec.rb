@@ -61,9 +61,30 @@ module OneboxApiDoc
     end
 
     describe "api_docs_paths" do
-      it "return correct array of document paths" do
-        expect_paths = Dir.glob(Rails.root.join(*OneboxApiDoc::Engine.api_docs_matcher.split("/"))).sort { |a,b| a.count("/") <=> b.count("/") }
-        expect(@base.api_docs_paths).to eq expect_paths
+      it "return correct array of document path hash with root and priority" do
+        expected_paths = []
+        OneboxApiDoc::Engine.doc_paths.sort { |a, b| a[:priority] <=> b[:priority] }.each do |path|
+          expected_paths += Dir.glob(
+            path[:root].join(*path[:path].split("/"))
+          ).sort { |a,b| a.count("/") <=> b.count("/") }
+        end
+        expected_paths
+        expect(@base.api_docs_paths).to eq expected_paths
+      end
+      it "return correct order based on priority of document path" do
+        OneboxApiDoc::Engine.doc_paths = []
+        OneboxApiDoc::Engine.api_doc_paths do |doc|
+          doc.path "api_doc/**/*.rb", priority: 0
+          doc.path "api_doc_2/**/*.rb", priority: 1
+        end
+        first_priority_paths = Dir.glob(
+            Rails.root.join(*"api_doc/**/*.rb".split("/"))
+          ).sort { |a,b| a.count("/") <=> b.count("/") }
+        second_priority_paths = Dir.glob(
+            Rails.root.join(*"api_doc_2/**/*.rb".split("/"))
+          ).sort { |a,b| a.count("/") <=> b.count("/") }
+        expected_paths = first_priority_paths + second_priority_paths
+        expect(@base.api_docs_paths).to eq expected_paths
       end
     end
 
