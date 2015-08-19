@@ -12,16 +12,20 @@ module OneboxApiDoc
     let(:doc_v2_1) { @doc_v2_1 = OneboxApiDoc.base.get_doc("2.1.0") }
 
     before do
+      OneboxApiDoc::Engine.doc_paths = []
       OneboxApiDoc::Engine.api_doc_paths do |doc|
         doc.path "api_doc/**/*.rb", priority: 0
         doc.path "api_doc_2/**/*.rb", priority: 1
       end
+      OneboxApiDoc.base.reload_document
     end
     
     it "can add new api" do
-      OneboxApiDoc.base.reload_document
-      expect(OneboxApiDoc.base.get_doc("2.1.0").apis.size).to eq 1
-      expect(doc_v2_1.apis.size).to eq 1
+      expect(doc_v2.apis.size).to eq 3
+      expect(doc_v2_1.apis.size).to eq 2
     end
+
+    # describe "can add param to existing api" do
+    # end
   end
 end
