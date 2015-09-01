@@ -7,9 +7,8 @@ module OneboxApiDoc
       # App name
       mattr_accessor :app_name do 'API DOC' end
 
-      # where is your API defined?
-      mattr_accessor :root_resource do Rails.root end
-      mattr_accessor :api_docs_matcher do "api_doc/*.rb" end
+      # API Doc paths with root and priority
+      mattr_accessor :doc_paths do [] end
 
       # default version
       mattr_accessor :default_version do "0.0" end
@@ -23,6 +22,17 @@ module OneboxApiDoc
 
       def config(&block)
         yield self
+      end
+
+      def api_doc_paths &block
+        yield self
+      end
+
+      # root and priority are optional
+      # path with least priority will load first
+      def path file_path, root: nil, priority: 100
+        root ||= Rails.root
+        doc_paths << { path: file_path, root: root, priority: priority }
       end
 
     end

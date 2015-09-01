@@ -27,12 +27,13 @@ module OneboxApiDoc
     end
 
     def api_docs_paths
-      Dir.glob(
-        OneboxApiDoc::Engine.root_resource.join(
-          *OneboxApiDoc::Engine.api_docs_matcher.split("/")
-        )
-      ).sort { |a,b| a.count("/") <=> b.count("/") }
-      # .sort { |x,y| x.split(/\//).size <=> y.split(/\//).size}
+      paths = []
+      OneboxApiDoc::Engine.doc_paths.sort { |a, b| a[:priority] <=> b[:priority] }.each do |path|
+        paths += Dir.glob(
+          path[:root].join(*path[:path].split("/"))
+        ).sort { |a,b| a.count("/") <=> b.count("/") }
+      end
+      paths
     end
 
     def main_app
