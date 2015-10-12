@@ -10,7 +10,7 @@
               = param.type
         %td
           %p.param__desc
-            = param.desc
+            = param.desc.html_safe
           - if param.default.to_s.present?
             %p.item.param__default
               = "<b>Default:</b> #{param.default}".html_safe
