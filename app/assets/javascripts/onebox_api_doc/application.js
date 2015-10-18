@@ -1,9 +1,9 @@
-//= require jquery
+//= require jquery/dist/jquery
 
-//= require semantic-ui/accordion
-//= require semantic-ui/dropdown
-//= require semantic-ui/popup
-//= require semantic-ui/tab
-//= require semantic-ui/transition
+//= require semantic-ui/dist/components/accordion
+//= require semantic-ui/dist/components/dropdown
+//= require semantic-ui/dist/components/popup
+//= require semantic-ui/dist/components/tab
+//= require semantic-ui/dist/components/transition
 
 //= require onebox_api_doc/init-semantic-ui

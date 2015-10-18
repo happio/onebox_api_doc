@@ -2,6 +2,16 @@ module OneboxApiDoc
   class Engine < ::Rails::Engine
     isolate_namespace OneboxApiDoc
 
+    initializer "onebox_api_doc.assets.precompile" do |app|
+      bower_path = root.join('vendor', 'assets', 'bower_components')
+      bower_path.tap do |path|
+        app.config.assets.paths << path.join('semantic-ui', 'dist').to_s
+        # app.config.assets.paths << path.join('bootstrap-sass-official','assets','fonts')
+        # app.config.assets.paths << path.join('font-awesome','fonts')
+      end
+      app.config.assets.precompile << %r(\.(?:eot|svg|ttf|woff|woff2)$)
+    end
+
     class << self
 
       # App name
