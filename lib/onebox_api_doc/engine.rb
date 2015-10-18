@@ -9,6 +9,7 @@ module OneboxApiDoc
         # app.config.assets.paths << path.join('bootstrap-sass-official','assets','fonts')
         # app.config.assets.paths << path.join('font-awesome','fonts')
       end
+      app.config.assets.precompile += %w( onebox_api_doc/footer.js )
       app.config.assets.precompile << %r(\.(?:eot|svg|ttf|woff|woff2)$)
     end
 
