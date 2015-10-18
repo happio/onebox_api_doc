@@ -9,7 +9,6 @@ PATH
       rails (>= 4.2.1)
       responders (>= 2.0)
       sass-rails
-      zeroclipboard-rails
 
 GEM
   remote: https://rubygems.org/
@@ -170,8 +169,6 @@ GEM
       json (>= 1.8.0)
     warden (1.2.3)
       rack (>= 1.0)
-    zeroclipboard-rails (0.1.1)
-      railties (>= 3.1)
 
 PLATFORMS
   ruby

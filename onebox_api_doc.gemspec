@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "responders", ">= 2.0"
   s.add_dependency "sass-rails"
   s.add_dependency "haml-rails"
-  s.add_dependency "zeroclipboard-rails"
   
   s.add_dependency "actionpack-page_caching"
   s.add_dependency "actionpack-action_caching"
