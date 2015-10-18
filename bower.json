@@ -1,6 +1,9 @@
 {
-  "name": "onebox_api_doc",
+  "name": "onebox-api-doc",
   "version": "1.0.0",
+  "ignore": [
+    "**/*"
+  ],
   "dependencies": {
     "jquery": "1.11.0",
     "semantic-ui": "~2.0.7",
