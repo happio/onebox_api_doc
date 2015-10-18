@@ -15,6 +15,7 @@ gemspec
 
 gem 'pg'
 gem 'devise'
+gem 'uglifier', '>= 1.3.0'
 gem 'quiet_assets', group: :development
 
 group :development, :test do
