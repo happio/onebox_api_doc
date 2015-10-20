@@ -1,0 +1,132 @@
+/* URL */
+.api__url {
+  .action {
+    opacity: 0.7;
+    &.get {
+      color: #4dab58;
+    }
+    &.post {
+      // @extend .api_url.action
+      color: #cc9900;
+    }
+    &.put,
+    &.patch {
+      // @extend .api_url.action
+      color: #3366ff;
+    }
+    &.delete {
+      // @extend .api_url.action
+      color: #cc3300;
+    }
+  }
+  &:hover {
+    .action {
+      opacity: 1;
+    }
+  }
+  &.header {
+    .action {
+      opacity: 1;
+    }
+  }
+}
+
+.api__desc {
+  color: rgba(black, 0.5);
+}
+
+.api__note {
+  .note--warning {
+    color: rgba(black, 0.5);
+  }
+}
+
+.permission {
+  .name {}
+}
+
+.params {
+  .param__key {
+    .name {}
+    .type {}
+  }
+  .param__desc {}
+  .param__permission {}
+  .param__validate {}
+  .param__from {
+    color: rgba(black, 0.5);
+  }
+  .param__warning {
+    color: #cc9900;
+    .header,
+    .description {
+      opacity: 0.5;
+    }
+  }
+}
+
+.errors {
+  .error__code,
+  .error__msg {}
+}
+
+/* Override */
+.ui {
+  &.table {
+    tr {
+      & > td {
+        vertical-align: text-top;
+      }
+    }
+  }
+  &.grid {
+    margin: 0px;
+  }
+  // &.containner
+  // // width: 960px
+  &.feed > .event > .content .extra.text {
+    max-width: inherit;
+  }
+}
+
+// for sematic 2.0
+
+$semantic-ui-font-path: "semantic-ui/dist/themes/default/assets/fonts";
+
+@font-face {
+  font-family: 'Icons';
+  src: asset-url("#{$semantic-ui-font-path}/icons.eot");
+  src: asset-url("#{$semantic-ui-font-path}/icons.eot?#iefix") format('embedded-opentype'), 
+       asset-url("#{$semantic-ui-font-path}/icons.woff2") format('woff2'), 
+       asset-url("#{$semantic-ui-font-path}/icons.woff") format('woff'), 
+       asset-url("#{$semantic-ui-font-path}/icons.ttf") format('truetype'), 
+       asset-url("#{$semantic-ui-font-path}/icons.svg#icons") format('svg');
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-decoration: inherit;
+  text-transform: none;
+}
+
+body {
+  background: #f7f7f7;
+}
+
+.ui {
+  &.vertical.menu .item .menu {
+    a.item:hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    .item {
+      font-size: 1rem;
+    }
+  }
+  &.table {
+    &.params {
+      tr:not(:last-child) {
+        border-bottom: 1px solid rgba(gray, 0.1);
+      }
+    }
+  }
+}
+
